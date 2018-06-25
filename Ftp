@@ -1,0 +1,23 @@
+if [ -f $HOME/.netrc ]
+  then
+  echo -n "Ftp version 1.0 running"
+  else
+  echo "Initializing .netrc"
+  cat /dev/null  > $HOME/.netrc
+  chmod 700 $HOME/.netrc
+fi
+if [ -f $HOME/.ftp_sessions ]
+  then
+  echo  "..."
+  else
+  cat /dev/null  > $HOME/.ftp_sessions
+fi
+  grep -i $1 $HOME/.netrc >> /dev/null
+if [ $? -gt 0 ]
+  then
+  echo	machine $1 >> $HOME/.netrc
+  echo	login anonymous >> $HOME/.netrc
+  echo  password  $USER >> $HOME/.netrc
+fi
+echo '---- '`date`'----to: '$1  'for: ' $2 \
+	>> $HOME/.ftp_sessions;  ftp $1

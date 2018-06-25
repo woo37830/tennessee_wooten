@@ -1,0 +1,13 @@
+# put this into /etc/xinetd.d/ directory
+# or a similar one on your system
+service http
+{
+flags           = REUSE
+socket_type     = stream
+wait            = no
+user            = root
+server          = /usr/local/bin/in.httpd.sh
+log_on_failure += USERID
+disable         = no
+}
+

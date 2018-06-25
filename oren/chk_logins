@@ -1,0 +1,16 @@
+#!/usr/local/bin/perl
+#
+#	Check to see which users have logged in at the
+@hosts=('woonext','sadm','orhs','aldebaran','betelgeuse','capella','deneb','fomalhaut','kochab','polaris','procyon','rigel','sirius','vega','altair');
+#
+foreach $host (@hosts)	{
+	open(PIPE,"rsh $host w|");
+	print "-------$host-----\n";
+	while(<PIPE>)	{
+	chop;
+	print "$_\n";
+	}
+	close(PIPE);
+
+}
+

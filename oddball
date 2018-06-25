@@ -1,0 +1,4 @@
+#!/bin/bash
+# loads perl-forth and then the oddball components
+#
+forth < ~/Development/Forth/Perl/perl-forth/oddball.dict 

@@ -1,0 +1,26 @@
+#!/usr/bin/perl
+#
+#	Check to see which users have logged in at the
+@hosts=('woonext','sadm','orhs','aldebaran','betelgeuse','capella','deneb','fomalhaut','kochab','polaris','procyon','rigel','sirius','vega','altair');
+#
+foreach $host (@hosts)	{
+	open(PIPE,"rsh $host df|");
+	print "-------$host-----\n";
+	while(<PIPE>)	{
+	chop;
+	next unless /^\/dev\/sd/;
+		@fields = split;
+		print "$_\n";
+		next if $reboot{$host};
+		$reboot{$host} = $fields[3] if $fields[3] < 20000; 	
+		$unit{$host} = $fields[0];
+	}
+	close(PIPE);
+}
+	print "\n----Recommend rebooting the following-----\n";
+	foreach $host (@hosts)	{
+		next unless $reboot{$host};
+		print "$host :  $unit{$host} -> $reboot{$host}\n";
+		}
+
+	print "\nAll Done\n";

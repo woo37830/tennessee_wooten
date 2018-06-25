@@ -1,0 +1,14 @@
+/Users/woo/Development/workspaces
+/Users/woo/Development/OlderSoftware
+/Users/woo/Development/Forth
+/Users/woo/lib
+/Users/woo/bin
+/Users/woo/Development/Notes
+/Users/woo/Development/perlDBv1
+/Users/woo/NetBeansProjects/PhpProject1
+/Users/woo/NetBeansProjects/sc_demo
+/Users/woo/NetBeansProjects/sc_entities
+/Users/woo/NetBeansProjects/sc_tags
+/Users/woo/NetBeansProjects/sc_test
+/Users/woo/NetBeansProjects/StateMachineWebService
+/Users/woo/NetBeansProjects/TaskListService

@@ -1,0 +1,11 @@
+#!/bin/bash
+#
+# Description: If latest backup is not current day, do a backup
+#
+FIRSTV=`latest_backup | tr -d "-" `
+SECONDV=`date +%Y%m%d`
+DIFF=$((SECONDV-FIRSTV))
+if [ $DIFF -ne 0 ]; then
+    echo "Time machine backup started: $SECONDV"
+    tmutil startbackup &
+fi

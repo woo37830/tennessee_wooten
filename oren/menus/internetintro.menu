@@ -1,0 +1,51 @@
+:
+# @(#) Internet Introduction Menu v1.0	Author: Bob Evridge   July 9, 1992
+
+
+DIR=$HOME/bin
+MENU="Intro to Internet"
+RVR="[7m"	# termcap so
+NORM="[0m"	# termcap se
+BOLD="[5m"	# termcap mb
+BLINK="[1m"	# termcap md
+
+while	:
+do
+	clear
+	set `date`
+	echo "
+$1, $2 $3 ${RVR}Oak Ridge Educational Network${NORM} $MENU    $4
+
+The following are documents that can provide you with more
+information about using the Internet.  As they tend to be lengthy, you
+might want to capture them in your buffer and read or print them later. 
+Of course, reading them online is an option as well.
+
+	 1)	Internet Resource Directory (IRD)
+	 
+         2) 	Hitchhikers Guide to the Internet
+
+         3)     There's Gold in them thar Networks!
+
+	 4) 	Internet Resource Guide
+
+	 5)     Frequently Asked Question And Answers
+
+ "
+echo -n "ENTER NUMBER OF YOUR CHOICE AND PRESS ENTER OR RETURN : "
+
+	read	CMD
+
+	case	$CMD in
+	  1)	$DIR/IRD.menu;;
+	  2)	;;
+	  3)	;;
+	  4)	;;
+          5)    ;;
+          *)    exit;;
+
+	
+	esac
+		echo -n "PRESS ENTER OR RETURN <CR> TO CONTINUE: "
+		read CMD
+done

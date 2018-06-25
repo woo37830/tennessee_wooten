@@ -1,0 +1,5 @@
+#!/bin/bash
+#
+# Print file two pages to the sheet
+#
+enscript -G -p - $1 | quarto -2 | lpr -P $PRINTER;

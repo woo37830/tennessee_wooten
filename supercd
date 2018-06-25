@@ -1,0 +1,361 @@
+##
+##  Super "cd" that adds the following capabilities:
+##
+##  1.  Allows use of "cd ..." to cd up 2 levels, 'cd ....' to up 3, etc.
+##  2.  Korn shell "cd cwd pattern" where pattern is replaced in cwd and cd'd to.
+##  3.  Keeps a list of directories visited for a menu-ized directory change
+##
+
+if [ -z "$DIR_STACK" ]; then export DIR_STACK="$HOME"; fi
+if [ -z "$FAV_DIRSTACK" ]; then
+     if [ -e $HOME/.favorite_dirs ]; then
+          export FAV_DIRSTACK=`cat $HOME/.favorite_dirs`
+     else
+          export FAV_DIRSTACK="$HOME"
+     fi
+fi
+alias cd=super_cd
+alias mcd=menu_cd
+alias fcd=fav_cd
+alias dirs="cd -m list"
+alias fdirs="cd -f list"
+
+function super_cd {
+
+     local option= cdpath=
+
+     # If we have a -L or -P sym link option, save then remove it
+     if [ "$1" = "-P" -o "$1" = "-L" ]; then
+          option="$1"
+          shift
+     elif [ "$1" = "-m" -o "$1" = "-menu" ]; then
+          shift
+          menu_cd $*
+          return $?
+     elif [ "$1" = "-f" -o "$1" = "-fmenu" ]; then
+          shift
+          fav_cd $*
+          return $?
+     elif [ "$1" = "-list" ]; then
+          menu_cd "list"
+          return $?
+     elif [ "$1" = "-flist" ]; then
+          fav_cd "list"
+          return $?
+     elif [ "$1" = "-save" ]; then
+          save_dirs
+          return $?
+     elif [ "$1" = "-load" ]; then
+          source_dirs
+          return $?
+     elif [ "$1" = "-fsave" ]; then
+          save_favdirs
+          return $?
+     elif [ "$1" = "-fload" ]; then
+          source_favdirs
+          return $?
+     fi
+
+     case "$#" in
+     0)   # No special syntax; plain old cd by itself to home dir
+          change_dir $option $*
+          ;;
+     1)   # Either normal cd or special "..." syntax (i.e. NT)
+          nt_cdpath $*
+          _RC=$?
+          if [ $_RC -ne 0 ]; then return $_RC; fi
+          cdpath=$_CDPATH
+          unset _CDPATH
+          change_dir $option $cdpath
+          ;;
+     2)   # Korn shell subsitution of current directory
+          korn_cdpath $*
+          _RC=$?
+          if [ $_RC -ne 0 ]; then return $_RC; fi
+          cdpath=$_CDPATH
+          unset _CDPATH
+          change_dir $option $cdpath
+          ;;
+     *)   # Error
+          echo "bash: cd: wrong arg count" 1>&2
+          return 1
+          ;;
+     esac
+
+     return 0
+
+}
+
+
+function nt_cdpath {
+
+     local length= count= cdpath= i= numb=
+
+     # Are we using the special syntax?  Make sure $1 isn't empty, then
+     # match the first 3 characters of $1 to see if they are '...' then
+     # make sure there isn't a slash by trying a substitution; if it fails,
+     # there's no slash.  Both of these string routines require Bash 2.0+
+     if [ -n "$1" -a "${1:0:3}" = '...' -a "$1" = "${1%/*}" ]; then
+          # We are using special syntax
+          length=${#1}  # Assume that $1 has nothing but dots and count them
+          count=2       # 'cd ..' still means up one level, so ignore first two
+
+          # While we haven't run out of dots, keep cd'ing up 1 level
+          for ((i=$count;i<=$length;i++)); do
+               cdpath="${cdpath}../" # Build the cd path
+          done
+
+          _CDPATH="$cdpath"
+     elif [ -n "$1" ]; then
+          # We are NOT using special syntax; just plain old cd by itself
+          numb=`echo $1 | grep "^-\([0-9]\)*$"`
+          if [ "$?" -eq 0 ]; then
+               # However, we are using an index number scheme to our list
+               i=0
+               numb="${numb:1}"
+               if [ -z "$numb" ]; then _CDPATH="$OLDPWD"; return 0; fi
+               for cdpath in $(echo " $DIR_STACK "); do
+                    i=$(expr $i + 1)
+                    if [ $i -eq $numb ]; then
+                         _CDPATH="$cdpath"
+                         return 0
+                    fi 
+               done
+               echo 'bash: cd: invalid range selection.'
+               return 1
+          else
+               _CDPATH="$*"
+          fi
+     else
+          # We are NOT using special syntax; plain old cd by itself to home dir
+          _CDPATH=""
+     fi
+
+     return 0
+}
+
+
+function korn_cdpath {
+
+     local newdir=
+
+     case "$#" in
+     0)   _CDPATH=""
+          ;;
+     1)   _CDPATH="$1"
+          ;;
+     2)   newdir=$(echo $PWD | sed -e "s:$1:$2:g")
+          case "$newdir" in
+          $PWD)   echo "bash: cd: bad substitution" >&2 ; return 1 ;;
+          *   )   _CDPATH="$newdir" ;;
+          esac
+          ;;
+     *)   echo "bash: cd: wrong arg count" 1>&2 ; return 1 ;;
+     esac
+
+     return 0
+
+}
+
+
+function list_dirs {
+
+     menu_cd "list"
+
+}
+
+
+function list_fdirs {
+
+     fav_cd "list"
+
+}
+
+
+function change_dir {
+
+     local option= to_dir= cwd= dirstack=" $DIR_STACK "
+
+     if [ "$1" = "-P" -o "$1" = "-L" ]; then
+          option="$1"
+          shift
+     fi
+
+     if [ $# -eq 0 ]; then to_dir="$HOME"; else to_dir="$*"; fi
+
+     builtin cd $option $to_dir
+     cwd=$PWD
+     if [[ "$dirstack" =~ " $cwd " ]]; then
+          DIR_STACK="$cwd${dirstack%% $cwd *}"
+          DIR_STACK="$DIR_STACK ${dirstack##* $cwd }"
+          DIR_STACK=${DIR_STACK% }
+     else
+          DIR_STACK="$cwd ${DIR_STACK% }"
+     fi
+
+     return 0
+
+}
+
+
+function plain_menu_cd {
+
+     PS3='directory? '
+     dirstack=" $DIR_STACK "
+
+     select selection in $dirstack; do
+          if [ $selection ]; then
+               DIR_STACK="$selection${dirstack%% $selection *}"
+               DIR_STACK="$DIR_STACK ${dirstack##* $selection }"
+               DIR_STACK=${DIR_STACK% }
+               builtin cd $selection
+               break
+          else
+               echo 'bash: cd: invalid selection.'
+          fi
+     done
+
+}
+
+
+function menu_cd {
+
+     local i= cdpath=
+
+     PS3='directory? '
+     dirstack=" $DIR_STACK "
+
+     if [ $# -eq 0 ]; then
+          select selection in $dirstack; do
+               if [ $selection ]; then
+                    DIR_STACK="$selection${dirstack%% $selection *}"
+                    DIR_STACK="$DIR_STACK ${dirstack##* $selection }"
+                    DIR_STACK=${DIR_STACK% }
+                    builtin cd $selection
+                    break
+               else
+                    echo 'bash: cd: invalid selection.'
+               fi
+          done
+     elif [ $# -eq 1 ]; then
+          i=0
+          if [ "$1" == "list" ]; then
+               for cdpath in $(echo "$dirstack"); do
+                    i=$(expr $i + 1)
+                    echo "$i) $cdpath"
+               done
+          else
+               echo $1 | grep "[^0-9].*" > /dev/null 2>&1
+               if [ "$?" -eq 0 ]; then
+                    echo 'bash: cd: argument must be numeric.'
+                    return 1
+               fi
+               for cdpath in $(echo "$dirstack"); do
+                    i=$(expr $i + 1)
+                    if [ $i -eq $1 ]; then
+                         change_dir $cdpath
+                         return 0
+                    fi 
+               done
+               echo 'bash: cd: invalid range selection.'
+               return 1
+          fi
+     else
+          echo "bash: cd: wrong arg count" 1>&2
+          return 1
+     fi
+
+}
+
+
+function save_dirs {
+
+     local _umask=$(umask)
+
+     umask 0022
+     rm -f $HOME/.dirs
+     echo "$DIR_STACK" > $HOME/.dirs
+
+     umask $_umask
+
+}
+
+function save_favdirs {
+
+    local _umask=$(umask)
+
+    umask 0022
+    rm -f $HOME/.favorite_dirs
+    echo "$DIR_STACK" > $HOME/.favorite_dirs
+
+    umask $_umask
+
+}
+function source_dirs {
+
+     if [ -e $HOME/.dirs ]; then
+          export DIR_STACK="`cat $HOME/.dirs`"
+     else
+          export DIR_STACK="$HOME"
+     fi
+
+}
+
+
+function source_favdirs {
+
+     if [ -e $HOME/.favorite_dirs ]; then
+          export FAV_DIRSTACK=`cat $HOME/.favorite_dirs`
+     else
+          export FAV_DIRSTACK="$HOME"
+     fi
+
+}
+
+
+function fav_cd {
+
+     local i= cdpath=
+
+     PS3='directory? '
+
+     if [ $# -eq 0 ]; then
+          select selection in $FAV_DIRSTACK; do
+               if [ $selection ]; then
+                    change_dir $selection
+                    break
+               else
+                    echo 'bash: cd: invalid selection.'
+               fi
+          done
+     elif [ $# -eq 1 ]; then
+          i=0
+          if [ "$1" == "list" ]; then
+               for cdpath in $(echo "$FAV_DIRSTACK"); do
+                    i=$(expr $i + 1)
+                    echo "$i) $cdpath"
+               done
+          else
+               echo $1 | grep "[^0-9].*" > /dev/null 2>&1
+               if [ "$?" -eq 0 ]; then
+                    echo 'bash: cd: argument must be numeric.'
+                    return 1
+               fi
+               for cdpath in $(echo "$FAV_DIRSTACK"); do
+                    i=$(expr $i + 1)
+                    if [ $i -eq $1 ]; then
+                         change_dir $cdpath
+                         return 0
+                    fi 
+               done
+               echo 'bash: cd: invalid range selection.'
+               return 1
+          fi
+     else
+          echo "bash: cd: wrong arg count" 1>&2
+          return 1
+     fi
+
+}
+
+

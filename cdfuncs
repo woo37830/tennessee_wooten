@@ -1,0 +1,144 @@
+#
+# DIRECTORY MANIPULATION FUNCTIONS, REPLACES CD
+#
+# Uses global variables _push_max _push_top _push_stack
+
+integer _push_max=${CDSTACK-32} _push_top=${CDSTACK-32}
+unalias cd
+alias cd=cdlist
+export CD=cdlist
+typeset -f cddots > /dev/null 2>&1
+if [ $? -eq 0 ] ; then
+	CDCMD=cddots; export CDCMD
+else
+	CDMCD=\cd; export CDCMD
+fi
+
+# Display directory stack -- $HOME displayed as ~
+dirs()
+{
+     typeset dir="${PWD#$HOME/}"
+     case $dir in
+          $HOME)
+	       dir=\~;;
+          /*)  ;;
+          *)   dir=\~/$dir;;
+     esac
+     PS3=
+     select i in "$dir" "${_push_stack[@]}"
+     do  :
+     done < /dev/null
+}
+
+# Change directory and put directory on front of stack
+cdlist()
+{
+     typeset dir=
+     integer n=0 type=4
+     case $1 in
+          -|-1|2) # cd -
+	       n=_push_top type=1;;
+          -[1-9]|-[1-9][0-9]) # cd -n
+	       n=_push_top+${1#-}-1 type=2;;
+          1)   # keep present directory
+	       if [ "$PS1ON" = "N" ]
+	       then print -r - "$PWD"
+	       fi
+	       return;;
+          [2-9]|[1-9][0-9]) # cd n
+	       n=_push_top+${1}-2 type=2;;
+          *)   if ((_push_top <= 0))
+	       then type=3 n=_push_max
+	       fi;;
+     esac
+     if ((type<3))
+     then if ((n >= _push_max))
+	  then print cd: Directory stack not that deep.
+	       return 1
+	  else dir=${_push_stack[n]}
+	  fi
+     fi
+     case $dir in
+	  ~*) dir=$HOME${dir#~};;
+     esac
+     ${CDCMD} "${dir:-$@}" || return 1
+     dir=${OLDPWD#$HOME/}
+     case $dir in
+	  $HOME)
+	       dir=\~;;
+	  /*)  ;;
+	  *)   dir=\~/$dir;;
+     esac
+     case $type in
+	  1) # swap first two elements
+	       _push_stack[_push_top]=$dir;;
+	  2|3) # put $dir on top and shift down by one until top
+	       integer i=_push_top
+	       for dir in "$dir" "${_push_stack[@]}"
+	       do ((i > n)) && break
+		    _push_stack[i]=$dir
+		    i=i+1
+		done;;
+	  4) # push name
+	       _push_stack[_push_top=_push_top-1]=$dir;;
+     esac
+#    if [ "$PS1ON" = "N" ]
+#     if [ "$PS1LONG" -eq "0" ]
+#     then print -r - "$PWD"
+#    else ps1 $PWD
+#     fi
+}
+
+# Menu-driven change directory command
+mcd()
+{
+     typeset dir="${PWD#$HOME/}"
+     case $dir in
+	  $HOME) dir=\~;;
+	  /*)    ;;
+	  *)     dir=\~/$dir;;
+     esac
+     PS3='Select by number or enter a name: '
+     select dir in "$dir" "${_push_stack[@]}"
+     do if ${CDCMD} $REPLY
+	then return
+	fi
+     done
+}
+
+# For the absolute geeks
+unsetcd()
+{
+    if [ "$CD" = "cdlist" ]
+    then
+	unset -f dirs
+	unset -f cdlist
+	unset -f mcd
+	unset -f unsetcd
+	unset _push_max
+	unset _push_top
+	unset _push_stack
+	case $PS1ON in
+	    "Y") alias cd=cdp
+		 export CD=cdp;;
+	    "N") alias cd=cd
+		 export CD=cd;;
+	    *)   ;;
+	esac
+    fi
+}
+
+# upon startup, push $OLDPWD to _push_stack if applicable
+if [ "$OLDPWD" != "" ]
+then
+     typeset dir=
+     dir=${OLDPWD#$HOME/}
+     case $dir in
+          $HOME)
+               dir=\~;;
+          /*)  ;;
+          *)   dir=\~/$dir;;
+     esac
+     _push_stack[_push_top=_push_top-1]=$dir
+     unset dir
+fi

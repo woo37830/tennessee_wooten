@@ -1,0 +1,265 @@
+#!/bin/bash
+#
+# This creates a job file which can be read by the queue manager
+#
+# Version: 0.1 (27th October 2007)
+# Author: Andrew
+#
+
+# Custom function for extending path names
+tolongpath() {
+if [[ "$1" = /* ]]
+then
+echo "$1"
+else
+echo "`pwd`/$1"
+fi
+}
+
+# Set version
+version="0.1"
+
+if [[ $# = 1 ]]
+then
+# There's only one argument
+# Check to see if the file has the .m extension
+if [[ "$1" != *.m ]]
+then
+# The parameter doesn't seem to be an m-file. It's probably a log
+outputfile="$1"
+fi
+elif [[ $# > 2 ]]
+then
+echo 'ERROR: Too many parameters'
+echo ' '
+echo "USAGE: `basename $0` [matlab_script_to_run.m] [job_file.job]"
+echo " NOTE: Both parameters are optional"
+echo ' '
+exit 2
+else
+# Check for a second parameter
+if [ -z "$2" ]
+then
+outputfile="myjob.job"
+else
+outputfile="$2"
+fi
+fi
+
+echo '# This file was created using the interactive tool' > $outputfile
+echo "# called `basename $0`, version $version" >> $outputfile
+echo "# Creation date: `date`" >> $outputfile
+echo '# ' >> $outputfile
+echo ' ' >> $outputfile
+
+emailnotify="preq"
+# Loop until we get a desired answer
+while [[ "$emailnotify" != n* && "$emailnotify" != y* ]]
+do
+echo -en "Do you wish to enable email notification for your job? [y/n]: "
+read emailnotify
+emailnotify=`echo $emailnotify | tr [:upper:] [:lower:]`
+done
+
+# If email notification is required
+if [[ "$emailnotify" == y* ]]
+then
+# Now perform email check:
+while [[ "$emailnotify" != *@* || ( "$emailnotify" != *.co* &&
+"$emailnotify" != *.ac.uk ) ]]
+do
+echo ' '
+echo -e "Please enter a valid email address to which the"
+echo -en "notifications will be sent: "
+read emailnotify
+done
+# Append this email address to the output file
+echo "#$ email=$emailnotify" >> $outputfile
+
+
+emailnotify=10
+while [[ $emailnotify -lt 1 || $emailnotify -gt 3 ]]
+do
+echo ' '
+echo 'Would you like notification when the job...'
+echo '1. Commences'
+echo '2. Completes'
+echo '3. Commences and Completes'
+echo ' '
+echo -en "[Please select 1, 2 or 3]: "
+read emailnotify
+done
+
+# Now add this to the job file
+echo "#$ notify=$emailnotify" >> $outputfile
+fi
+
+# End of email section
+# From here, we deal with just job that will be carried out
+
+# Automatic mode...
+
+if [[ "$1" = *.m ]]
+then
+echo ' '
+echo 'MATLAB file detected as input variable. Automatically configuring setup file...'
+if [[ -e $1 && -f $1 ]]
+then
+if [[ "$1" = */* ]]
+then
+# The file already has a path
+echo "matlabjob \"$1\"" >> $outputfile
+else
+# Relative paths work okay
+echo "matlabjob \"`pwd`/$1\"" >> $outputfile
+fi
+echo ' '
+echo "Job file created successfully. You can now submit the job file \"$outputfile\""
+
+# # Change the permissions within the directory
+# $pathtochange=`readlink -f "$1"`
+# $pathtochange=`dirname "$pathtochange"`
+# chmod -R -f o+rwx $pathtochange/*
+exit 0
+else
+echo "Could not find MATLAB file \"`pwd`/$1\"."
+echo "Please ensure this file exists"
+# Remove the output file as it's only longer required due to the failure
+rm -f $outputfile
+exit 2
+fi
+fi
+
+# Manual mode...
+
+# Ask the user if their job is MATLAB based
+ismatlab="preq"
+# Loop until we get a desired answer
+while [[ "$ismatlab" != n* && "$ismatlab" != y* && "$ismatlab" != a* ]]
+do
+echo ' '
+echo -en "Is the job MATLAB based (you need to have prepared a m-file)? [y/n/(a)bort]: "
+read ismatlab
+ismatlab=`echo $ismatlab | tr [:upper:] [:lower:]`
+done
+
+# Check input
+if [[ "$ismatlab" = a* ]]
+then
+# Request to abort received
+exit 1
+elif [[ "$ismatlab" = y* ]]
+then
+# MATLAB will be used
+
+# Tell the user the shortcut that can be used - currently only available for .m files
+echo "HINT: You can use \"`basename $0` [matlab_script_to_run.m] [job_file.job]\""
+echo " to quickly create a Job file. You will then only be prompted for"
+echo " email notifications."
+echo ' '
+
+ismatlab="preq"
+# Loop until we get a desired answer
+while [[ "$ismatlab" != n* && "$ismatlab" != y* ]]
+do
+echo ' '
+echo -en "Do you wish to take any MATLAB output to a file (for debugging)? [y/n]: "
+read ismatlab
+ismatlab=`echo $ismatlab | tr [:upper:] [:lower:]`
+done
+if [[ "$ismatlab" = y* ]]
+then
+# Take the name of the filename
+echo ' '
+echo -e "Please enter the name of the file you wish to save the output to: "
+read logoutput
+fi
+
+# Now to get the MATLAB script from the user
+while [[ ( "$matlabfile" != *.m && ! -e $matlabfile ) || -d $matlabfile ]]
+do
+echo ' '
+echo -e "Please enter the filename of the script (including the .m extension): "
+read matlabfile
+done
+
+# Now check the path
+matlabfile=`tolongpath "$matlabfile"`
+
+# Check to see if an output should be taken and write the necessary line
+if [[ -z $logoutput ]]
+then
+# No log output
+echo "runmatlab \"$matlabfile\"" >> $outputfile
+else
+logoutput=`tolongpath "$logoutput"`
+echo "runmatlab \"$matlabfile\" \"$logoutput\"" >> $outputfile
+fi
+
+# # Change the permissions within the directory
+# $pathtochange=`readlink -f "$matlabfile"`
+# $pathtochange=`dirname "$pathtochange"`
+# chmod -R -f o+rwx $pathtochange/*
+
+# Finally, there's no need to continue running the script, so exit
+exit 0
+fi
+# Ask the user whether a script file will run
+
+isscript="preq"
+# Loop until we get a desired answer
+while [[ "$isscript" != n* && "$isscript" != y* ]]
+do
+    echo -en "Has your job been created as a BASH-compatible script file? [y/n]: "
+    read isscript
+    isscript=`echo $isscript | tr [:upper:] [:lower:]`
+done
+
+# If email a BASH script will run is required
+if [[ "$isscript" == y* ]]
+    then
+        # Script bash script to run. Which script?
+        while [[ ! -e $scriptfile || -d $scriptfile ]]
+        do
+            echo ' '
+            echo -e "Please enter the filename of the script (including the extension, if any): "
+            read scriptfile
+        done
+
+        # We now have a script file. It should be checked, but, on good faith,
+        # we assume file is okay
+
+        # Check the path and should it be a relative path, put it into its longer context
+        scriptfile=`tolongpath "$scriptfile"`
+
+        # Now add the line to the job file. There may be other arguments
+        # that could be added to the job file to customise the bash window
+        echo "bash \"$scriptfile\"" >> $outputfile
+
+        isscript="preq"
+
+        while [[ "$isscript" != n* && "$isscript" != y* ]]
+        do
+            echo -en "Do you want to submit the job? [y/n]: "
+            read isscript
+            isscript=`echo $isscript | tr [:upper:] [:lower:]`
+        done
+        
+        # If submit the BASH script if requested
+            if [[ "$isscript" == y* ]]
+                then
+                    submit "${outputfile}"
+                else
+                    noscript="X"
+            fi
+    else
+        noscript="Y"
+fi
+if [ "$noscript" == "Y" ]; then
+    # No script will run. Nothing left to do
+    echo 'Create Job script finished. Nothing else to do.'
+    echo 'No job information was created - just a header.'
+    echo "Job file created as $outputfile. Add commands to the end of this file"
+elif [ "$noscript" == "X" ]; then
+    echo 'Prepared job file myjob.jbo created.  Use submit myjob.job to submit to queue'
+fi

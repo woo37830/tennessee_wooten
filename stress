@@ -1,0 +1,13 @@
+#!/bin/bash
+# run stress test.
+if [ $# -ne 1 ]; then 
+    echo "Useage: stress level, level = [1 -> 8]"
+    exit 1;
+fi
+echo "Runnning stress test, level = $1"
+echo "To stop: killall yes"
+#
+for (( c=1 ; c<=$1; c++ ))
+do
+    yes > /dev/null &
+done

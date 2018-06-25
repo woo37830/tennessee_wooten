@@ -1,0 +1,13 @@
+#!/usr/bin/perl
+#
+#	Check to see which users have logged in at the
+@hosts=('woonext','sadm','orhs','jjhs','rjhs','aldebaran','betelgeuse','capella','deneb','fomalhaut','kochab','polaris','procyon','rigel','sirius','vega','altair','arcturus');
+#
+foreach $host (@hosts)	{
+	open(PIPE,"rsh $host ls -al /usr/lib/NextStep/Workspace.app | grep Workspace|");
+	$_ = <PIPE>;
+	print "$host -> ",$_,"\n";
+	close(PIPE);
+
+}
+

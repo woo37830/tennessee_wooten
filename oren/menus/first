@@ -1,0 +1,53 @@
+
+* * * * * * * WELCOME TO THE OAK RIDGE EDUCATIONAL NETWORK * * * * * * *
+
+This file contains helpful information for getting started.  It is shown
+to you automatically the first time you log into OREN.  If you wish to
+review it later, just remember to type intro at the prompt.
+
+You have logged into a host on the OREN.  This host uses an operating
+system called Unix.  An introduction to Unix can be reviewed by typing
+
+intro
+
+at the command prompt.  To move to a new page, press the space bar.  To
+quit before the end of the document, type q and a return.  When you've
+finished with this page of the document, you should type a space and a
+carriage return also (we're using more to print this on your terminal).
+
+To log off of the system, type
+
+logout
+
+at the command prompt.  All commands end with a carriage return.
+If you have serious problems, hang up the phone and your session will
+be killed later so that you can try again.
+
+A gripe program exists to allow you to easily enter complaints about
+problems or suggestions (polite please) or requests for additional 
+services.  To use gripe type
+
+gripe
+
+at the command prompt.  Follow the directions and enter your comments.
+You will be contacted by email as a followup to your gripe.
+
+A menu base system to help  new users is available by typing
+
+menu
+
+at the command prompt.
+Other topics are available from intro.  To see a list of topics type
+
+intro index
+
+at the command prompt.  You may then type intro followed by the desired
+subject.
+
+Now this text will end.  Try typing 
+
+intro
+
+at the command line prompt.  Remember to finish with a carriage return.
+Thanks
+

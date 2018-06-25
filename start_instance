@@ -1,0 +1,10 @@
+#!/bin/bash
+#
+# Start a cache instance
+#
+instance='%SYS'
+if [ $# -ne 0 ]
+then
+    instance=$1
+fi
+/Applications/Cache/bin/cache -s/Applications/Cache/mgr -U $instance

@@ -1,0 +1,7 @@
+#! /bin/csh
+# execute as activate.list
+
+foreach i  (`awk -F: -f activate.awk < activate.db `)
+	(cd ~apply; activate $i)
+	echo "User $i activated"	
+end

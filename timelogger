@@ -1,0 +1,410 @@
+#!/usr/bin/perl
+#
+#	timekeeper.pl	Version 1.0				11/12/2011
+#
+#				J. W. Wooten
+#				jwooten@shoulderscorp.com
+#
+#
+#	A file by yyyyMM is maintained with Client|start-time|end-time
+#       if still billing the |end-time is not there.
+#       start-time and end-time are of the form DD:HHMMSS
+#
+use POSIX qw/strftime/;
+
+$lockFile = "/Users/woo/tmp/.pfc";
+$LOCALE_ITEM = 1;  # 24 hour clock?
+$num_args = $#ARGV + 1;
+$PROJ = "";
+$BILLING = "";
+$ACCT = "";
+$LAST_LINE = "";
+$open = -1;
+$gotal = 0;
+my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
+$year += 1900;
+my @month_abbr = qw( Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec );
+$CURRENT_TIME = strftime('%d:%H%M%S',localtime);
+$month_number = $mon+1;
+if( length($month_number) == 1 )	{ $month_number = "0$month_number"; }
+$DIR = "$year$month_number";
+print "\n$month_abbr[$mon] $mday, $year\t$DIR\t$CURRENT_TIME\n";
+$LOGDIR = "$ENV{HOME}/pers/timelogs";
+open(PROJS, "$LOGDIR/projects") || die("No projects available");
+my @projects = <PROJS>;
+close PROJS;
+	if( !( -e "$LOGDIR/$DIR" ) )	{
+		open(FILE, ">$LOGDIR/$DIR"); # Create file if it does not exist.
+		close FILE;
+		}
+    if( $ARGV[0] eq "-c" )	{
+        open(PROJS, ">>$LOGDIR/projects");
+        $PROJ = $ARGV[1];
+        chomp($PROJ);
+        if( $PROJ ne "" )
+        {
+            $ACCT = $ARGV[2];
+            print PROJS "\n$PROJ,$ACCT";
+        }
+        close PROJS;
+        exit;
+    }
+    if( -e "$LOGDIR/$DIR")	{
+       open(FILE, "$LOGDIR/$DIR");
+       #printf("\nhistory file $LOGDIR/$DIR successfully opened.");
+       my @file = <FILE>;
+       close FILE;
+    #   chomp(@file);
+       $LAST_LINE = @file[$#file];
+       pop(@file);
+       chomp($LAST_LINE);
+       if( $LAST_LINE ne "" )	{
+       	#printf("\nLAST_LINE = $LAST_LINE");
+       	@items = split(",", $LAST_LINE);
+       	@dt = split(":", $items[1]);
+       	$begin = $dt[1];
+       	#printf("\nitems[1] = '$items[1]', dt=($dt[0],$dt[1]),  begin = '$begin'\n");
+       	$open = $#items-2;
+       	if(  $open < 0 )	{
+       		$BILLING = $items[0];
+          	printf("\nBilling to: $BILLING since $items[1]\n");
+            $PROJ = $BILLING;
+       	}
+       	if( $ARGV[0] eq "-i" )  {
+        				open(FILE,"$LOGDIR/$DIR") || die("\n\t\t$DIR not found\n");
+        				@lines = <FILE>;
+        				close FILE;
+                        $ref = \@lines;
+                        $gtotal = 0;
+                        	foreach $P (@projects)	{
+                        	    @a = split(",", $P);
+                        	    $P = $a[0];
+                        		printInvoice($P, $ref);
+                        	}
+                        print "\n--------------------------------------------------------------";
+                        printf "\n\t\t\t\tTotal:        %4.2f\n",$gtotal;
+                        print "\n\n";
+                    }
+	}
+        if( $num_args > 0 )	{
+           if( $ARGV[0] eq "-f" )	{
+              endBilling($PROJ);
+	      unlink($lockFile);
+              exit;
+              }
+           }
+           if( $ARGV[0] eq "-n" )	{
+              $PROJ = $ARGV[1];
+              if( $PROJ eq "" )	{
+                 printf("\nUseage: timelog [-f/[-n project]]\n");
+                 exit;
+              }
+              startBilling($PROJ);
+                            exit;
+           }
+
+            if( $num_args > 0 )	{
+               if( $ARGV[0] eq "-" )   {
+                    $PROJ = "";
+               		while( true )	{
+                    printf("\n\t\t\tMenu\n\n\tSelect(s)\n\tInvoice(i)\n\tCreate(c)\n\tList Projects(l)\n\tEdit Time(e)\n\tBegin(n)\n\tEnd(f)\n\tQuit(q)\n\n\n\t\t\tInput: ");
+                    $userinput =  <STDIN>;
+                    chomp ($userinput);
+                    if ( $userinput eq "q" )  {
+                        printf("\nAll Done!\n");
+                        exit;
+                    }
+
+                    elsif( $userinput eq "s" )	{
+                    	$k = 0;
+                    	foreach $P (@projects)	{
+                    		chomp($P);
+                    		print "\n\t$k) $P";
+                    		$k++;
+                    	}
+                    	print "\nEnter the number for your selection or ‘*’ for all: ";
+                    	$PROJ = <STDIN>;
+                    	chomp($PROJ);
+                    	if( $PROJ ne "*" )	{
+                    		@v = split(",",$projects[$PROJ]);
+                    		$PROJ = $v[0];
+                    	}
+                    	print "\nSelected $PROJ";
+                    }
+                    elsif( $userinput eq "i" )  {
+                        @lines = selectMonth();
+                        $ref = \@lines;
+                        $gtotal = 0;
+                        if( $PROJ eq "" )	{
+                        	$P = selectProject();
+                        	} else	{
+                        	$P = $PROJ;
+                        	}
+                        if( $P eq "*" )	{
+                        	foreach $P (@projects)	{
+                        	    @a = split(",", $P);
+                        	    $P = $a[0];
+                        		printInvoice($P, $ref);
+                        	}
+                        }
+                        else {
+                        	printInvoice($P, $ref);
+                        }
+                        print "\n\n";
+                    }
+                    elsif( $userinput eq "n" && ($PROJ eq "" || $PROJ eq "*") )	{
+                    	print "\nSelect a project first (s) ";
+                    }
+                    elsif( $userinput eq "n" && ($PROJ ne "" && $PROJ ne "*") )	{
+                    	startBilling($PROJ);
+                    }
+                    elsif( $userinput eq "f" )	{
+                    	endBilling($PROJ);
+                    }
+                    elsif( $userinput eq "c" )	{
+                    	open(PROJS, ">>$LOGDIR/projects");
+                    	print "\nEnter Project ID: ";
+                    	$PROJ = <STDIN>;
+                    	chomp($PROJ);
+                    	if( $PROJ ne "" )	{
+                    		print "\nEnter Account #: ";
+                    		$ACCT = <STDIN>;
+                    		print PROJS "$PROJ,$ACCT";
+                    	}
+                    	close PROJS;
+                    	open(PROJS, "$LOGDIR/projects");
+                    	@projects = <PROJS>;
+                    	close PROJS;
+                    }
+                    elsif( $userinput eq "l" )	{
+                        print "\n\t\tProjects\n";
+                        $k = 0;
+                    	foreach $P (@projects)	{
+                    		($CUSTOMER,$ACCT) = split(",", $P);
+                    		print "\n\t$k) $CUSTOMER";
+                    		$k++;
+                    	}
+                    }
+                    elsif( $userinput eq "e" )	{
+                    	if( $PROJ eq "" )	{
+                    		print "\nEnter project to edit: ";
+                    		$PROJ = <STDIN>;
+                    		chomp($PROJ);
+                    	}
+                    	if( $PROJ ne "" )	{
+                    		$ACCT = isValid($PROJ);
+                    		if( $ACCT ne "" )	{
+                    			print "\nEnter period to edit (YYYYMM): ";
+                    			$DIR = <STDIN>;
+                    			chomp($DIR);
+                    			print "\nEditing $DIR";
+                    			open(FILE,"$LOGDIR/$DIR") || die("File $LOGDIR/$DIR does not exist!");
+                    			@lines = <FILE>;
+                    			close FILE;
+                    			open(FILE,">$LOGDIR/$DIR");
+                    			$finish = 0;
+                    			foreach $line (@lines)	{
+                    				chomp($line);
+                    				($CUSTOMER,$BEGIN,$END) = split(",",$line);
+                    				if( $CUSTOMER ne $PROJ || $finish == 1)	{
+                    					print FILE "$line\n";
+                    				} else	{
+                    					print "\n\t$line\nQuit(q), Accept(a), Delete(d), or Replace(r) : ";
+                    					$userinput = <STDIN>;
+                    					chomp($userinput);
+                    					if( $userinput eq "a" )	{
+                    						print FILE "$line\n";
+                    					} elsif( $userinput eq "r" )	{
+                    						print "\nEnter replacement line: ";
+                    						$userinput = <STDIN>;
+                    						print FILE $line; # should have a lf/cr at the end
+                    					} elsif( $userinput eq "q" )	{
+                    						print FILE "$line\n";
+                    						$finish = 1;
+                    					}
+                    				}
+                    			}
+                    			close FILE;
+                    		}
+                    	}
+                    }
+                    else	{
+                    	print "\nInvalid entry ‘$userinput’";
+                    }
+                }
+            }
+        }
+    }
+printf("\nAll Done!\n");
+exit;
+
+sub endBilling()	{
+	$PROJ = $_[0];
+if( $PROJ eq "" )		{
+    printf("\nNot currently billing to a client\n");
+} else	{
+       open(FILE, "$LOGDIR/$DIR");
+       #printf("\nhistory file $LOGDIR/$DIR successfully opened.");
+       my @file = <FILE>;
+       close FILE;
+    #   chomp(@file);
+       $LAST_LINE = @file[$#file];
+       pop(@file);
+       chomp($LAST_LINE);
+    @dt = split("\:", $CURRENT_TIME);
+    $end = convertToSecs($dt[1]);
+    $begin = convertToSecs($begin);
+    $hours = floatHrs($end-$begin);
+    printf("\nBilling terminated for $BILLING, $begin -> $end = $hours hours billed\n");
+    #printf("\nLAST_LINE = $LAST_LINE\n");
+    open(FILE,">$LOGDIR/$DIR");
+    print FILE @file;
+    print FILE "$LAST_LINE,$CURRENT_TIME,$hours\n";
+    close FILE;
+	}
+}
+
+sub startBilling()	{
+            $PROJ = $_[0];
+                printf("\nTrying to bill to $PROJ");
+			$ACCT = isValid($PROJ);
+              if( $ACCT eq "" )	{
+               printf("\nACCT is null, not valid project");
+              	exit;
+              }
+              if( $open < 0 && !$LAST_LINE eq "")	{
+                 if( $items[0] =~ /$PROJ/ )	{
+                    printf("\nAlready billing to $BILLING\n");
+                    exit;
+                 }
+                 printf("\nCurrently billing to $BILLING\n");
+                 $LAST_LINE = "$LAST_LINE,$CURRENT_TIME\n";
+                 pop(@file);
+                 open(FILE,">$LOGDIR/$DIR");
+                 print FILE @file;
+                 print FILE $LAST_LINE;
+                 push(@file,$LAST_LINE);
+                 close FILE;
+              }
+              $BILLING = $PROJ;
+              printf("\nBilling will now go to: $BILLING, Account= $ACCT\n");
+              # get acct number from projects, output line with start time
+              open(FILE, ">>$LOGDIR/$DIR") || die("Cannot open $LOGDIR/$DIR");
+              print FILE "$PROJ,$CURRENT_TIME";
+
+}
+sub isValid()	{
+			$PROJ = $_[0];
+			$count = 0;
+              for( $i = 0; $i <= $#projects; $i++ )	{
+                 @fields = split(",", $projects[$i]);
+                 if( $fields[0] =~ /$PROJ/ )	{
+                    $count++;
+                    $ACCT = $fields[1];
+                 }
+              }
+              if( $count == 0 )	{
+                 printf("\nInvalid project!  \n\nValid projects are:\n\n");
+                 print @projects;
+                 print "\n";
+              }
+              return $ACCT;
+}
+
+sub selectMonth()	{
+    	printf("\t\t\tEnter YYYYMM to invoice:\t");
+        $DIR = <STDIN>;
+        chomp($DIR);
+        if ($DIR eq "")     {
+            printf("\nAll Done!\n");
+            exit;
+        }
+        open(FILE,"$LOGDIR/$DIR") || die("\n\t\t$DIR not found\n");;
+        @lines = <FILE>;
+        close FILE;
+        #printf("\nThere are $#lines in file");
+		return @lines;
+}
+
+sub selectProject()
+{
+        printf("\t\t\tEnter project to Invoice:\t");
+        $P = <STDIN>;
+        chomp($P);
+        if ($P eq "")   {
+            printf("\nAll Done!\n");
+            exit;
+        }
+		return $P;
+}
+
+sub printInvoice
+    {
+    	$PROJ = $_[0];
+    	#printf("\nInvoice for ‘$PROJ’");
+    	@lines = @{$_[1]};
+        $total = 0.0;
+        foreach $line (@lines) {
+            chomp($line);
+            ($x,$fld1,$fld2,$hours) = split(",", $line);
+            if( $x eq $PROJ )	{
+            $activity = "   ";
+            @dt = split(":", $fld1);
+            $date = $dt[0];
+            $begin = $dt[1];
+            @dt = split(":", $fld2);
+            $end = $dt[1];
+            $hours = floatHrs(convertToSecs($end) - convertToSecs($begin));
+            if( $hours > 0.0 )	{
+            	$total += $hours;
+            	$gtotal += $hours;
+            	write STDOUT;
+            	} else	{
+        			printf "\t\t\t\t\t\t\tOpen Time Record\n";
+            	}
+            }
+        }
+        #$- = 0;
+        if( $total > 0.0 )	{
+        	printf "\n\t\t\t\tTotal:        %4.2f\n",$total;
+        	}
+        $- = 0; # force new page
+    }
+sub convertToSecs
+    {
+        $retVal = $_[0]/10000; # hour
+        $theMin = ($_[0] - $retVal*10000)/100; # min
+        $theBeginSecs = $_[0] - (($_[0] - $retVal*10000)*100);
+        return $retVal*3600+$theMin*60+$theBeginSec;
+    }
+sub floatHrs
+    {
+        return $_[0]/3600;
+    }
+#####################################################################
+
+  # Here is the top of form format, with column headings.
+
+  format STDOUT_TOP =
+
+
+                        Invoice
+                    @<<<<<<@<<<<<@####
+                $PROJ,$month_abbr[$mon],$year
+
+  Date      Activity     Begin     End       Hours
+  ------    ---------    -----     ----      -------
+.
+
+  # Here is the format for each record.
+
+  format STDOUT =
+  @#####@############@##########@##########@####.##
+  $date,$activity,$begin,$end,$hours
+.
+
+  format STDOUT_BOTTOM =
+  @############################Grand Total:#####.##
+  $gtotal
+.
+

@@ -1,0 +1,23 @@
+WID=`$HOME/bin/wid`
+if [ "$NODE" = "" ] ; then NODE=$(hostname | sed s/\\..*$//); export NODE; fi
+case "$0" in
+    *bash) if [ "$SHLVL" -eq 1 ] ; then
+		PS1='(${0}) @${NODE}${PWD}
+[\!]:${?} '
+	   else
+		PS1='(${0}) @${NODE}${PWD}
+${SHLVL}[${WID}\!]:${?} '
+	   fi
+           ;;
+    *ksh)  let SHLVL=$SHLVL+1; export SHLVL
+	   if [ "$SHLVL" -eq 1 ] ; then
+		PS1='(${0}) @${NODE}${PWD}
+[!]:${?} '
+	   else
+		PS1='(${0}) @${NODE}${PWD}
+${SHLVL}[${WID}!]:${?} '
+	   fi
+           ;;
+    *)	   PS1='$(/bin/hostname)$ '
+           ;;
+esac

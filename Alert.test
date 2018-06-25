@@ -1,0 +1,4 @@
+#	@(#)	Test Alert panel from script
+
+Alert	'You have an appointment' 'OK'
+

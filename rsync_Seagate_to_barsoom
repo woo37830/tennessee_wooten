@@ -1,0 +1,6 @@
+#!/bin/bash
+#
+# Definition: sync Seagate/Movies to barsoom/Volumes/iTunes/Movies
+#
+rsync -vaz /Volumes/SeagateTimeCapsule-2/Movies --rsh="ssh -l woo" barsoom:/Volumes/iTunes
+echo "All Done!"

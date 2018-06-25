@@ -1,0 +1,9 @@
+#! /bin/csh
+# execute as  tarlist to-dir name1 name2 name3
+set TO = $1
+set DATE = `ddmmyy -n`
+shift
+foreach i  ($argv)
+	echo "tarring $i to $TO"
+	tar -cf - $i | compress > $TO/$i.$DATE.tar.Z
+end

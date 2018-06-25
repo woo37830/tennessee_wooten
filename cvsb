@@ -1,0 +1,12 @@
+cvs ci -m '' $@
+cvs tag -F BETA $@
+cvs tag -F QA $@
+echo ""
+echo "Committed and tagged BETA and QA:"
+while [ $# -ne 0 ]
+	do
+		ABPATH=$(pwd "$1")
+		echo "$ABPATH/$1"
+		shift
+done
+exit 0

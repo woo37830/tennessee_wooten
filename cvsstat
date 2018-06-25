@@ -1,0 +1,12 @@
+:
+# @(#) svnstat v1.0      Collect stats from svn for project
+
+cd ~/tmp
+mkdir cvsstat
+cd cvsstat
+cvs -d :ext:woo@jwooten37830.com:/Users/woo/cvsrep co $1
+cd $1
+cvs log > $1.log
+java -jar ~/lib/jars/statcvs.jar $1.log .
+cd ~/tmp/cvsstat/$1
+/Applications/Firefox.app/Contents/MacOS/firefox -new-window index.html

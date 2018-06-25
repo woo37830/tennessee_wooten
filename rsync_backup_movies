@@ -1,0 +1,11 @@
+#!/bin/bash
+#
+# Definition: sync ~/Movies or barsoom:/Volumes/iTunes/Movies to SeagateTimeCapsule-2
+#
+if [ "$#" -ne 0 ]; then
+   rsync -vaz --rsh="ssh -l woo" barsoom:/Volumes/iTunes/Movies /Volumes/SeagateTimeCapsule-2
+   echo "Synched to Seagate-2 from barsoom"
+else
+   rsync -vaz ~/Movies /Volumes/SeagateTimeCapsule-2
+   echo "Synched to Seagate-2 from ~/Movies"
+fi

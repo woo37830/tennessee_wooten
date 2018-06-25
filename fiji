@@ -1,0 +1,4 @@
+#!/bin/bash
+# Set the classpath to contain path to fiji
+# and then start fiji
+java -cp ~/Development/Forth/fiji.1.2_beta/fiji.1.2_beta.jar com.SoftWoehr.FIJI.FIJI

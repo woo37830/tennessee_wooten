@@ -1,0 +1,2 @@
+#!/bin/bash
+ssh barsoom tmutil latestbackup | awk -F'/' '{print $6}'

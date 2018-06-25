@@ -1,0 +1,19 @@
+:
+# @(#) mmm v1.0	Nroff command with mm macros
+
+if [ "$#" -eq 0 ]
+	then	echo "mmm: wrong arg count"	>&2
+		echo "usage: mmm file [...]"	>&2
+		echo 1
+fi
+
+LIST=""
+for ARG in $*
+do
+	if [ ! -f $ARG ]
+		then echo "mmm: $ARG is not a regular file"	>&2
+		else LIST="$LIST $ARG"
+	fi
+done
+
+nroff -r0o -mm $LIST

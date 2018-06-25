@@ -1,0 +1,4 @@
+# @(#)
+foreach i (`cat ~/.rhosts`)
+rsh stc06 grep $i /etc/hosts
+end

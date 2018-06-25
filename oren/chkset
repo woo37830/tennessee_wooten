@@ -1,0 +1,22 @@
+:
+# @(#) chkset v1.0	Check for set bits on	Author: J. W. Wooten
+
+FORM="-print"
+SORT="sort"
+
+if [ "`echo $1 | cut -c1`" = "-" ]
+  then	case $1 in
+	-l)	shift
+		FORM="-exec ls -ld {} ;"
+		SORT="sort +7";;
+	*)	echo "usage: chkset [-l][file/dir ...]" >&2
+		exit 1;;
+	esac
+fi
+
+if [ "$#" -gt 0 ]
+   then	SRC="$*"
+   else	SRC="/"
+fi
+
+find	$SRC \( -perm -4000 -o -perm -2000 \) $FORM | $SORT

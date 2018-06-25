@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+# List the jobs waiting to execute
+#
+# Version: 0.1 (16 Apriil 2014)
+#
+echo ' Jobs waiting in queue...'
+for i in $( ls ~/queues/jobs/ ); do
+   echo item: $i
+done
+ps -al | grep queue_ | grep -v grep > /dev/null
+RETVAL=$?
+[ $RETVAL -eq 0 ] && echo ' queue_manager is running'
+[ $RETVAL -ne 0 ] && echo ' queue_manager is NOT running'
+
+echo 'All Done!'

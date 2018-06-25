@@ -1,0 +1,8 @@
+#!/bin/bash
+#
+# stop the queue_manager
+#
+# Version: 0.1 16 April 2014
+# Author: John Wooten, Ph.D.
+#
+echo "Bye Bye" >  ${QUEUEPATH}quit.job

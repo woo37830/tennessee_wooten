@@ -1,0 +1,46 @@
+#!/bin/csh
+# .after.login
+# sample of commands often found in .login files
+# The .login file is run automatically, when you log in with /bin/csh
+# It runs only once during a given login session.
+
+
+setenv NAME 'John Wooten 574-1005'
+# setenv EDITOR vi
+if -e hold echo mail on hold
+if -e /usr/spool/mail/root  echo root mail
+if -e /usr/spool/mail/daemon  echo daemon mail
+ #  biff y
+fgrep >! ~/tmp/todo + ~/.todo
+if -z ~/tmp/todo then
+rm -f ~/tmp/todo
+else
+echo >>! ~/.done -n  --------- ;date>>~/.done
+cat < ~/tmp/todo >> ~/.done
+fgrep >! ~/tmp/todo  -v + ~/.todo
+mv -f ./tmp/todo ~/.todo
+endif
+if -e calendar then
+echo --------- Calendar For Today ---------
+echo " "
+calendar
+echo " "
+endif
+echo ----------- TODO List ----------------
+echo " "
+more ~/.todo
+echo " "
+echo --------------------------------------
+echo " "
+leave
+echo " "
+alias todo vi +$ ~/.todo
+# pwd
+# ls -FC
+
+
+# If new account, show README file
+if ( -f $HOME/.newacct ) then
+    cat $HOME/README; rm $HOME/.newacct
+endif
+	

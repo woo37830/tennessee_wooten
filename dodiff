@@ -1,0 +1,24 @@
+#!/usr/local/bin/perl
+
+opendir(DIR,'.')	|| die("Can't open directory");
+
+@files = readdir(DIR);
+close DIR;
+shift(@files);
+shift(@files);
+while($file = shift(@files))	{
+	next if $file =~ /RCS/;
+	open(PIPE,"rcsdiff $file|");
+	while(<PIPE>)	{
+		chop;
+		next unless $_ =~ /^>/;
+		push(@changed,$file);
+		last;
+	}
+	close PIPE;
+}
+print "\n\n  Files with Changes\n";
+print join("\n",@changed);
+print "\n";
+
+

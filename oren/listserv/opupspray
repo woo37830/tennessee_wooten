@@ -1,0 +1,258 @@
+#opupspray (called by mailsplitter)
+#!/bin/sh
+#
+# Mail sprayer utility by JohnPC
+# -----------------------------------------------------------------------------
+# Takes one argument as the filename of the just arrived mail to send to
+# everybody on the mailinglist
+# -----------------------------------------------------------------------------
+#
+version="opupspray"
+homedir=/usrs4/cjbosman
+workdir=$homedir/.Mail
+#
+cat=/bin/cat
+ls=/bin/ls
+sed=/bin/sed
+grep=/bin/grep
+egrep=/bin/egrep
+head=/usr/ucb/head
+zcat=/usr/ucb/zcat
+rm=/bin/rm
+mv=/bin/mv
+wc=/usr/ucb/wc
+tr=/usr/bin/tr
+compress=/usr/ucb/compress
+touch=/bin/touch
+sleep=/bin/sleep
+expr=/bin/expr
+kill=/bin/kill
+basename=/bin/basename
+sendmail=/usr/lib/sendmail
+test=test
+echo=/bin/echo
+date=/bin/date
+errlog="$echo `$date` -- "
+archivedir=$workdir/messages
+archive=$archivedir/`$date +%y%m%d%H%M%S`$$.Z
+helpfile=$workdir/opup.help
+addrfile=$workdir/addresses
+duplfile=$workdir/dupl
+logfile=$workdir/opuplog
+crapsed=$workdir/.mailcrap.sed
+addwarnsed=$workdir/.addwarn.sed
+opupspray=$workdir/opupspray
+mailsplitter=$workdir/mailsplitter
+ids=$workdir/ids
+lock=$workdir/LCK.
+mylock=$lock.$$
+lockpat=$lock.'*'
+#
+if $test $# != 1; then
+  # expecting a parameter
+  $errlog No parameter passed to the sprayer >> $logfile
+  exit 1
+fi
+mailfile=$1
+if $test ! -f $mailfile; then
+  # no such file
+  $errlog No such file $mailfile >> $logfile
+  exit 1
+fi
+#
+# Put it in the logs
+$echo --- >> $logfile
+$echo Date: `$date` >> $logfile
+$egrep '^From: |^Subject: ' $mailfile >> $logfile
+#
+# Get the Id, for the duplicates check.
+$grep '^Message-Id: ' $mailfile > $mailfile.id || {
+  # No message-Id, must be a broken mailer. Fake one to continue.
+  $errlog No message Id >> $logfile
+  $date +%y%m%d%H%M%S > $mailfile.id
+}
+id=`$head -1 < $mailfile.id | $sed 's/^Message-Id:[ 	]*//'`
+$rm $mailfile.id
+#
+# Mutual exclusion, with simple livelock and deadlock prevention. 
+deadlock () {
+  $rm $lockpat
+  $touch $mylock
+}
+trap deadlock 16
+($sleep `$expr $$ % 67 + 60`; kill -16 $$ > /dev/null 2>&1 ) &
+$touch $mylock
+while $test `$echo $lockpat | $wc -w` != 1
+do
+  $rm $mylock
+  $sleep `$expr $$ % 17 + 1`
+  $touch $mylock
+done
+trap "" 16
+#
+# Only one processes is guaranteed to get here at once. Now check duplicates.
+$echo no > $duplfile
+if $test -f $ids; then
+  while read old_id
+  do
+    if $test "$old_id" = "$id"; then
+      $echo yes > $duplfile
+    fi
+  done < $ids
+fi
+#
+dupl=`$cat $duplfile`
+$rm $duplfile
+if $test "$dupl" = "yes"; then
+  $echo Duplicate message: $id >> $logfile
+else
+  # Update the id file
+  $echo $id >> $ids
+fi
+#
+# End of critical section. Release the lock.
+$rm $mylock
+if $test "$dupl" = "no"; then
+  # Create a mail.header and mail.body file for various purposes.
+  $sed -n '1,/^[ 	]*$/p' $mailfile | $sed '$d' > $mailfile.header
+  $sed -n '/^[ 	]*$/,$p' $mailfile > $mailfile.body
+  #
+  # Get the subject, test for administrative messages.
+  subject=`$sed -n 's/^Subject:[ 	]*\([^ 	]*\)[ 	]*$/\1/p' $mailfile.header`
+  if $test "$subject" = "LISTSERV"; then
+    # Its an administrative message. Read contents, do not send on.
+    # Create reply message header from fields in original message.
+    from=`$sed -n 's/^From: //p' $mailfile.header`
+    timestamp=`$sed -n 's/^Date: //p' $mailfile.header`
+    replyto=`$sed -n 's/^Reply-To: //p' $mailfile.header`
+    yourid=`$sed -n 's/^Message-Id: //p' $mailfile.header`
+    if $test "$timestamp" = ""; then
+      timestamp=`date`
+    fi
+    if $test "$yourid" = ""; then
+      yourid="which had no Message-Id"
+    fi
+    if $test "$replyto" = ""; then
+      replyaddr=`$echo $from | $sed -f $crapsed`
+    else
+      replyaddr=$replyto
+    fi
+    # 
+    # All collected, now write out the header. Fake a nice Message-Id ;)
+    $cat > $mailfile.reply <<-EOF
+	Date: `date`
+	In-Reply-To: Your message of $timestamp,
+	  $yourid
+	From: cjbosman@sacam.oren.ornl.gov
+	Message-Id: <`date +%y%m%d%H%M%S`.JPC$$@sacam.oren.ornl.gov>
+	To: $replyaddr
+	Subject: Re: LISTSERV
+	Reply-To: cjbosman@sacam.oren.ornl.gov
+	X-Generated-by: Automaton ($version)
+
+	EOF
+    #
+    # Now read the body of the mail, and process each line.
+    $tr '[A-Z]' '[a-z]' < $mailfile.body | while read bodyline
+    do
+      # Quote the line
+      $echo "> $bodyline" >> $mailfile.reply
+      case "$bodyline" in
+      help )
+        $cat $helpfile >> $mailfile.reply
+        helpgiven=1;;
+      review | rev ) $cat $addrfile >> $mailfile.reply;;
+      index | ind ) $ls $archivedir >> $mailfile.reply;;
+      log ) $cat $logfile >> $mailfile.reply;;
+      source )
+        $echo "mailsplitter (called from .forward)" >> $mailfile.reply
+        $sed 's/^/| /' $mailsplitter >> $mailfile.reply
+        $echo "----" >> $mailfile.reply
+        $echo "opupspray (called by mailsplitter)" >> $mailfile.reply
+        $sed 's/^/| /' $opupspray >> $mailfile.reply
+        $echo "----" >> $mailfile.reply
+        $echo ".mailcrap.sed (sed script to filter mail addresses)" >> $mailfile.reply
+        $sed 's/^/| /' $crapsed >> $mailfile.reply
+        $echo "----" >> $mailfile.reply
+        $echo ".addwarn.sed (sed script to add a warning)" >> $mailfile.reply
+        $sed 's/^/| /' $addwarnsed >> $mailfile.reply;;
+      get* ) 
+        # Split the "get" word off
+        wanted=`$echo "$bodyline" | $sed -e 's/get //' -e 's/\.z/\.Z/'`
+        # Check for sneaky / characters in the request
+        $echo "$wanted" | $grep '/' > /dev/null
+        if $test $? = 0; then
+          $echo Hacking attempt ignored. >> $mailfile.reply
+        else
+          # It should expand whenever necessary here...
+          for article in $archivedir/$wanted
+          do
+            # Send the article
+            if $test -f $article; then
+              $echo Sending you `$basename $article`: >> $mailfile.reply
+              $zcat $article | $sed 's/^/| /' >> $mailfile.reply
+            else
+              $echo No such article. >> $mailfile.reply
+            fi
+          done
+        fi;;
+      * )
+        # Process other lines, if it isnt empty, generate an error
+        $echo $bodyline | $grep '^[ 	]*$' > /dev/null || {
+          if $test "$errorgiven" = ""; then
+            if $test "$helpgiven" = ""; then
+              $echo I don\'t recognise this line. Send \'help\' on a line by itself to get help. >> $mailfile.reply
+            else
+              $echo Read the help, dude. >> $mailfile.reply
+            fi
+            $echo Message containes an error. >> $logfile
+            errorgiven=1
+          fi
+        };;
+      esac
+      # for clarity, insert marker between commands
+      $echo "----" >> $mailfile.reply
+      $echo >> $mailfile.reply
+    done
+    #
+    # A little cleanup...
+    $rm $mailfile.header $mailfile.body
+    #
+    # Send it back to the one who wanted it
+    $sendmail $replyaddr < $mailfile.reply
+    $echo Sent `$cat $mailfile.reply | $wc -l` lines in reply. >> $logfile
+    #
+    # Now clean up and exit
+    $rm $mailfile $mailfile.reply
+    exit 0
+  fi
+  #
+  # Store the message
+  $cat $mailfile | $compress > $archive
+  $echo File: `$basename $archive` >> $logfile
+  #
+  # Remove any leading "From " lines
+  $sed '/^From /d' < $mailfile.header > $mailfile.tmp
+  $mv $mailfile.tmp $mailfile.header
+  #
+  # Remove a possibly present "Sender: " field, and add my own.
+  $sed '/^Sender: /d' $mailfile.header > $mailfile.tmp
+  $mv $mailfile.tmp $mailfile.header
+  $echo 'Sender: cjbosman@sacam.oren.ornl.gov' >> $mailfile.header
+  #
+  # If there is no "Reply-To: " field, add one.
+  $grep '^Reply-To: ' $mailfile.header > /dev/null || {
+    $echo 'Reply-To: cjbosman@sacam.oren.ornl.gov' >> $mailfile.header
+  }
+  #
+  # Put the header and body back together
+  $cat $mailfile.header $mailfile.body > $mailfile
+  $rm $mailfile.header $mailfile.body
+  #
+  # And send it out
+  $sendmail `$grep -v '^#' $addrfile` < $mailfile
+fi
+#
+# Finally, clean up and exit
+$rm $mailfile
+exit 0

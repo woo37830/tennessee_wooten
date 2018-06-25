@@ -1,0 +1,6 @@
+#!/bin/bash
+#
+#  Print out the last 20 or so lines from the diary
+#
+LINES=20
+tail -$LINES ~/Dropbox/Personal/Documents/Notes/.diary 

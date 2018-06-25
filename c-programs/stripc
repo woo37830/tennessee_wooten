@@ -1,0 +1,23 @@
+:
+# @(#) stripc v1.0	Strip comment header	Author:	J. W. Wooten
+
+if [ "$#" -eq "0" ]
+	then	echo "stripc: arg count error"		>&2
+			echo "usage:  stripc file [...]"	>&2
+			exit 1
+fi
+
+for FILE in $@
+do
+	if [ ! -s $FILE ]
+		then	echo "file \"$FILE\" does not exist"	>&2
+				continue
+	fi
+	
+	awk	'/^\/\*/,/^\*\// { if ( $0 != " */" )
+							print $0
+							else {print;exit}
+				}' $FILE
+				
+	echo ""
+done

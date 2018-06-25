@@ -1,0 +1,3 @@
+#!/bin/csh
+:
+nidump passwd / | grep ':\*:'

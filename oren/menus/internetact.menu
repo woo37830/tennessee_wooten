@@ -1,0 +1,58 @@
+: 
+# @(#) menu v1.0   Internet Activities Menu	Author: Bob Evridge  July 10, 1992
+
+
+DIR=$HOME/bin
+MENU="Internet Activities"
+
+RVR="[7m"	# termcap so
+NORM="[0m"	# termcap se
+BOLD="[5m"	# termcap mb
+BLINK="[1m"	# termcap md
+
+while	:
+do
+	clear
+	set `date`
+	echo "
+$1, $2 $3 ${RVR}Oak Ridge Educational Network${NORM} $MENU    $4
+
+	1)	Gopher/WAIS--Access Other Sources of Information
+
+	2)	Internet Relay Chat (irc)--Online Real Time Discussions
+
+	3)	Archie--World Wide Search For Files
+
+	4)	File Transfer Protocol (ftp)--Getting Files
+
+	5)	News -- read and post to news groups
+
+	6)	Electronic Mail -- send and receive mail
+"
+echo -n "ENTER NUMBER OF YOUR CHOICE AND PRESS RETURN OR ENTER : "
+
+	read	CMD
+
+	case	$CMD in
+	
+	1)	gopher;;
+	2)	irc5g;;
+	3)         echo -n "Enter search criteria: "
+                read    CMD
+                archie  -s $CMD
+                ;;
+	4)	 echo -n "Enter site: "
+                read    SITE
+                echo -n "Enter file to retrieve: "
+                read    CMD
+                echo "---- "`date`"----to: $SITE for: $CMD" \
+                        >>$HOME/.ftp_sessions;  $DIR/Ftp $SITE $CMD
+                ;;
+	5)	$DIR/tin -r;;
+	6)	pine;;
+	*)	exit;;
+       esac
+                echo -n "PRESS ENTER OR RETURN <CR> TO CONTINUE: "
+                read CMD
+done
+

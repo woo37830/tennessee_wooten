@@ -1,0 +1,3 @@
+#! /bin/csh
+testen0 `awk ' { print $2 } ' < tmp.hosts `
+

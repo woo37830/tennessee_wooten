@@ -1,0 +1,32 @@
+#! /bin/csh
+# @(#) String a directory of files out as #include files for tex
+#      dir2tex dir > filename.tex
+#
+foreach i  ($argv)
+	if ( -d $i ) then
+			echo "\chapter{$i}"
+			cd $i
+			foreach j (`ls .`)
+				if ( -d "$j" ) then
+					echo "\newpage"
+					echo "\section{$j}"
+					cd $j
+					foreach k (`ls .`)
+						if ( -d "$k" ) then
+							echo "Error--- $i/$j/$k more than three deep" >&2
+							exit 1
+						else
+							echo "\subsection{$k}"
+							echo "\verbatimfile{$i/$j/$k}"
+						endif
+					end
+					cd .. 
+				else
+					echo "\newpage"
+					echo "\section{$j}"
+					echo "\verbatimfile{$i/$j}"
+				endif
+			end
+			cd ..
+	endif
+end

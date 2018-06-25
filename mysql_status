@@ -1,0 +1,2 @@
+#!/bin/bash
+mysqladmin --host jwooten37830.com --user woo --password $1 $2

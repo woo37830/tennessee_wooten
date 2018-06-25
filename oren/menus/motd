@@ -1,0 +1,38 @@
+SunOS Release 4.1.1 (GENERIC) #2: Tue Jul 7 12:46:27 EDT 1992
+
+   Welcome to Oak Ridge Educational Network 
+
+   This node is node SACAM and is a SUN SPARCstation 2.
+
+This computer is provided for educational purposes by Martin Marietta Energy
+Systems as a part of the Department of Energy's commitment to education.  Any
+misuse of the system will result in immediate cancellation of your account.
+Malicious misuse might result in legal prosecution.  Since all files and mail
+messages are carried on a public network and on equipment provided by the
+Department of Energy, they are subject to examination and review. 
+
+Do not share your password with anyone.  We have tried to make the account
+application and approval process as simple and quick as possible.  If at any
+time you suspect that someone has obtained your password or you suspect that
+the system is being misused, please send a message via the gripe command. 
+
+Use "intro index" for some local help.
+Use "intro erase_key" to see how to remap your delete key.
+Use "intro share" to see how to share programs.
+
+Use "menu" to access a menu based system for new users.
+
+NEW:
+	tex and latex - text formating
+	pine - simple mail interface
+	pico - simple text editor
+
+NOTE:
+When accessing the Internet please be polite and use your correct address if
+asked.  We have received complaints regarding users originating from this
+node.  This system is for your use PLEASE do not abuse that use.
+
+****************************************************************************
+
+NOTE:
+ftp to sacam has been temporarily disabled

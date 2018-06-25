@@ -1,0 +1,22 @@
+:
+# @(#) chkwrt v1.0	Check for wrt bits on for other than owner	Author: J. W. Wooten
+
+FORM="-print"
+SORT="sort"
+
+if [ "`echo $1 | cut -c1`" = "-" ]
+  then	case $1 in
+	-l)	shift
+		FORM="-exec ls -ld {} ;"
+		SORT="sort +7";;
+	*)	echo "usage: chkwrt [-l][file/dir ...]" >&2
+		exit 1;;
+	esac
+fi
+
+if [ "$#" -gt 0 ]
+   then	SRC="$*"
+   else	SRC="/"
+fi
+
+find	$SRC ( -perm 777 -o -perm 666 -o -perm 664 -o perm 775 ) $FORM | $SORT

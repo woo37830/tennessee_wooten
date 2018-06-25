@@ -1,0 +1,37 @@
+:
+# @(#) Watch for yhe logging in, send mail message to woo
+
+if [ $# -eq 0 ]
+   then	echo "watch: argument error"		>&2
+	echo "usage: watch login_name"		>&2
+	exit 1
+fi
+
+if [ "$1" -eq "all" ]
+	then
+while true
+	do
+	 	( sleep 600 )
+		for i in `who | cut -f1`
+			do
+				if [ "$i" -ne "woo" ]
+					then
+					echo "$i logged in at `date | cut -f4`" | mail woo@ornl.gov
+						break
+				fi
+			done
+done
+	else
+while true
+	do
+		who | grep -i $1  > /dev/null
+
+		if [ $? -gt 0 ]
+			then
+	  			( sleep 600 )
+			else
+	   			echo "$1 logged in at `date | cut -f4`" | mail woo@ornl.gov
+	   			break
+		fi
+	done
+fi

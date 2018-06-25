@@ -1,0 +1,8 @@
+#! /bin/csh
+# execute as testloop name1 name2 name3
+
+foreach i  (`cat ~woo/bin/net.hosts`)
+	echo "         Host $i"
+	rsh $i w
+end
+

@@ -1,0 +1,78 @@
+:
+# @(#) menu v1.0   Main Menu	Author: Bob Evridge  July 10, 1992
+
+MENU="Main Menu"
+DIR=$HOME/bin
+
+RVR="[7m"	# termcap so
+NORM="[0m"	# termcap se
+BOLD="[5m"	# termcap mb
+BLINK="[1m"	# termcap md
+
+while	:
+do
+	clear
+	set `date`
+	echo "
+$1, $2 $3 ${RVR}Oak Ridge Educational Network${NORM} $MENU    $4
+
+	1)	New Users Menu
+
+	2)	Mail--Read/Send
+
+	3)	News--Read Comments/Article on Misc. Topics
+
+	4)	Calendar--Keep Track Of Important Dates
+
+	5)	Gripe--Send Comments To System Administators
+
+        6)	Shell Command--Allows UNIX Commands To Be Issued
+
+        7)	How Do I.........?
+
+        8)	Internet Activities Menu
+
+        9)	Edit Files (Copy, rename, directories)
+
+"
+echo -n "ENTER NUMBER OF YOUR CHOICE AND PRESS RETURN OR ENTER : "
+
+	read	CMD
+
+	case	$CMD in
+	1)	newusers.menu;;
+	2)	pine;;
+	3)	tin -r;;
+	4)	echo	""
+		$DIR/today
+		if	[ -s $HOME/calendar ]
+		 then	echo	"Calendar file:  `ls -l	$HOME/calendar`"
+			 echo	"Calendar notifications;"
+			 PWD=`pwd`
+			 cd	$HOME
+			 calendar
+			 cd	$PWD
+			 echo	"Check your mail for calendar notifications"
+		 else	echo	"You do not have a calendar file at $HOME"
+		fi
+		;;
+	5)	gripe;;
+        6)	echo -n	"enter command: "
+		read	CMD
+		eval	$CMD
+		;;
+	7)	howdoi.menu;;
+	8)	internetact.menu;;
+	9)	pico;;
+	*)	exit;;
+
+
+
+
+
+
+       esac
+                echo -n "PRESS ENTER OR RETURN <CR> TO CONTINUE: "
+                read CMD
+done
+

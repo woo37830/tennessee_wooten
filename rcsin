@@ -1,0 +1,80 @@
+#! /bin/sh
+#
+#  See if things are properly checked in
+#
+#  Usage: rcsin [-v] file [file ...]
+#
+#  Author: Paul Hoefling
+#  E-mail: hoefling
+#
+#  $Id: rcsin,v 1.1.1.1 2013/12/14 21:49:59 woo Exp $
+#
+MyName=`basename $0`
+if [ $# -eq 0 ] ; then
+	echo 1>&2 "Usage: $MyName [-v] file [file ...]"
+	exit 1
+fi
+Verbose=
+#
+#  Verbose means that it will tell you about *all* files
+#
+if [ "$1" = "-v" ] ; then
+	Verbose=noisy
+	shift
+fi
+Error=0
+for file in "$@" ; do
+	if [ -d $file ] ; then
+		continue
+	fi
+	file=`basename $file ,v`
+	if [ ! -r $file,v -a ! -r RCS/$file,v ] ; then
+		echo "$file is not under RCS control"
+		Error=2
+		continue
+	else
+		Oops=`rlog -h $file | awk "
+BEGIN	{
+	File = \"$file"'";
+	Term = "/dev/tty";
+	Locks_Present = 0;
+}
+
+/^head:/	{
+	Head_Rev = $2;
+	next;
+}
+
+/^locks:/	{
+	In_Locks = 1;
+	next;
+}
+
+/^access/	{
+	printf ("%d\n", Locks_Present);
+	exit;
+}
+
+{
+	if (In_Locks) {
+		Name = substr ($1, 1, length ($1) - 1);
+		if ($2 == Head_Rev)
+			printf ("%s (Head revision: %s) is locked by %s\n", File, $2, Name) > Term;
+		else
+			printf ("%s (%s) is locked by %s\n", File, $2, Name) > Term;
+		Locks_Present = 1;
+	}
+}'`
+		if [ $Oops -ne 0 ] ; then
+			Error=3
+			continue
+		fi
+	fi
+	if [ -w $file ] ; then
+		echo "$file is writable"
+		Error=4
+	elif [ $Oops -eq 0 -a -n "$Verbose" ] ; then
+		echo "$file is checked in properly"
+	fi
+done
+exit $Error

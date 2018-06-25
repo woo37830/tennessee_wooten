@@ -1,0 +1,8 @@
+# @(#)	v1.0	Update newsletter mail addresses
+
+echo > mail_list
+foreach	i (`cat .subscribers`)
+(rsh stc06 whos "/mailname=$i/brief=(given_name,last_name,ms,building,plant)/noheader") >> mail_list
+end
+chmod 755 mail_list
+echo  File: mail_list has been Updated 

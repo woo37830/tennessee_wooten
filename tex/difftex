@@ -1,0 +1,54 @@
+#! /bin/sh
+#
+# difftex: derived from diffmk.  Given two input LaTeX files
+# (oldfile and newfile), generates a third file (markfile)
+# which is a version of newfile with change bars.  Any deleted
+# lines are marked with a left arrow.
+#
+# Be sure that you have [changebars] in your \documentstyle
+# after running this script.
+#
+#	@(#)diffmk.sh 1.4 88/02/08 SMI; from S5R2 1.2
+#
+PATH=/bin:/usr/bin:/Users/wooten/bin
+FILE1=/tmp/difftex1$$
+FILE2=/tmp/difftex2$$
+FILE3=/tmp/difftex3$$
+if test -z "$3" -o "$3" = "$1" -o "$3" = "$2"; then
+	echo "usage: difftex oldfile newfile markfile -- markfile must be different"
+	exit 1
+fi
+
+diff -e $1 $2> $FILE1
+sed -n -e '
+/[ac]$/{
+	p
+	a\
+\\cbstart
+: loop
+	n
+	/^\.$/b done1
+	p
+	b loop
+: done1
+	a\
+\\cbend\
+.
+	b done2
+}
+: done2
+/d$/{
+	s/d/c/p
+	a\
+	\\marginpar{$\\Leftarrow$}\
+.
+	b
+}'< $FILE1 > $FILE2
+echo "e $1" | cat - $FILE2 > $FILE3
+echo "w $3" | cat $FILE3 - > $FILE2
+echo "q" | cat $FILE2 - > $FILE3
+ed  <$FILE3
+
+echo "Reminder: make sure you have 'changebars' in your style list"
+/bin/rm /tmp/difftex*
+exit 0

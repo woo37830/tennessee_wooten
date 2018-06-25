@@ -1,0 +1,13 @@
+RVR="[7m"	# termcap so
+NORM="[0m"	# termcap se
+BOLD="[5m"	# termcap mb
+BLINK="[1m"	# termcap md
+
+while	:
+do
+	clear
+	set `date`
+	echo "
+$1, $2 $3 ${RVR}Oak Ridge Educational Network${NORM} $MENU    $4
+
+

@@ -1,0 +1,11 @@
+#!/bin/bash
+#
+# Start the virtual machine with Ubuntu
+# then start the VistA session in that virtual machine
+# Logging in as an administrator
+#
+pushd /Users/woo/Development/Mumps/VistA/Scripts/Install/Ubuntu
+vagrant up
+ssh -p 2222 osehraprog@localhost
+vagrant halt
+popd

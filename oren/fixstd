@@ -1,0 +1,9 @@
+rm /private/etc/login.std
+#ln -s /Net/polaris/General/usr/local/etc/login.std  /private/etc/login.std
+rm /usr/template/user/.cshrc
+#ln -s /Net/polaris/General/usr/local/etc/.cshrc /usr/template/user/.cshrc
+#rm -r /usr/local
+#ln -s /Net/polaris/General/usr/local /usr/local
+rm /private/etc/motd
+#ln -s /Net/polaris/General/usr/local/etc/motd /private/etc/motd
+chmod -R g+w /etc /usr/template/user /usr/bin /usr/lib

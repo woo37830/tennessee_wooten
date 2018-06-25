@@ -1,0 +1,21 @@
+#!/bin/bash
+if [[ $# -eq 0 ]]; then
+    echo 'Useage: search some_phrase'
+    exit 0
+fi
+echo "Searching diary"
+echo
+grep $1 ~/.diary
+echo "Searching Language"
+echo
+grep $1 ~/Dropbox/Personal/Documents/Notes/Language.txt | sed 's:~/Dropbox/Personal/Documents/Notes/::'
+echo "Searching Port Starboard"
+echo
+grep $1 ~/Dropbox/Personal/Documents/Notes/Port_Starboard.txt | sed 's:~/Dropbox/Personal/Documents/Notes/Port_Starboard.txt::'
+echo "Searching Restaurants"
+echo
+grep $1 ~/Dropbox/Personal/Documents/Notes/Restaurants.txt | sed 's:~/Dropbox/Personal/Documents/Notes/Restaurants.txt::'
+echo "Searching Notes"
+echo
+grep $1 ~/Dropbox/Personal/Documents/Notes/Notes*.txt | sed  's:/Users/woo/Dropbox/Personal/Documents/Notes/::'
+echo "All Done!"

@@ -1,0 +1,149 @@
+alias   a=alias		# short name for alias command
+
+a	help=apropos
+a	h=history		# short name for history command
+# ----------security with some utilities ------------
+a	rm='rm -i'		# prompt before removing any file
+a	cp='cp -i'		# prompt before overwriting any file with cp
+a	mv='mv -i'		# prompt before overwriting any file with mv
+#set +o noclobber
+#set noclobber			# forbid use of > to automatically overwrite
+# -----------moving around in directories -------
+a	back='set back=$old; cd $back; unset back'
+a	pd=pushd
+a	pop=popd
+# ----------Useful directories
+a   crack='pushd /Users/woo/Downloads/john-1.7.9-jumbo-7-macosx-Intel-2/run'
+# ----------cvs shortcuts
+a	cvs-edits="cvs -Q status | grep -i locally"
+a	cvs-diffs="cvs -q diff --brief"
+# ---------- quantellia shortcuts
+a humongous='ssh -Y -o ConnectTimeOut=150 -i "/Users/woo/.ssh/id_rsa" -l ubuntu 18.216.122.7'
+a quantellia='ssh -Y -o ConnectTimeOut=150 -i "/Users/woo/.ssh/id_rsa" -l ubuntu 18.217.212.159'
+a woo_server='ssh -Y -o ConnectTimeOut=150 -i "/Users/woo/.ssh/id_rsa" -l woo 18.217.212.159'
+a clone='ssh -Y -o ConnectTimeOut=150 -i "/Users/woo/.ssh/id_rsa" -l ubuntu 18.222.156.148'
+a woo_clone='ssh -Y -o ConnectTimeOut=150 -i "/Users/woo/.ssh/id_rsa" -l woo 18.222.156.148'
+a dcl_l='ssh -Y -o ConnectTimeOut=150 -i "/Users/woo/.ssh/id_rsa" -l ubuntu 172.31.41.149'
+# ----------vm shortcuts
+a   vrestore='vagrant snapshot restore \$@ --no-provision'
+a   vlist='vagrant snapshot list'
+a   vssh='vagrant ssh'
+a   vstatus='vagrant status'
+a   vhalt='vagrant halt'
+a   vpause='vagrant suspend'
+a   vsave="vagrant snapshot save \$@"
+a   caseflow="cd ~/vagrant_vms/precise64"
+a   vstart="vagrant snapshot restore root_password_set --no-provision"
+# ----------- listing files and directories ----------
+a	l='/bin/ls -FC'	# list files in columns and mark directories
+a	ll='/bin/ls -l'		# long listing
+a	la='/bin/ls -al'		# long listing of all files
+a	lt='/bin/ls -at'		#list by time modified
+a   fle="perl -pi -e 's/\r\n?/\n/g' "
+# ------------printing -------------------------------------
+a	ps_troff="tbl \$@ | ptroff -ms -t"
+a	prt_troff="tbl $@ | nroff -ms"
+a	fmt_report="enscript -GrE --color -Wh, -p - "
+a	prt_report="enscript -r -fCourier12 "
+a	prt_listing="enscript  -fCourier12 "
+a	prt_calendar="pscalendar -P$PRINTER "
+a	rmbak="/bin/rm -f *~"
+a	rmtex="/bin/rm -f *.{aux,cp,cps,dlog,dvi,fn,fns,ky,kys,log,pg,pgs,ps,toc,tp,tps,vr,vrs}"
+a   difftex="echo useage: 'latexdiff -t CFONT -f diff.tex old.tex new.tex '"
+# -----------  routines to check status of things ------
+a	con="tail -20 /var/log/system.log"
+a	msgs="tail -50 /usr/adm/messages | more"
+a	lpderr="tail	-50 /usr/adm/lpd-errs | more"
+a	anynu="tail -24  /usr/adm/nu.log"
+a	whop="ps -agu"
+a	userp="ps -agu | grep \$@ |& grep -v 'grep $@' "
+a	lastlog="last | head -20"
+a	usersum="ac -p"
+a	rup="/usr/local/lib/watcher/rupping"
+a	rstat="/usr/local/lib/watcher/rshuptime"
+a	syslog="tail -50 /private/var/log/system.log"
+a   findlocked="find . -flags uchange"
+a   unlock="chflags -R nouchg ."
+a   clear_history='cat /dev/null > ~/.bash_history && history -c && exit'
+# -------------accessing remote sites ---
+a   jenkins='java -jar ~/bin/jenkins-cli.jar -s http://jwooten37830.com:8080/jenkins/ '
+# ----------managing jobs ----------------
+a	running="ps ax | grep \$@ |& grep -v 'grep \$@' "
+a	slay='(set j=`ps -ax|grep \$@ |head -1`;kill -1 $j[1]) >& /dev/null'
+a	zap='(set j=`ps -ax|grep \$@ |head -1`;kill -9 $j[1]) >& /dev/null'
+# ---------- priviledged applications --------
+# ----------time management --------------
+a   set_time="echo 'Must be root';/usr/etc/ntp -sf tick.usno.navy.mil";
+a	timesheet='timelogger -i'
+a	todo='vi  + $HOME/pers/.todo'
+a	track='time_track.tcl'
+a   on='time_track.tcl start'
+a	off='time_track.tcl stop'
+a	billed='time_track.tcl summary'
+# --------- getting phone #'s and user ids etc. ---------
+a	phone="/Users/woo/bin/phone "
+a	whos="whois -h nic.ddn.mil"
+# ---------- kill and restore dashboard
+a   kill_dashboard='defaults write com.apple.dashboard mcx-disabled -boolean YES;killall Dock'
+a   restore_dashboard='defaults write com.apple.dashboard mcx-disabled -boolean NO;killall Dock'
+# -----------miscellaneous aliases -----------------
+a	forth="/Users/woo/Development/Forth/Perl/perl-forth/forth"
+a	sforth="/Users/woo/Development/Forth/Cocoa-for-SwiftForth/SwiftForth/bin/osx/coco-sf"
+a   oddball='echo '\''load oddball.dict'\''; pushd ~/Development/Forth/Perl/perl-forth; forth; pop'
+a	pforth="/Users/woo/Development/Forth/pforth_v27/fth/pforth"
+a   latex2html="/usr/local/tex/latex2html/latex2html"
+a	mathematica="(stty erase '^?' kill '^X' intr '^C' quit '^\' eof '^D';math)"
+a	vt100="setenv TERM vt100"
+a	mail=/usr/ucb/Mail
+a	sbp='sbprolog -p 100000 -m 200000 /usr/local/src/sbprolog/modlib/\$readloop'
+#a	amslatex "virtex \&amsplain"
+#a	latex	"virtex \&lplain"
+a   insult="afplay ~/Library/Sounds/HabQuch.au"
+a   analyze-sql='perl ~/Development/Forth/Perl/analyzeFile.pl'
+a   fortran="gfortran -w -std=legacy -L /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib"
+a   vista='pushd /Users/woo/Development/Mumps/VistA/Scripts/Install/Ubuntu'
+a   M='echo "password=prog" && ssh -p 2222 osehraprog@localhost'
+# ---------------- from .bash_profile
+a big10='du -sk ~/* | sort -nr | head -n 10'
+a big10dir='find ~ -type d -maxdepth 1 -print0 | xargs -0 du -sk | sort -nr | head -n 10'
+a teco='/Applications/Utilities/teco/teco'
+a adventure='emacs -batch -l dunnet'
+a last_logs='ls -al /var/log/*.out'
+# ---------------- starting and stopping processes and daemons
+#a cms_start='sudo /Applications/Plone-2.5.2/Instance/bin/zopectl start'
+#a cms_stop='sudo /Applications/Plone-2.5.2/Instance/bin/zopectl stop'
+#a jboss_start='/Applications/jboss-4.2.2.GA/bin/run.sh&'
+#a jboss_stop='/Applications/jboss-4.2.2.GA/bin/shutdown.sh -S'
+#a tc5_start='/Library/Tomcat/apache-tomcat-5.5.12/bin/startup.sh'
+#a tc5_stop='/Library/Tomcat/apache-tomcat-5.5.12/bin/shutdown.sh'
+#a jbpm_start='/Users/woo/Development/Applications/jbpm-jpdl-3.2.2/server/bin/run.sh -c jbpm &'
+#a jbpm_stop='/Users/woo/Development/Applications/jbpm-jpdl-3.2.2/server/bin/shutdown.sh -S '
+a cache='./bin/start_cache'
+a cache_stop='./bin/stop_cache'
+#a tcu='./bin/start_tomcat'
+#a tcd='./bin/stop_tomcat'
+#a restart='sudo apachectl restart'
+#a jup='/Users/woo/Applications/atlassian-jira-enterprise-4.1.2-standalone/bin/startup.sh &'
+#a jdown='/Users/woo/Applications/atlassian-jira-enterprise-4.1.2-standalone/bin/shutdown.sh &'
+a mongod_start='/usr/local/bin/mongod &'
+a mongo='/usr/local/bin/mongo'
+a mysql_server='/usr/local/bin/mysql.server'
+a mysql_start='mysql_server start'
+a mysql_stop='mysql_server stop'
+#a mysql_start='sudo /usr/local/mysql/bin/mysqld_safe &'
+#a mysql=/Applications/MAMP/Library/bin/mysql
+#a mysql=/usr/local/mysql/bin/mysql
+#a mysqladmin=/usr/local/mysql/bin/mysqladmin
+#a mysql0='sudo launchctl unload -w /Library/LaunchDaemons/StartupParameters.plist'
+#a mysql1='sudo launchctl load -w /Library/LaunchDaemons/StartupParameters.plist'
+#a plone='sudo /Applications/Plone-2.5.2/instance/bin/zopectl start;echo http://localhost:8080/Plone'
+#a plone_stop='sudo /Applications/Plone-2.5.2/Instance/bin/zopectl stop'
+#
+#a ldap_stop='sudo launchctl unload /Library/LaunchDaemons/org.apache.directory.server.plist'
+#a ldap_start='sudo launchctl load /Library/LaunchDaemons/org.apache.directory.server.plist'
+
+#a webshare='python -c "import SimpleHTTPServer;SimpleHTTPServer.test()"'
+# ------------- compiling programs ----------------
+a cc='cc.sh'
+a xlate='pushd ~/Development/workspaces/sc_workspace/sc_tests/conf; create-latex.sh; popd'
+a start_queue='~/bin/queue_manager &'

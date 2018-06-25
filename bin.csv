@@ -1,0 +1,202 @@
+.login.rc*,If you login with csh, this gets run.  sets env, other interesting things. Manipulates todo and a done.  
+.places
+.subscribers
+.tia
+accounts*,give a list of accounts from passwd file.  Not sure of accuracy on Mac.
+activate.awk*
+activate.db
+activate.list*
+active.perl,Goes through passwd file and prints information.  Isn’t valid on mac.
+adder*,Script to do sums?  fails.
+Alert.test*,The output from a script that does alerts?
+awk.file,Prints out “records” that have RSP in field 10
+bell*,Rings bell
+cdfuncs*,directory manipulation replaces cd if run in csh
+checkfor*,Checks which users have logged in a various computers in science ed building.
+checktmp*,Checks the tmp space on a list of provided hosts, e.g. checktmp xanadu woo-laptop.  Uses rsh to try to connect
+chk_free*,Checks the science ed hosts for their free space.
+chk_locked*,Lists the locked accounts on the host via the netinfo nidump passwd.  Won’t work on mac.
+chk_logins*,Checks who has logged in a computers on science network.
+chk_passwd*,Checks to see if there is a passwd on accounts
+chkset*,Checks for set bits 
+chkwrt*,Checks for write bits for other than owner
+chkwrt~*,Checks to see if others than the user can write
+classList.pl*,Creates a list of nested classes for MBA code
+clean_extra_monthly_logs.sh_bak*
+clean_extra_monthly_logs.sh*
+clean_extra_weekly_logs.sh*
+client*,A binary file and unrunnable
+cohort,List of people in the cohort.  Used in mail list testing
+cohort.new,Much larger list of people with account on educational network
+combine*,A binary file and unrunnable
+configuration.pl,Creates a ~/.menu file that should run the menu sh script
+connect.pl*,Seems to want to calculate connect tme, but input args unknown
+cwis*,A binary file unrunnable
+date_time,A perl script about date time, but used in menu program?
+dcnm*,Some sort of script for sending mail?
+ddmmyy.c*,A C program for printing out the time?
+ddmmyy.c~*
+ddmmyy*,Yes, it ran and printed out 11/23/11
+ddmmyy~
+diary*,Maintains a diary in ~/.diary
+difftex.sh~
+difftex*,Determines the changes between 2 versions, marks one of them as changed?
+dir_prompt*,Creates a prompt line for csh ?
+dir2tex*,Create a tex file with chapters being files in a directory?
+dir2tex~*
+DocumentsBackup.command*,A crude rotation of backups.
+dodiff*,Creates a list of files with changes.  Something to do with RCS though
+domap*,Binary file
+dump.trash,Dumps the .NeXTTrash on a next machine
+dups.pl*,Seems to go through a Next project and print some of the file names?
+dups.sh*,Runs splitter.pl then sort then dups.pl?
+dvidvi*,Binary file
+ed.hup,Contains strange l comma $p  ?
+emailStats*,Did some stats about who had received read replied etc.
+enslave*,Manual startup of MandelSpawn server ?
+example.ics,No clue some sort of information about an event
+extract*,Binary file
+faq-filer,Splits up comp.sys.next FAQ file into separate files
+fix_*,Changes files with _ to -
+fixit.sh*,generate passwords from make-Classxx program
+fixstd,Some sort of fix for login problems on polaris?
+force*,A script to kill self-propogating scripts
+forloop.csh*,A sample for loop in csh
+forloop.sh*,The same sample for loop in sh
+fping*,Binary file
+Ftp*,Under csh keeps a record of ftp sessions, does auto logins, etc.
+geek_scripts/,A directory where geek scripts are kept
+gen_tree*,Supposedly creates a tree structure by going through an  html site
+gentags*,Generates a tag file based upon all .c files in a users directory
+getip.py*,Runs a python script and gets the external ip address
+gohome*,Supposedly plays the gohome sound.  Needs sndplay, replaced with afplay
+gtcp*,Gets the tcp address for hosts from stc06?
+hello.c,C program Hello World
+highlight.cursor,Example of controls to hightlight and blink cursor in script
+hold_line.sh*,holds a “line” by fpinging something sleeping 1 min then repeating?
+holdmail*,removes the .forward file from ~
+hosts,The list of hosts in the OREN network
+iCal.pl*,parses the iCal event like example.ICS.  Has some kind of error
+inews*,Binary file
+Interface*,Possibly an Objective C interface
+iRobot.pl,Use macbook accelerometers to drive iRobot using Perl
+jboss_env.sh*,Setup the JBoss environment
+jboss.pid*,Must be a process id when JBoss is running
+jboss.sh*,A bash script to run the jboss server.
+kill_httpd*,An old script to kill the NeXT httpd server
+kind*,prints all files of a particular “kind” kind -x * prints all executables from *
+lastlogin*,prints the time of last login but uses a lastlog file?
+LibraryBackup.command*,rotates backups and does rsync?
+list.pl*,Seems to create a random list of users from cohort list
+listserv/,A directory where the listserver kept information
+loadAddr.pl*,Loaded the addressbook from the internal .address book
+logrotate.sh*,On different hosts, rotate and tidy up the logs
+mail_list*,An empty file?
+mail2users*,Send mail from a file to the users on sacam?
+mailfiles*,mailfiles toname file1 file2 etc.  ?
+make_homepage*,Created an initial home page for the user
+makeuserlist*,Generate a list of users from a directory of users?
+mass_apply.csh*,apply something to a set of things?  activate ?
+mate@,A binary file
+memo.log,A log file from creating a TeX memo?
+memo.tex,A memo style example for TeX
+memo.tex.orig
+memo.tex~
+menus/,A directory holding menu scripts.  ~/bin/menus/menu WORKS check calendar?
+micom.time*,A file containing when project began and used by some logger program?
+microsearch.pl,a perl script for using reg expressions to search into directories
+mktex*,Seems to add or remove .tex from a list of files
+mktex~*
+mmm*,nroff command with mm macros
+mycd*,A cd command that trys to do the right thing on aliases
+mycut*,A binary file
+mygopher*,A binary file
+mypaste*,A binary file
+myX*,Start NeXT X windows with chosen settings
+net.hosts,List of hosts on the science ed network
+netaccts*,Loop through the net.hosts and print out the account names
+netusers*,Loop through net.hosts and ...
+NetworkTest*,Tests the network interfaces
+newtiff*,Something to do with tiff files
+niprint*,Print information from the netinfo on NeXT
+nohup.out*,Empty file
+odbackup*,Created a backup on an optical disk on the NeXT machines
+patch*,Binary file
+peek,Peek at whos on line on other systems?
+pgp*,Binary file
+phone*,Rather simple phone list handler... Worked though
+pingem*,Check that each host can be reached
+pinger*,ping sites and complain if problems
+pppdown*,Finds pppd processes and shuts them down
+pppkill.c,Same thing in c
+pppup*,Brings up the ppp daemons
+pragma*,Maybe creates the .h files from the .m files?
+prolog-manual*,Would print out the prologue manual if we had /usr/bin/X11/xterm?
+prolog-startup*,Binary file
+property*,Shell to manage ~/projects/Property etc. Missing .last?
+prt_acct*,Would print out acct information in /var/adm/acct ?
+pscalendar*,Prints out a postscript calendar.  Think it broke at 2000
+psfix,Adds postscript headers needed to print mathematica files?
+quarto*,Does something that is used in ps and script printing routines
+quickping.c,C code for quickping
+quickping*,Binary from quickping.c needs recompiling
+rcsin*,Runs rcsin to check and be sure things are checked in okay?
+README,The header for Minuit
+README.gen_tree,Readme file for a perl script that analyzes web sites.
+rename*,Renames file1 to file2, checks they are the same kind first
+rename~*
+retrieve*,Examines dir info from ftp program sets up retrievals
+rsync.sh*,Seems to copy source files to target directories?
+sample.c.code*,A sample C code with lots of comments
+sample.sh.code*,A sample sh script with lots of comments
+saytime*,A binary file
+sc*,A binary file of supercalc?
+scripts/,A directory of some scripts.  Has caseChange.scpt
+security*,A script to manage some security items.  Works sort of.
+setownergrp.perl*,Using password file trys to set owner groups.
+setup_git.sh*,Unclear what this script does?  Deals with .MacOSX/environment
+shellprompt*,Something with the prompt but tries to execute a binary?
+smart.cp*,Tries to do a smart copy?
+splitter.pl*,Think it prints the last portion of a file path?
+start_cache*,Starts cache the MUMPs package
+start_tomcat*,Starts tomcat 4.1.31
+stop_cache*,Stops cache  Apparently its running most of the time?
+stop_tomcat*,Stop the tomcat server
+stripc*,Strip the comment header from files?
+stripf*,Strip the function headers from files?
+strips.orig*,Strip shell comment headers?
+strips*,modified strips.orig?
+strips~*
+sumex,Try to get files via ftp from sumex-aim.stanford.edu?
+supercd*
+tailwag
+tarlist*
+tclean*
+teco.el
+test
+test.ed
+test.menu*
+tester*
+testit*
+tgrep*
+thead*
+TIA*,Old binary file( not runnable)
+time.example.c*
+timelogger*
+today*
+tree.orig*
+tree*
+unmailfiles*
+unNeXTmail*
+update_addrs*
+update.sh*
+vacation
+watch*
+WebWalker*,A perl spider.
+whatis*
+whileloop.sh*
+whoz*
+wid*
+WriteNow2rtf,Converts a WriteNow file to rtf
+xadd*
+zip*

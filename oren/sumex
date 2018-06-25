@@ -1,0 +1,37 @@
+#!/bin/sh
+# Shell script to try repeatedly to get files via ftp from the host named
+# below. The host is repeatedly polled until the session is successfully
+# completed.
+# This is the site we're ftp'ing to.
+#
+host=sumex-aim.stanford.edu
+#
+# Define the input, result and error files.
+#
+in=$0.fil
+out=$0.res
+err=$0.err
+#
+# How long to sleep between subsequent tries (in seconds):
+#
+time=3600       # An hour
+echo "Starting to get files from $host." > $out
+#
+# Try to make connection w/out error loop first time
+# Initialize the error message file so we start the loop:
+#
+echo "Trying to reach $host at time:" >> $out
+date >> $out
+ftp -n -v $host < $in >> $out 2> $err
+#
+# MAIN LOOP: If error file isn't empty, we sleep for an hour and try again.
+#
+while test -s $err
+do
+  echo "Cannot connect now, will try again in $time seconds." >> $out
+  sleep $time
+  echo "Trying to reach $host at time:" >> $out
+  date >> $out
+  ftp $host < $in >> $out 2> $err
+done
+echo "File transfer successful!" >> $out

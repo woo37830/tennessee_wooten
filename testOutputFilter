@@ -1,0 +1,21 @@
+#!/bin/bash
+#
+# Filter the test output file to remove user dependent artifacts
+# so that the files can be compared if the files are archived.
+#
+# Version 1.0
+# Author: John Wooten, Ph.D.
+# Date: 21 April 2014
+#
+if [ $# != 2 ]; then
+    echo "Useage: testOutputFilter <testFilename> <filteredFilename>"
+    exit 1
+fi
+if [ ! -e $1 ]; then
+    echo "File $1 does not exist!"
+    exit 1
+fi
+
+awk '{print substr($0,25)}' $1 | grep -v 'Using database:' > $2
+
+echo "All Done!"

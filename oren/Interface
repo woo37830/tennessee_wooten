@@ -1,0 +1,7 @@
+/#pragma .h/       {$1 = "";$2=""; print }
+/@implementation/  {$1 = "@interface"; print ;state++} 
+/^{/               { if(state == 1) state++} 
+                   {if(state == 2) print} 
+/^}/               { if(state == 2) state++}
+/^[+-]/            {if(state == 3) print}
+END               { print "@end"}

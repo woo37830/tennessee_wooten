@@ -1,0 +1,36 @@
+:
+# @(#) tgrep v1.0	Search for strings in tree
+
+OPT=""
+
+for ARG in $@
+do
+	if [ "`echo $ARG|cut -c1`" = "-" ]
+	then	case $ARG in
+		-c)	OPT="-name \"*.c\""
+			shift;;
+		-h)	OPT="-name \:*.h\""
+			shift;;
+		*)	echo "$0: incorrect argument"	>&2
+			exit 1;;
+		esac
+	fi
+done
+
+case $# in
+0)	echo "$0: argument error"			>&2
+	echo "usage: $0 [-c|-h] string [dir ...]"	>&2
+	exit 2
+	;;
+1)	while read FILE
+	do
+		grep -i "$1" $FILE /dev/null
+	done
+	;;
+*)	STRING=$1; shift
+	eval find "$@" -type f $OPT -print | sort | while read FILE
+	do
+		grep -i "$STRING" $FILE /dev/null
+	done
+	;;
+esac

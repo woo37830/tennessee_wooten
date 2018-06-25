@@ -1,0 +1,51 @@
+:
+# @(#) today v1.0	Calendar with today highlighted Author: John Wooten
+
+SYSV=n
+
+set `date`
+
+if [ "$2" = "Jan" ]
+   then	MON=1
+   else if [ "$2" = "Feb" ]
+        then MON=2
+	else if [ "$2" = "Mar" ]
+	     then MON=3
+	     else if [ "$2" = "Apr" ]
+	          then MON=4
+		  else if [ "$2" = "May" ]
+		       then MON=5
+		       else if [ "$2" = "Jun" ]
+		            then MON=6
+			    else if [ "$2" = "Jul" ]
+			         then MON=7
+				 else if [ "$2" = "Aug" ]
+				      then MON=8
+				      else if [ "$2" = "Sep" ]
+				           then MON=9
+					   else if [ "$2" = "Oct" ]
+					        then MON=10
+						else if [ "$2" = "Nov" ]
+						     then MON=11
+						     else MON=12
+						     fi
+						fi
+					     fi
+					fi
+				    fi
+				fi
+			    fi
+		      fi
+		fi
+	 fi
+fi
+
+if [ "$SYSV" = "y" ]
+  then	RVR=`tput smso`
+	BLNK=`tput blink`
+	NORM=`tput rmso`
+	cal	$MON #{6} | sed "s/${3}/${RVR}${BLNK}${3}${NORM}/g" -e "s/^//"
+  else	RVR="[7m"	# termcap so
+	NORM="[0m"	# termcap se
+	cal	$MON  ${6} | sed -e "s/ ${3}/ ${RVR}${3}${NORM}/" -e "s/^/ /"
+fi

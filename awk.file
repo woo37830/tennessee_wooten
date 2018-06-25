@@ -1,0 +1,27 @@
+# @(#) Print out records that have RSP name in field 10
+			BEGIN	{
+			printf("--Feb/23/2008------------- Custodian Wooten\\n\\n")
+			printf("%5s  ","ID")
+			printf ("%-30.30s %-20s","Description","Serial")
+			printf(" %-5s%-8s%-5s","Plant","Bldg.","Room")
+			printf("%-12s %-12s","Out","Due")
+			printf("\\n\\n")
+				}
+			{
+				if ( $10 ~ /Wooten/)
+				{
+					if ( $2 != prev )
+					{
+						printf("-------------%s----------\\n",$2)
+						prev=$2
+					}
+						items++; printf("%5d> ",$16)
+						printf ("%-30.30s %-20s",$3,$6)
+						printf(" %-5s%-8s%-5s",$11,$12,$13)
+						printf("%-12s %-12s",$14,$15)
+						printf("\\n")
+				}
+			}
+			END	{
+	printf("\\n TOTAL ITEMS : %d\\n\\n",items)
+				}

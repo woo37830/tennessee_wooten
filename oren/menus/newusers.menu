@@ -1,0 +1,53 @@
+:
+# @(#) newusers menu v1.0	Author: Bob Evridge  July 9, 1992
+
+DIR=$HOME/bin
+MENU="New Users"
+RVR="[7m"	# termcap so
+NORM="[0m"	# termcap se
+BOLD="[5m"	# termcap mb
+BLINK="[1m"	# termcap md
+
+while	:
+do
+	clear
+	set `date`
+	echo "
+$1, $2 $3 ${RVR}Oak Ridge Educational Network${NORM} $MENU    $4
+
+	 1)	Equipment Requirements And Settings
+	 
+         2) 	Commands Used Here
+
+         3)     What Is Available Here
+
+	 4)	How To Get Help
+
+	 5)	How OREN Works
+
+	 6)	Introduction To The Internet 
+    
+         7)	Glossary Of Terms Used On Oren
+
+"
+echo -n "ENTER NUMBER OF YOUR CHOICE AND PRESS RETURN OR ENTER : "
+             
+	read	CMD
+
+	case	$CMD in
+	  1)	equipment;;
+	  2)	commands;;
+	  3)	avail.here;;
+	  4)	helphow;;
+	  5)	orenworks;;
+	  6)	internetintro.menu;;
+	  7)	glossary;;
+	  *)	exit;;		
+
+
+	esac
+		echo -n "PRESS ENTER OR RETURN <CR> TO CONTINUE: "
+		read CMD
+done
+
+

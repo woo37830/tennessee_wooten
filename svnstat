@@ -1,0 +1,12 @@
+:
+# @(#) svnstat v1.0      Collect stats from svn for project
+
+cd ~/tmp
+mkdir redaction
+cd redaction
+svn co http://www.areteq.com/Deep6/Working/4_00/$1
+cd $1
+svn log -v --xml > $1.log
+java -jar ~/lib/jars/statsvn.jar $1.log .
+cd ~/tmp/redaction/$1
+/Applications/Firefox.app/Contents/MacOS/firefox -new-window index.html

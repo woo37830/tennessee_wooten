@@ -1,0 +1,50 @@
+:
+# @(#) security examination v1.0	Author: J. W. Wooten
+
+
+while	:
+do
+	clear
+	set `date`
+	echo "
+$1, $2 $3			$4
+
+	Security Menu
+	------------
+	1) New Users
+	2) Console Messages
+	3) Whos Running
+	4) What Processes for User
+	5) Watch for User[s]
+	6) Check SetUid bits
+	7) User Activity
+	8) Reset User Activity File
+	9) Last Users
+
+press item number or <cr> : \c"
+
+	read	CMD
+
+	case	$CMD in
+	"")	exit;;
+	1)	tail -24  /usr/adm/nu.log | more;;
+	2)	tail -50 /usr/adm/messages | more;;
+	3)	ps -agu;;
+	4)	echo "User id: \c"
+		read RSP
+		ps -agu | grep $RSP ;;
+	5)	echo "User id [all]: \c"
+		read RSP
+		echo "Setting watcher for User id: $RSP"
+		nice nohup watch $RSP &;;
+	6)	chkset -l;;
+	7)	ac -p;;
+	8)	cat /dev/null > /private/adm/wtmp;;
+	9)	last | head -20;;
+	*)
+		echo "Bad selection, enter again";;
+	esac
+		echo "Enter <cr>"
+		read CMD
+done
+		

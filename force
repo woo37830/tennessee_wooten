@@ -1,0 +1,104 @@
+In article <1990Oct25.185822.11838@nntp-server.caltech.edu> gwoho@nntp-server.caltech.edu (g liu) writes:
+>supose someone ran the following program:
+>main()
+>{
+>int i;
+>for (i=0; i<32; i++)
+>signal(i,(char *)1);
+>while (fork()!=-1)
+>;
+>}
+>
+>then ran it. how would i kill it? i could kill one of them, but
+>then the others multiply until the limit is reached. then one fails,
+>terminates, and a new one appears, etc. so i have 1000 processes
+>with constantly changing pids that have too be stopped simultaneously.
+>any ideas for stopping it?
+
+1000 processes.  Wow.  I keep my limit to 50 processes per user.
+
+The power on/off switch is a very effective method of simultaneously
+stopping processes.  Short of that, and assuming that the offending
+processes are not running as 'root', you can try my 'csh' script.  Since
+this depends on 'csh' you will need to temporarily change that user's
+login shell to be /bin/csh for this script to work.
+
+If the PIDs are constantly changing you will need to run the script
+several times to eliminate all of the runaway processes.  You must
+do it carefully so as to not kill any of the additional processes
+created by the script.
+
+I call the script 'force'.  If the user's program is called 'xyzzy'
+and the user's name is 'baduser' I would, as root, use the following
+command:
+
+ps uax | grep ^baduser | grep xyzzy | force
+
+and I would repeat that command as many times as needed until the
+script prints out its help message to indicate that no more processes
+are left (i.e. it received no input in the pipe).
+
+The reason it needs 'csh' is that it su's to the user before killing
+a process.  If you are at the process limit you can't use /bin/kill,
+so you need a kill built in command.
+
+The basic strategy is blocking.  Before killing a process, you create
+a new, more harmless process for the user.  This keeps the number of
+processes for the user at the limit, so that it cannot breed.  Eventually
+they will all die by themselves or be killed by repeated applications of
+the script, since the new harmless processes prevent creation of more.
+Then finally you sit back and wait for the harmless processes (sleeps)
+to naturally die.
+
+Hope this helps.
+
+#/bin/csh -fx
+# This C-shell script is designed to forcably kill self propogating
+# processes.  If a process is in a "fork" loop, it will continue to
+# propogate (as will its children) until it reaches the limit of the
+# number of processes per user.  It is often impossible to kill these
+# processes, since as soon as one is killed, it makes room for another
+# to propogate.
+#  In order to force them off, it is necessary to block their reproduction
+# by creating additional processes under the same userid.  This can be done
+# with the "su" command.  Thus we go into a loop of su, kill a process, and
+# repeat this until all processes are killed.  We must then terminate the
+# newly created blocking processes.
+#
+#  To use this command, just run it (as root) with the input redirected to come
+# from the output of the "ps -ut..| grep user" command, where .. refers
+# to the terminal from which these processes were started.
+set nonomatch
+set count=0
+set process=( x x x )
+while ($#process > 2)
+set noglob
+eval set process=\($<\)
+unset noglob
+if ($#process < 3) break
+set u=$process[1]
+set p=$process[2]
+su $u -cf "kill -KILL $p ; exec sleep 1000" &
+@ count++
+end
+if ($count == 0) then
+echo "Usage:"
+echo "ps -uta31 | grep ^xyzzy | $0 "
+echo " will (we hope) kill off all propogating processes of"
+echo " user  xyzzy  from terminal  ttya31"
+echo "The killed processes are replaced by relatively harmless"
+echo "sleeping process (sleeping for 17 minutes approx.)"
+echo "  the user MUST NOT be root, but only root can issue this command"
+echo " "
+echo " The user being forced off MUST be using /bin/csh as login shell"
+echo " "
+echo " Before using this command, it is a good idea to 'renice'"
+echo " all of the user's commands to +19, to essentially stop them."
+exit
+endif
+-- 
+=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=
+Neil W. Rickert, Computer Science               <rickert@cs.niu.edu>
+Northern Illinois Univ.
+DeKalb, IL 60115.                                  +1-815-753-6940
+

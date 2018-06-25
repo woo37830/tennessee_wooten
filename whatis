@@ -1,0 +1,7 @@
+:
+# @(#)	whatis	Author: John Wooten
+#
+
+zcat  $1.tar.Z | tar -xf - ./README | more
+
+

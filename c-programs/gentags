@@ -1,0 +1,8 @@
+:
+# @(#) generate a new tag file based on all *.c files in users directory
+
+if [ -f $HOME/src/tags ]
+   then /bin/rm $HOME/src/tags
+fi
+#ctags -d -o $HOME/src/tags `find $HOME/src -name "*.c" -print` 
+ctags -a  -d -o $HOME/src/tags `find $HOME/projects/nextdb  -name "*.c" -print` 

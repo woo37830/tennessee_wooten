@@ -1,0 +1,8 @@
+#! /bin/csh
+# execute as testloop name1 name2 name3
+foreach i  ($argv)
+	echo $i
+	rsh $i du -s /private/tmp
+	echo "--------------"
+end
+

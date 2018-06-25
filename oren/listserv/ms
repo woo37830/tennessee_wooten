@@ -1,0 +1,151 @@
+#mailsplitter (called from .forward)
+#!/bin/sh
+#
+# Mail splitter utility by JohnPC.
+# -------------------------------------------------------------------------
+# Takes incoming mail, looks at the To: address and takes appropriate
+# action. Currently tests for:
+#  - "regular" mail
+#  - the opup mailings. These are then sprayed to the opup members.
+# --------------------------------------------------------------------------
+# 
+umask 077
+#
+homedir=/usrs4/cjbosman
+sysmbox=/usr/spool/mail/cjbosman
+workdir=$homedir/.Mail
+#
+# Variables that are egrep patterns matching the various incoming addresses
+normalmail='cjbosman@sacam\.oren\.ornl\.gov'
+opup='opup@sacam\.oren\.ornl\.gov'
+#
+# Where the incoming mails of the mailing lists should go
+#
+# The opup sprayer
+opupspray=$workdir/opupspray
+#
+# Some variables
+tmp=$workdir/in.$$
+ttmp=/tmp/in.$$
+crapsed=$workdir/.mailcrap.sed
+addwarnsed=$workdir/.addwarn.sed
+tr=/usr/bin/tr
+wc=/usr/ucb/wc
+cat=/bin/cat
+tee=/bin/tee
+sed=/bin/sed
+grep=/bin/grep
+egrep=/bin/egrep
+rm=/bin/rm
+mv=/bin/mv
+test=test
+echo=/bin/echo
+errlog="$echo `/bin/date` -- "
+maillog=$workdir/log
+#
+# Tricky. Put the incoming mail in tmp and ttmp, and extract the From field
+# in case everything goes wrong. Add a blank line to both.
+from=`$cat - | $tee $tmp | $tee $ttmp | $sed '/^[ 	]*$/,$d' | $sed -n 's/^From: //p'`
+$echo >> $tmp
+$echo >> $ttmp
+#
+# Now test the files just written, and note if a file system seems full.
+if $test ! -f $tmp; then
+  homedirind=full
+else
+  len1=`$cat $tmp | $wc -c`
+  if $test ! -f $ttmp; then
+    tmpdirind=full
+    len2=10
+  else
+    len2=`$cat $ttmp | $wc -c`
+  fi
+  if $test $len2 -lt 10; then
+    tmpdirind=full
+    len2=10
+  fi
+  if $test $len1 -lt $len2; then
+    homedirind=full
+  fi
+fi
+#
+# Take actions if homedir is full, panic if tmp is full also
+if $test "$homedirind" = "full"; then
+  if $test "$tmpdirind" = "full"; then
+    # panic! Both file systems full! 
+    $cat >> $sysmbox <<-EOF
+	From myself `$date`
+	From: myself (WARNING MESSAGE!)
+        To: cjbosman@sacam.oren.ornl.gov
+	Subject:LOST MAIL
+
+	Sorry, I have lost the mail from $from
+
+	EOF
+    #
+    # Do not remove $tmp, it might be good after all, just rename it
+    $mv $tmp $tmp.defunct
+    $rm -f $ttmp 
+    exit 255
+  fi
+  # Homedir is full, but $ttmp is ok, so put that in system mbox (add a warn)
+  $sed -f $addwarnsed $ttmp >> $sysmbox
+  $rm -f $tmp $ttmp
+  exit 0
+fi
+$rm -f $ttmp
+#
+# Separate the header
+$sed '/^[ 	]*$/,$d' < $tmp > $tmp.header
+#
+# Add a blank line to the header for easier processing
+$echo >> $tmp.header
+#
+# get the To: and Cc: fields, with contents.
+$sed -n '/^To: /,/^[^ 	]/p' $tmp.header | $sed '$d' > $tmp.addr
+$sed -n '/^Cc: /,/^[^ 	]/p' $tmp.header | $sed '$d' >> $tmp.addr
+#
+# We don't need the header anymore...
+$rm $tmp.header
+#
+# Ok, this might not be necessary, but still... filtering out some of the
+# useless stuff that accompanies some mail addresses. I hope I get all of
+# it.
+$sed -f $crapsed $tmp.addr | $tr '[A-Z]' '[a-z]' > $tmp.ad
+$rm $tmp.addr
+# 
+# Test for a valid address
+if $test ! -s $tmp.ad; then
+  # no address? put it in the normal mailbox...
+  $cat $tmp >> $sysmbox
+  $errlog 'No address found' >> $maillog
+  $rm $tmp*
+  exit 0
+fi
+#
+# A variable to check whether the mail gets delivered somewhere
+delivered=0
+#
+# Now lets grep for the addresses I know
+$egrep $normalmail $tmp.ad > /dev/null && {
+	$cat $tmp >> $sysmbox
+	delivered=1
+}
+$egrep $opup $tmp.ad > /dev/null && {
+	# for the mailinglist. The sprayer takes care of cleanup, but I
+	# want to make sure I have a copy in my mbox.
+	$cat $tmp >> $sysmbox
+	$rm $tmp.ad
+	$opupspray $tmp
+	exit 0
+}
+if $test $delivered = 0; then
+	# Mail not delivered yet! This is strange... let's put it in my
+	# system mailbox.
+	$cat $tmp >> $sysmbox
+	$errlog 'Undelivered mail' >> $maillog
+fi
+#
+# Finally, clean up
+$rm $tmp*
+exit 0

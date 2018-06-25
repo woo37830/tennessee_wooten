@@ -1,0 +1,63 @@
+open(USERS,"cohort") || die("Forget it, Jack");
+while(<USERS>){
+	chop;
+        $samples += 1;
+	$User = $_;
+printf("Checking file /usr/spool/mail/%s\n",$User);
+USER:
+if ( !( -r "\/usr\/spool\/mail\/$User" )) {
+	printf(" User spool file locked\n");
+	next;
+	}
+open(MBOX,"\/usr\/spool\/mail\/$User"); 
+   while(<MBOX>){
+   chop;
+   next unless (/^Subject.*XXvawhiteXX/); 
+   while (<MBOX>){
+   chop;
+   last if /^Status.*/;
+   last if /^Subject.*XXvawhiteXX/;
+}
+   $num_not_read += 1;
+   if (/^Status.*RO/) {
+	$num_not_read -= 1;
+	$num_read_inbox += 1;
+	}
+   close(MBOX);
+   last;
+}
+}
+
+open(REPLIES,"/usr/spool/mail/woo") || die ("No reply mail file?\n");
+
+while(<REPLIES>)	{
+	chop;
+	next unless /Re: .*XXvawhiteXX/;
+	$reply +=1;
+	}
+$num_read = $samples - $num_not_read;
+require 'ctime.pl';
+$daytime = &ctime(time);
+chop $daytime;
+printf ("Date : %s\n", $daytime);
+printf ("Samples : %d\n",$samples);
+printf ("Read but elsewhere : %d\n",$num_read);
+printf ("Read remaining inbox : %d\n",$num_read_inbox);
+printf ("Not read : %d\n", $num_not_read);
+printf ("Replies : %d\n", $reply);      
+    
+printf
+("%s|%d|%d|%d|%d|%d\n",$daytime,$samples,$num_read,$num_read_inbox,$num_not_read,$reply);
+
+   
+
+   
+  
+
+
+	
+
+
+
+
+

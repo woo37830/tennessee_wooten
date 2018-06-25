@@ -1,0 +1,673 @@
+:
+# @(#)	prop.sh  v1.0	Shell to manage ACISO Property - Author: John Wooten
+
+BASE="$HOME/projects/Property"
+FILE="$HOME/projects/Property/.property"
+LOG="$HOME/projects/Property/.log"
+LAST="$HOME/projects/Property/.last"
+
+if [ ! -f $LAST ]
+	then
+last=0
+	else
+	read last < $LAST
+fi
+
+DATE=`date | awk ' { printf("%s/%s/%s",$2,$3,$6) } '`
+
+if [ $# -gt 0 ]
+	then	grep -i $1 $FILE | more
+		exit 0
+fi
+
+cd $BASE
+
+while test 1 
+do
+	echo "
+
+	database = $FILE
+
+	MENU	$DATE
+	----------
+
+   (a) add to property
+   (b) print out dsrd style listing
+   (t) transfer ownership or location of property
+   (p) print out status of equip
+   (s) search for string
+   (d) show database description
+   (e) edit raw database
+   (c) change record by ID#
+   (l) list purchase order numbers
+   (m) print equipment with custodian
+   (x) extract purchase order #
+   (r) report all pos
+   (q) quit the program
+   <cr> - exit program
+
+   Press a,b,t,p,s,m,d,e,c,l,x,r,q or <cr>: \c"
+   read RSP
+	
+	case $RSP in
+	""|q)	echo $last > $LAST
+		exit 0
+		;;
+	d|D)	clear
+		echo $BASE
+		cat $BASE/dbase.desc
+		echo "Hit any key to continue: \c"
+		read RSP
+		;;
+	e|E)	vi $FILE 
+		;;
+	b)	prt_dsrd_listing
+		;;
+	r|R)	clear
+		print.all.po $FILE | more
+		echo "\nDo you want a printout? (y/n):\c"
+		read	 RSP
+		if [ "$RSP" =  "y" ]
+			then	print.all.po $FILE | enscript -fCourier8  
+		fi
+		echo "Hit any key to continue: \c"
+		read RSP
+		;;
+	l|L)	clear
+		echo "List of Purchase Order Numbers for Property"
+		echo ""
+		prop.po.list | more
+		echo "\nDo you want a printout? (y/n):\c"
+		read	 RSP
+		if [ "$RSP" =  "y" ]
+			then	prop.po.list | enscript -fCourier8  
+		fi
+		echo "Hit any key to continue: \c"
+		read RSP
+		;;
+	p|P)	clear
+		if [ -f awk.file ]
+			then		/bin/rm awk.file
+		fi
+		echo '# @(#) Print out all records
+			BEGIN	{ 
+			printf("--'"$DATE"'--------------Property List---------------\\n\\n")
+			printf("%5s  ","ID")
+			printf ("%-30.30s %-20s","Description","Serial")
+			printf(" %-20.18s","Custodian")
+			printf("%-5s%-8s%-5s","Plant","Bldg.","Room")
+			printf("%-12s %-12s","Out","Due")
+			printf("\\n\\n")
+				}
+			{' > awk.file
+		echo "All or only those currently loaned? (a or l)\c"
+		read RSP
+		if [ "$RSP" = "l" ]
+			then echo ' if ( $15 != "" ) ' >> awk.file
+		fi
+ 		echo '		{
+				printf("%5d> ",$16)
+				printf ("%-30.30s %-20s",$3,$6)
+				printf(" %-20.18s",$10)
+				printf("%-5s%-8s%-5s",$11,$12,$13)
+				printf("%-12s %-12s",$14,$15)
+				printf("\\n")
+				}
+			}' >> awk.file
+		awk -F:   -f awk.file < $FILE | more
+		echo "\nDo you want a printout? (y/n):\c"
+		read	 RSP
+		if [ "$RSP" =  "y" ]
+			then	awk -F: -f awk.file < $FILE | enscript  -r -fCourier8  
+		fi
+		echo "Hit any key to continue: \c"
+		read RSP
+		;;
+	m|M)	echo "Enter Custodian: \c"
+		read RSP
+		if [ "$RSP" = "*" ]
+		then
+			if [ -f awk.file2 ]
+				then		/bin/rm awk.file2
+			fi
+		echo '# @(#) Print out all records
+			BEGIN	{
+			printf("--'"$DATE"'--------------Property List---------------\\n\\n")
+			printf("%5s  ","ID")
+			printf ("%-30.30s %-20s","Description","Serial")
+			printf(" %-5s%-8s%-5s","Plant","Bldg.","Room")
+			printf("%-12s %-12s","Out","Due")
+			printf("\\n\\n")
+				}
+			{
+        			if (prev != $10) {
+	printf("\\n TOTAL ITEMS : %d\\n\\n--------\\nCustodian :%-20.20s\\n\\n",items,$10)
+                	items = 0;  prev = $10
+                				}
+				{
+					items++; printf("%5d> ",$16)
+				printf ("%-30.30s %-20s",$3,$6)
+				printf(" %-5s%-8s%-5s",$11,$12,$13)
+				printf("%-12s %-12s",$14,$15)
+					printf("\\n")
+				}
+			}
+			END	{
+	printf("\\n TOTAL ITEMS : %d\\n\\n",items)
+				}' > awk.file2
+		cat $FILE | sort -t: +9 | awk -F: -f awk.file2 | more
+		echo "\nDo you want a printout? (y/n):\c"
+		read	 RSP
+		if [ "$RSP" =  "y" ]
+		then	cat $FILE | sort -t: +9 | awk -F: -f awk.file2 \
+			| enscript  -r -fCourier8  
+		fi
+		else 
+		clear
+			if [ -f awk.file ]
+				then		/bin/rm awk.file
+			fi
+		echo '# @(#) Print out records that have RSP name in field 10
+			BEGIN	{
+			printf("--'"$DATE"'------------- Custodian '"$RSP"'\\n\\n")
+			printf("%5s  ","ID")
+			printf ("%-30.30s %-20s","Description","Serial")
+			printf(" %-5s%-8s%-5s","Plant","Bldg.","Room")
+			printf("%-12s %-12s","Out","Due")
+			printf("\\n\\n")
+				}
+			{
+				if ( $10 ~ /'"$RSP"'/)
+				{
+					if ( $2 != prev )
+					{
+						printf("-------------%s----------\\n",$2)
+						prev=$2
+					}
+						items++; printf("%5d> ",$16)
+						printf ("%-30.30s %-20s",$3,$6)
+						printf(" %-5s%-8s%-5s",$11,$12,$13)
+						printf("%-12s %-12s",$14,$15)
+						printf("\\n")
+				}
+			}
+			END	{
+	printf("\\n TOTAL ITEMS : %d\\n\\n",items)
+				}' > awk.file
+		cat $FILE | sort -t: +1 -2 +9 | awk -F: -f awk.file | more
+		echo "\nDo you want a printout? (y/n):\c"
+		read	 RSP
+		if [ "$RSP" =  "y" ]
+	then	cat $FILE | sort -t: +1 -2 +9 | awk -F: -f awk.file | enscript  -r -fCourier8  
+		fi
+		fi
+		echo "Hit any key to continue: \c"
+		read RSP
+		;;
+t|T)	echo "\nEnter  Present Custodian: \c"
+		read RSP
+		clear
+		if [ -f awk.file ]
+			then		/bin/rm awk.file
+		fi
+		echo '# @(#) Print out records that have RSP name in field 10
+			BEGIN	{
+			printf("--'"$DATE"'------------- Custodian '"$RSP"'\\n\\n")
+			printf("%5s  ","ID")
+			printf ("%-30.30s %-20s","Description","Serial")
+			printf(" %-5s%-8s%-5s","Plant","Bldg.","Room")
+			printf("%-12s %-12s","Out","Due")
+			printf("\\n\\n")
+				}
+			{
+				if ( $10 ~ /'"$RSP"'/)
+					{
+						printf("%5d> ",$16)
+						printf ("%-30.30s %-20s",$3,$6)
+						printf(" %-5s%-8s%-5s",$11,$12,$13)
+						printf("%-12s %-12s",$14,$15)
+						printf("\\n")
+					}
+			}' > awk.file
+		awk -F:   -f awk.file < $FILE | more
+		echo	"\n\nEnter id number of record to transfer:\c"
+		read RSP
+		if [ "$RSP" != "" ]
+			then
+		echo	"\n\nEnter New Custodian : \c"
+		read		CUST
+		echo	"Enter Plant/(or other loc, e.g. Home):\c"
+		read	 PLANT
+		echo	"Enter Bldg.:\c"
+		read  BLDG
+		echo	"Enter Room:\c"
+		read  ROOM
+		echo	"If loan or removal is temporary, enter date due or <cr>:\c"
+		read	DUE
+		echo "$DATE,Transfer,$RSP,$CUST,$PLANT,$BLDG,$ROOM,$DUE" >> $LOG
+		if [ -f prop.tmp ]
+			then /bin/rm prop.tmp
+		fi
+		mv	$FILE prop.tmp
+		if [ -f awk.file2 ]
+			then		/bin/rm awk.file2
+		fi
+		echo '# @(#) Print out records that have RSP id in field 16
+			BEGIN     {       OFS=":" }
+			{
+				if ( $16 == '"$RSP"' )
+					{
+	printf ("%s:%s:%s:%s:%s:%s:%s:%s:%s",$1, $2, $3, $4, $5, $6, $7 ,$8, $9)
+	printf( ":'"$CUST:$PLANT:$BLDG:$ROOM:"'")
+	printf("'"$DATE:$DUE"':%s", $16)
+			printf("\\n")
+					}
+				else
+					{
+						print ($0 )
+					}
+				}' > awk.file2
+		awk -F:   -f awk.file2 < prop.tmp > $FILE
+		fi
+		echo "Hit any key to continue: \c"
+		read RSP
+		;;
+c|C)	echo "\nEnter Record ID: \c"
+		read ID
+		if [ -f awk.file ]
+			then		/bin/rm awk.file
+		fi
+		if [ -f awk.file2 ]
+			then		/bin/rm awk.file2
+		fi
+		echo '# @(#) Print out records that have RSP ID in field 16
+			{
+			      if ( $16 == '"$ID"' )
+				      {
+			printf("ONE=\\"%s\\"\\n",$1)
+			printf("TWO=\\"%s\\"\\n",$2)
+			printf("THREE=\\"%s\\"\\n",$3)
+			printf("FOUR=\\"%s\\"\\n",$4)
+			printf("FIVE=\\"%s\\"\\n",$5)
+			printf("SIX=\\"%s\\"\\n",$6)
+			printf("SEVEN=\\"%s\\"\\n",$7)
+			printf("EIGHT=\\"%s\\"\\n",$8)
+			printf("NINE=\\"%s\\"\\n",$9)
+			printf("TEN=\\"%s\\"\\n",$10)
+			printf("ELEVEN=\\"%s\\"\\n",$11)
+			printf("TWELVE=\\"%s\\"\\n",$12)
+			printf("THIRTEEN=\\"%s\\"\\n",$13)
+			printf("FOURTEEN=\\"%s\\"\\n",$14)
+			printf("FIFTEEN=\\"%s\\"\\n",$15)
+			}
+			}' > awk.file
+		awk -F:   -f awk.file < $FILE > awk.file2
+		. awk.file2
+	TOUCHED=-1
+while test 1
+ do
+		clear
+		echo	"\n\n --------- Record ID # $ID
+
+	Field	Name		Value
+	1	ADP #		$ONE
+	2	Category	$TWO
+	3	Description	$THREE
+	4	Cost		$FOUR
+	5	P.O. #		$FIVE
+	6	Serial #	$SIX
+	7	IAG #		$SEVEN
+	8	Account #	$EIGHT
+	9	Requestor	$NINE
+	10	Custodian	$TEN
+	11	Plant		$ELEVEN
+	12	Building	$TWELVE
+	13	Room		$THIRTEEN
+	14	Last Date	$FOURTEEN
+	15	Due Back	$FIFTEEN
+	
+	Enter field number to change or <cr> when done: \c"
+	read RSP
+		case $RSP in
+		
+		""|q|.)	break;;
+		1)	echo	"\\nChange $ONE to : \c"
+			read	NEW
+			TOUCHED=0
+			ONE=$NEW;;
+		2)	echo	"\\nChange $TWO to : \c"
+			read	NEW
+			TOUCHED=0
+			TWO=$NEW;;
+		3)	echo	"\\nChange $THREE to : \c"
+			read	NEW
+			TOUCHED=0
+			THREE=$NEW;;
+		4)	echo	"\\nChange $FOUR to : \c"
+			read	NEW
+			TOUCHED=0
+			FOUR=$NEW;;
+		5)	echo	"\\nChange $FIVE to : \c"
+			read	NEW
+			TOUCHED=0
+			FIVE=$NEW;;
+		6)	echo	"\\nChange $SIX to : \c"
+			read	NEW
+			TOUCHED=0
+			SIX=$NEW;;
+		7)	echo	"\\nChange $SEVEN to : \c"
+			read	NEW
+			TOUCHED=0
+			SEVEN=$NEW;;
+		8)	echo	"\\nChange $EIGHT to : \c"
+			read	NEW
+			TOUCHED=0
+			EIGHT=$NEW;;
+		9)	echo	"\\nChange $NINE to : \c"
+			read	NEW
+			TOUCHED=0
+			NINE=$NEW;;
+		10)	echo	"\\nChange $TEN to : \c"
+			read	NEW
+			TOUCHED=0
+			TEN=$NEW;;
+		11)	echo	"\\nChange $ELEVEN to : \c"
+			read	NEW
+			TOUCHED=0
+			ELEVEN=$NEW;;
+		12)	echo	"\\nChange $TWELVE to : \c"
+			read	NEW
+			TOUCHED=0
+			TWELVE=$NEW;;
+		13)	echo	"\\nChange $THIRTEEN to : \c"
+			read	NEW
+			TOUCHED=0
+			THIRTEEN=$NEW;;
+		14)	echo	"\\nChange $FOURTEEN to : \c"
+			read	NEW
+			TOUCHED=0
+			FOURTEEN=$NEW;;
+		15)	echo	"\\nChange $FIFTEEN to : \c"
+			read	NEW
+			TOUCHED=0
+			FIFTEEN=$NEW;;
+		*)	echo "\n\n Not a valid command";;
+	esac
+done
+
+	if [ $TOUCHED = 0 ]
+	  then
+	echo	"\n\nUpdate record? (y/n) ? \c"
+	read	RSP
+	if [ "$RSP" = "y" ]
+	  then
+	  	mv	$FILE prop.tmp
+		if [ -f awk.file2 ]
+			then		/bin/rm awk.file2
+		fi
+		echo '# @(#) Print out records that have ID id in field 16
+			BEGIN     {       OFS=":" }
+			{
+				if ( $16 == '"$ID"' )
+					{
+	printf ("'"$ONE:$TWO:$THREE"'")
+	printf ("'":$FOUR:$FIVE:$SIX:$SEVEN"'")
+	printf ("'":$EIGHT:$NINE"'")
+	printf( "'":$TEN:$ELEVEN:$TWELVE:$THIRTEEN"'")
+	printf("'":$DATE:$FIFTEEN:$ID"'")
+			printf("\\n")
+					}
+				else
+					{
+						print ($0 )
+					}
+				}' > awk.file2
+		awk -F:   -f awk.file2 < prop.tmp > $FILE
+		echo "$DATE,EDIT,$ID,$TEN,$ELEVEN,$TWELVE,$THIRTEEN,$FIFTEEN" >> $LOG
+	fi
+	fi
+		echo "Hit any key to continue: \c"
+		read RSP
+	;;
+	a|A)	echo	"Enter ADP #:\c"
+		read ADP
+		if [ "$ADP" = "" ] 
+			then	break;
+		fi
+		echo	"Enter Category (computer/drive/software...):\c"
+		read	 CAT
+		echo	"Enter Description:\c"
+		read	 DESC
+		echo	"Enter Cost:\c"
+		read COST
+		echo	"Enter PO #:\c"
+		read PONUM
+		echo	"Enter Serial Number:\c"
+		read	 SERIAL
+		echo	"Enter IAG #:\c"
+		read	IAG
+		echo	"Enter Account #:\c"
+		read  ACCT
+		echo	"Enter Requestor:\c"
+		read REQUEST
+		echo	"Enter Custodian:\c"
+		read CUSTODIAN
+		echo	"Enter Plant:\c"
+		read	 PLANT
+		echo	"Enter Bldg.:\c"
+		read  BLDG
+		echo	"Enter Room:\c"
+		read  ROOM
+		echo	"Enter Date Temporarily removed or <cr>:\c"
+		read	 DATE_OUT
+		echo	"Enter Date To Be Returned or <cr>:\c"
+		read	 DATE_DUE
+		last=`expr $last + 1`
+		echo "$ADP:$CAT:$DESC:$COST:$PONUM:$SERIAL:$IAG:$ACCT:$REQUEST:$CUSTODIAN:$PLANT:$BLDG:$ROOM:$DATE_OUT:$DATE_DUE:$last" >> $FILE
+		echo	"$DATE,Assigned,$last,$CUSTODIAN,$PLANT,$BLDG,$ROOM,$DATE_DUE" >> $LOG
+		echo "Hit any key to continue: \c"
+		read RSP
+		;;
+	x|X)	echo "Enter P.O. Number: \c"
+		read RSP
+		if [ -f awk.file ]
+			then /bin/rm awk.file
+		fi
+		clear
+		echo	'{
+        		if (prev != $5) {
+                	printf("-----Purchase Order Number : %-15.15s\\n\\n",$5)
+               		 printf("%6s %-40.40s%-10.10s%-8s%-s\\n", \
+			" ID ","Description","Account","Amount","Custodian")
+                	prev = $5
+                        	}
+       		 	if ( $5 ~ /'"$RSP"'/ )	{
+				amount = $4
+        			totalpr += amount
+        			printf ("%4d> %-40.40s%-10.10s%8.2f %s\\n",$16,$3,$8, \
+                        		amount,$10)
+					}
+	}
+	END     {       printf ("                            ")
+                printf ("                TOTAL  %13.2f\\n\\n",totalpr)
+	}' > awk.file
+		grep $RSP .property | awk -F: -f  awk.file | more
+	echo "\nEnter e for edit, p for print, or <cr>: \c"
+		read OPT
+		case $OPT in
+		"") ;;
+		e)	echo "\nEnter ID of record to edit: \c"
+		read ID
+		if [ "$ID" != "" ]
+		 then
+		 if [ -f awk.file ]
+			then		/bin/rm awk.file
+		fi
+		if [ -f awk.file2 ]
+			then		/bin/rm awk.file2
+		fi
+		echo '# @(#) Print out records that have RSP ID in field 16
+			{
+			      if ( $16 == '"$ID"' )
+				      {
+			printf("ONE=\\"%s\\"\\n",$1)
+			printf("TWO=\\"%s\\"\\n",$2)
+			printf("THREE=\\"%s\\"\\n",$3)
+			printf("FOUR=\\"%s\\"\\n",$4)
+			printf("FIVE=\\"%s\\"\\n",$5)
+			printf("SIX=\\"%s\\"\\n",$6)
+			printf("SEVEN=\\"%s\\"\\n",$7)
+			printf("EIGHT=\\"%s\\"\\n",$8)
+			printf("NINE=\\"%s\\"\\n",$9)
+			printf("TEN=\\"%s\\"\\n",$10)
+			printf("ELEVEN=\\"%s\\"\\n",$11)
+			printf("TWELVE=\\"%s\\"\\n",$12)
+			printf("THIRTEEN=\\"%s\\"\\n",$13)
+			printf("FOURTEEN=\\"%s\\"\\n",$14)
+			printf("FIFTEEN=\\"%s\\"\\n",$15)
+			}
+			}' > awk.file
+		awk -F:   -f awk.file < $FILE > awk.file2
+		. awk.file2
+	TOUCHED=-1
+while test 1
+ do
+		clear
+		echo	"\n\n --------- Record ID # $ID
+
+	Field	Name		Value
+	1	ADP #		$ONE
+	2	Category	$TWO
+	3	Description	$THREE
+	4	Cost		$FOUR
+	5	P.O. #		$FIVE
+	6	Serial #	$SIX
+	7	IAG #		$SEVEN
+	8	Account #	$EIGHT
+	9	Requestor	$NINE
+	10	Custodian	$TEN
+	11	Plant		$ELEVEN
+	12	Building	$TWELVE
+	13	Room		$THIRTEEN
+	14	Last Date	$FOURTEEN
+	15	Due Back	$FIFTEEN
+	
+	Enter field number to change or <cr> when done: \c"
+	read RSP
+		case $RSP in
+		
+		""|q|.)	break;;
+		1)	echo	"\\nChange $ONE to : \c"
+			read	NEW
+			TOUCHED=0
+			ONE=$NEW;;
+		2)	echo	"\\nChange $TWO to : \c"
+			read	NEW
+			TOUCHED=0
+			TWO=$NEW;;
+		3)	echo	"\\nChange $THREE to : \c"
+			read	NEW
+			TOUCHED=0
+			THREE=$NEW;;
+		4)	echo	"\\nChange $FOUR to : \c"
+			read	NEW
+			TOUCHED=0
+			FOUR=$NEW;;
+		5)	echo	"\\nChange $FIVE to : \c"
+			read	NEW
+			TOUCHED=0
+			FIVE=$NEW;;
+		6)	echo	"\\nChange $SIX to : \c"
+			read	NEW
+			TOUCHED=0
+			SIX=$NEW;;
+		7)	echo	"\\nChange $SEVEN to : \c"
+			read	NEW
+			TOUCHED=0
+			SEVEN=$NEW;;
+		8)	echo	"\\nChange $EIGHT to : \c"
+			read	NEW
+			TOUCHED=0
+			EIGHT=$NEW;;
+		9)	echo	"\\nChange $NINE to : \c"
+			read	NEW
+			TOUCHED=0
+			NINE=$NEW;;
+		10)	echo	"\\nChange $TEN to : \c"
+			read	NEW
+			TOUCHED=0
+			TEN=$NEW;;
+		11)	echo	"\\nChange $ELEVEN to : \c"
+			read	NEW
+			TOUCHED=0
+			ELEVEN=$NEW;;
+		12)	echo	"\\nChange $TWELVE to : \c"
+			read	NEW
+			TOUCHED=0
+			TWELVE=$NEW;;
+		13)	echo	"\\nChange $THIRTEEN to : \c"
+			read	NEW
+			TOUCHED=0
+			THIRTEEN=$NEW;;
+		14)	echo	"\\nChange $FOURTEEN to : \c"
+			read	NEW
+			TOUCHED=0
+			FOURTEEN=$NEW;;
+		15)	echo	"\\nChange $FIFTEEN to : \c"
+			read	NEW
+			TOUCHED=0
+			FIFTEEN=$NEW;;
+		*)	echo "\n\n Not a valid command";;
+	esac
+done
+	if [ $TOUCHED = 0 ]
+	  then
+	echo	"\n\nUpdate record? (y/n) ? \c"
+	read	RSP
+	if [ "$RSP" = "y" ]
+	  then
+	  	mv	$FILE prop.tmp
+		if [ -f awk.file2 ]
+			then		/bin/rm awk.file2
+		fi
+		echo '# @(#) Print out records that have ID id in field 16
+			BEGIN     {       OFS=":" }
+			{
+				if ( $16 == '"$ID"' )
+					{
+	printf ("'"$ONE:$TWO:$THREE"'")
+	printf ("'":$FOUR:$FIVE:$SIX:$SEVEN"'")
+	printf ("'":$EIGHT:$NINE"'")
+	printf( "'":$TEN:$ELEVEN:$TWELVE:$THIRTEEN"'")
+	printf("'":$DATE:$FIFTEEN:$ID"'")
+			printf("\\n")
+					}
+				else
+					{
+						print ($0 )
+					}
+				}' > awk.file2
+		awk -F:   -f awk.file2 < prop.tmp > $FILE
+		echo "$DATE,EDIT,$ID,$TEN,$ELEVEN,$TWELVE,$THIRTEEN,$FIFTEEN" >> $LOG
+	fi
+	  fi
+	fi;;
+	p) grep $RSP .property | awk -F: -f  awk.file | enscript -fCourier8
+		;;
+	esac
+		echo "Hit any key to continue: \c"
+		read RSP
+	;;
+		s)	echo "Enter search string: \c"
+		read RSP
+		clear
+		echo "Search String Was $RSP"
+		grep -i $RSP $FILE | more
+		echo "Hit any key to continue: \c"
+		read RSP
+		;;
+	*)	echo "Not a valid command"
+		;;
+	esac
+done
+

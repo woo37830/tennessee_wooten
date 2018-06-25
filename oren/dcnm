@@ -1,0 +1,60 @@
+#! /bin/csh -f
+onintr BAILOUT
+set SUM = /usr/bin/sum          # Use md5 if you have it.
+
+if ( ! -e /tmp/NeXTMail.$USER ) then
+	mkdir /tmp/NeXTMail.$USER
+	mkdir /tmp/NeXTMail.$USER/.tmp
+endif
+
+if ( ! -e /tmp/NeXTMail.$USER/.tmp ) then
+	mkdir /tmp/NeXTMail.$USER/.tmp
+endif
+
+cat > /tmp/NeXTMail.$USER/.tmp/UU.$$
+cd /tmp/NeXTMail.$USER/.tmp
+$SUM UU.$$ > .cksum
+cd /tmp/NeXTMail.$USER
+
+foreach dir ( `ls` )
+	if ( -d $dir ) then
+		if ( ! `diff /tmp/NeXTMail.$USER/.tmp/.cksum $dir/.cksum | wc -l` ) then
+			cd $dir
+			echo Attachments...
+			ls -F . | grep -v index.rtf ; echo " "
+			echo Text of the message follows... ; echo " "
+			/usr/bin/rtf-ascii < index.rtf
+			rm /tmp/NeXTMail.$USER/.tmp/*
+			exit
+		endif
+	endif
+end
+
+@ i = 1
+
+while ( -e /tmp/NeXTMail.$USER/Mail.$i )
+	@ i ++
+end
+
+mkdir Mail.$i
+cd Mail.$i
+mv /tmp/NeXTMail.$USER/.tmp/UU.$$ . ; mv /tmp/NeXTMail.$USER/.tmp/.cksum .
+uudecode UU.$$ ; rm UU.$$ ; (cat .tar*.attach ; rm .tar*.attach) | uncompress | tar xf -
+
+if ( `ls -A | grep encrypt | wc -l` ) then
+	mv .tar.*.encrypt .tar.encrypt.uu ; uudecode .tar.encrypt.uu
+	rm .tar.encrypt.uu
+	pgp -f +force +keepbinary=off +interactive=on < .tar.*.encrypt | uncompress | tar xf - 
+	rm .tar.*encrypt
+endif
+
+echo Attachments... ; echo " "
+ls -F . | grep -v index.rtf ; echo " "
+echo Text of the message follows... ; echo " "
+/usr/bin/rtf-ascii < index.rtf
+BAILOUT:
+
+if ( `ls /tmp/NeXTMail.$USER/.tmp` ) then
+	rm /tmp/NeXTMail.$USER/.tmp/*
+endif
+#

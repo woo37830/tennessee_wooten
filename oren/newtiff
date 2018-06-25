@@ -1,0 +1,17 @@
+#!/usr/local/bin/perl5.001
+#
+#	Select a login tiff at random
+#
+$HOME="/LocalLibrary/Images/LoginTiffs";
+@files=("nextlogin.Opus","nextlogin.Bill","nextlogin.Binkley",
+	"nextlogin.Milo","nextlogin.Opus",
+	"nextlogin.Opus","nextlogin.Rosebud",
+	"nextlogin.SteveDallas");
+
+srand;
+$it=int(rand @files);
+#print $it,"\n";
+$selected=$files[$it];
+
+#print "Next Login Tiff is $selected\n";
+system("/bin/rm $HOME/nextlogin.tiff; cp $HOME/$selected.3.1.tiff $HOME/nextlogin.tiff");

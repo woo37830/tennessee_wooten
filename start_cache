@@ -1,0 +1,3 @@
+#!/bin/sh
+export CACHE_HOME=/Applications/Cache
+$CACHE_HOME/cstart $CACHE_HOME/cache

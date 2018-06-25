@@ -1,0 +1,94 @@
+:
+# @(#)	phone v1.0	Maintain telephone database	Author: John Wooten
+
+BASE="$HOME/.phone.list"
+
+if [ $# -gt 0 ]
+	then	grep -i $1 $BASE | awk -F: '{printf "%-20.20s%-20.20s%s\n",$1, $2, $3}'
+		exit 0
+fi
+
+while test 1 
+do
+	echo "
+
+	phonebase = $BASE
+
+	PHONE MENU
+	----------
+   (a)dd name to list
+   (d)elete name from list
+   (e)dit list (exit with ZZ)
+   (s)earch for name in list
+   (v)iew complete list
+   (q)uit quit the program
+   <cr> - exit program
+"
+echo -n   "Press a,d,e,s,v or <cr>: "
+   read RSP
+	
+	case $RSP in
+	""|q)	exit 0
+		;;
+	a|A)	echo -n "Enter name to add [first last] (<.> to exit): "
+		read F_NAME L_NAME
+		if [ "$F_NAME" = "." ]
+			then continue
+		fi
+		if [ "$L_NAME" != "" ]
+		then
+			grep -i "$L_NAME" $BASE > /dev/null
+			if [ $? -le 0 ]
+			then
+			echo "----------  Existing Occurences of last name >$L_NAME< in data base ------"
+			grep -i "$L_NAME" $BASE | awk -F: '{printf "%-20.20s%-20.20s%s\n",$1, $2, $3}'
+			echo ----------------------------------------------------------------
+			fi
+		fi
+		echo  -n "Enter description or keywords (<.> terminates): "
+		read DESC
+		if [ "$DESC" = "." ]
+			then continue
+		fi
+		echo -n "Enter number to add: "
+		read NUM
+		if [ "$L_NAME" = "" ]
+			then
+			echo --------------- Existing Occurences of number in data base -----
+			grep -i "$NUM" $BASE | awk -F: '{printf "%-20.20s%-20.20s%s\n",$1, $2, $3}'
+			echo ----------------------------------------------------------------------------------
+			echo  -n "Add this record (<cr> is no): "
+			read RSP
+			if [ "$RSP" = "" ]
+				then continue
+			fi
+		fi
+		echo "$NUM:$L_NAME $F_NAME:$DESC" >> $BASE
+		sort -t: +1 -o $BASE $BASE
+		;;
+	d|D)	echo -n "Enter name to delete (will delete first match) (<cr> to exit): "
+		read NAME
+		if [ "$NAME" = "" ]
+			then continue
+		fi
+		sed -e "/$NAME/d" $BASE > $BASE.new
+		mv $BASE.new $BASE
+		;;
+	e|E)	vi $BASE
+		;;
+	s|S)	echo -n "Enter name to search for: "
+		read NAME
+		echo "--------------------------------------------"
+		grep -i "$NAME" $BASE | awk -F: '{printf "%-20.20s%-20.20s%s\n",$1, $2, $3}'
+		echo "----------------------------------------------"
+		;;
+	v|V)	echo "---------Phone List---------------------------" &
+		cat $BASE | awk -F: '{printf "%-20.20s%-20.20s%s\n",$1, $2, $3}' | more
+		echo  -n "hit <cr> "
+		read RSP
+		;;
+	*)	echo "Not a valid command"
+		;;
+	esac
+done
+

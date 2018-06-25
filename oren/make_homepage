@@ -1,0 +1,81 @@
+#!/usr/local/bin/perl
+
+$HOME = $ENV{'HOME'};
+$me = getlogin || (getpwuid($<))[0];
+print "Login is : $me\n";
+$login = '';
+open(PASSWD,"nidump passwd . |") ;
+while (<PASSWD>)	{
+	/^([^:]+)/;
+	if ($1 eq $me)	{
+		($login,$opasswd,$uid,$gid,$ogcos,$home,$shell) = split(/:/);
+		die "You aren't you! ($< $uid $me $x $login)\n" if $< && $< != $uid;
+		
+		$ogcos =~ s/,.*//;
+		$mynames = $ogcos;
+		$mynames =~ s/\W+/ /;
+		$mynames =~ s/^ //;
+		$mynames =~ s/ $//;
+		$mynames =~ s/ . / /g;
+		$mynames =~ s/ . / /g;
+		$mynames =~ s/^. //;
+		$mynames =~ s/ .$//;
+#		$mynames =~ s/ /|/;
+		$mynames = '^$' if $mynames eq '';
+		last;
+		}
+	}
+	close(PASSWD);
+	die "$me isn't in the passwd file.\n" unless $login;
+	$header = $mynames . "'s";	
+	if (-e "$HOME/public_html")	{
+	print "Apparently you already gots one!\n";
+	exit;
+	}
+chdir($HOME);
+print "Making directory $HOME/public_html\n";
+system("mkdir public_html");
+print "cd public_html\n";
+chdir("public_html");
+print "creating default.html\n";
+open(FILE,">default.html");
+	print FILE <<"EOF";
+<HEAD>
+<TITLE>$header Home Page</TITLE>
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF">
+
+<H1>$header Home Page</H1>
+
+<IMG SRC="YourPicture.gif"> picture title
+
+<H2>Where I work/go to school</H2>
+
+I work at <A HREF="URL here">company/school name</A>.
+
+<H2>Hobbies</H2>
+<UL>
+<LI>description
+<LI>description
+<LI>description
+</UL>
+
+<H2>Personal Hot List</H2>
+<UL>
+<LI><A HREF="URL here">description</A>
+<LI><A HREF="URL here">description</A>
+<LI><A HREF="URL here">description</A>
+</UL>
+
+<ADDRESS>
+$mynames ($login\@sacam.oren.ortn.edu)
+</ADDRESS>
+
+</BODY>
+</HTML>
+EOF
+close(FILE);
+system("ln -s default.html index.html");
+print "All done\nTo view see it type: more public_html/default.html\n";
+

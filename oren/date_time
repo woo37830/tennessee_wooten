@@ -1,0 +1,100 @@
+		# Write possible multiple titles
+		&Tputs($TC{'so'},0,TTYOUT); # Put in standout mode
+		$j = $titlerow;
+		for ($i = 0; $i <= $#title; $i++) {
+			&Tputs(&Tgoto($TC{'cm'},$titlecol[$i],$j++),0,TTYOUT);
+			&write_screen_line($title[$i]);
+		}
+		&Tputs($TC{'se'},0,TTYOUT); # Put in standend mode
+		
+		$row = $firstsel_row + $#title;
+		
+		if ($maxselwosplit <= $num_selections-1 ) {
+			$col = $side1col;
+			$twosides=1;
+		}
+		else {$col = $selectioncol; $twosides=0;}
+		for ($i = 0; $i < $num_selections; $i++) {
+			$sel_row[$i] = $row;
+			local($c_offset) = 0;
+			if (length($sel_index[$i]) > 1) {$c_offset=1;}
+			$sel_col[$i] = $col-$c_offset;
+			&Tputs(&Tgoto($TC{'cm'},$sel_col[$i],$row),0,TTYOUT);
+			local($string) = $sel_full[$i];
+			if ($twosides) {$string=substr($string,0,30);}
+			&write_screen_line("$string");
+			$row += 2;
+			if ($col == $side1col) {
+				if ($i+1 >= $num_selections/2) {
+					$row = $firstsel_row + $#title;
+					$col = $side2col;
+				}
+			}
+		}
+#	}
+	if ($highlight) {&highlight('on');}
+}
+
+
+sub write_prompt {
+	if (!defined $fullscreen) {
+		print TTYOUT "\r"." "x$maxcols; # Blankout possible trash
+		print TTYOUT "\r$prompt";
+	}
+	else {
+		# blankout trash
+		&Tputs(&Tgoto($TC{'cm'},0,$promptrow),0,TTYOUT);
+		&Tputs($TC{'ce'},0,TTYOUT);
+		print TTYOUT "$prompt";
+	}
+	$column = $upromptcol;
+}
+
+sub write_screen_line {
+	# Entry: $_[0] = line to write to screen (\n will be added)
+	#	 $_[1] = number of times to write $_[0] (omitted do once)
+	local($i);
+	if ($#_ == 0) { $i = 1; }
+	else { $i = $_[1];}
+	while ($i--) {
+		print TTYOUT "$cr$_[0]$newline";
+		if (!$fullscreen) {
+			$screenline++;
+			if ($screenline > $maxrows) {&diesoft("Menu overflowed screen");}
+		}
+	}
+}
+
+sub write_status_info {
+	if (defined $fullscreen) {
+		# move cursor to bottom row-1
+		&Tputs(&Tgoto($TC{'cm'},0,$statusinforow),0,TTYOUT);
+	}
+
+	# write status line (q to quit and all that)
+	&Tputs($TC{'so'},0,TTYOUT);
+	&write_screen_line("$statusinfo");
+	&Tputs($TC{'se'},0,TTYOUT);
+}
+
+sub write_date_time {
+	if (defined $fullscreen) {
+		# move cursor to top row
+		&Tputs(&Tgoto($TC{'cm'},0,0),0,TTYOUT);
+	}
+
+	# write date and time
+	&Tputs($TC{'so'},0,TTYOUT);
+	($sec, $min, $hour, $mday, $mon, $year) = localtime();
+	$u_have_mail = "New MAIL";
+	$whoami = `whoami`;
+	chop $whoami;
+	if (-z "/usr/spool/mail/$whoami")	{
+		$u_have_mail = "";
+	}
+	$datetime = "$mon/$mday/$year                                                 $hour:$min:$sec  $u_have_mail";
+	&write_screen_line($datetime);
+	&Tputs($TC{'se'},0,TTYOUT);
+}
+
+### End of name of program goes here

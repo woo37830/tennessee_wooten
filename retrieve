@@ -1,0 +1,56 @@
+:
+#	@(#)	retrieve:  examines directory information from ftp program.  Sets up retrievals.
+
+cd $HOME/searches
+
+for dirs in *
+do
+	if [ -d $dirs ]
+	then
+		cd $dirs
+		for  files in   *.old  
+		do
+			# separate out the dir name from the file name ending in .old call it lookat
+			lookat="pub"
+			#  see if a file name $lookat.rlist exists and delete if if so.
+			[ -f $lookat.rlist ] && /bin/rm $lookat.rlist
+			if [ -s $files ]
+				then
+				echo "------------------- $dirs : $files ----------------------"
+				cat $files
+				while true
+				do
+					echo "Enter file to retrieve,  . exits: \c"
+					read ans
+					case $ans in
+						[Qq]uit)	exit ;;
+						.)		break ;;
+						*)		grep $ans $files > /dev/null # see if in directory
+								if [ $? -gt 0 ]
+						then	echo "File $ans not located in $lookat at $dirs, reenter"
+						else
+							(grep '^d' $files | grep $ans ) > /dev/null # see if it is a directory
+							if [ $? -eq 0 ]
+								then echo "This is a directory. Expand search [y/n]?"
+									echo "Not implemented yet"	
+								else 
+									echo "Need full path name for file here ****$lookat***"
+									echo cd $lookat >> $lookat.rlist
+									echo get  $ans  >> $lookat.rlist
+							fi
+					fi
+								;;
+					esac
+				done
+				if [ -f $lookat.rlist ]
+					then
+						echo quit >> $lookat.rlist
+						echo Following files to be retrieved:
+						cat $lookat.rlist
+				fi				
+			fi
+		done
+		cd ..
+	fi
+done
+

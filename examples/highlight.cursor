@@ -1,0 +1,10 @@
+:
+# @(#) Demo of cursor control
+
+SE="[m"
+SO="[7m"
+BOLD="[1m"
+BLNK="[5m"
+
+echo "${BOLD} This is normal and ${SE} this is bold ${BLNK} and? ${SE} what"
+

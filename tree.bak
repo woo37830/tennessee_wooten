@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# @(#)	tree v1.0	Visual display of a file tree
+
+ls -R | grep ":$" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/'

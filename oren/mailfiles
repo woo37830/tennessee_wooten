@@ -1,0 +1,16 @@
+:
+# @(#) mailfiles toname  file1 file2 file3
+NAME=$1
+shift
+TMP=/tmp/mailfile$$
+
+for i # in "$@"
+do
+	echo "%%$i" >>$TMP
+	cat $i >> $TMP
+done
+	echo "Mailing to $NAME"
+	cat $TMP | mail -s "Here are files you requested" $NAME	
+	echo "Done"
+
+/bin/rm $TMP

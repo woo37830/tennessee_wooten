@@ -1,0 +1,1005 @@
+#!/usr/local/bin/perl
+
+require 5.001;
+#require 5.002;
+
+###############################################################################
+#                                                                             #
+#  Program to traverse a tree of HTML pages to collect their URLs and build   #
+#  a textual representation in form of a tree (a HTML page with hyperlinks)   #
+#                                                                             #
+###############################################################################
+#                                                                             #
+#      Version 1.0     -   Written 31.08.96 by Steffen Beyer                  #
+#      Version 1.1     -   Written 01.09.96 by Steffen Beyer                  #
+#      Version 1.2     -   Written 04.09.96 by Steffen Beyer                  #
+#      Version 2.0     -   Written 10.09.96 by Steffen Beyer                  #
+#                                                                             #
+###############################################################################
+#                                                                             #
+#      Copyright (c) 1996 by Steffen Beyer.                                   #
+#      All rights reserved.                                                   #
+#                                                                             #
+###############################################################################
+#                                                                             #
+#      This program is free software; you can redistribute it and/or          #
+#      modify it under the same terms as Perl itself.                         #
+#                                                                             #
+###############################################################################
+
+# ============================ Internal constants: ============================
+
+$self = $0;
+$self =~ s!^.*/!!;
+
+$VERSION = '2.0';
+$version = "version $VERSION";
+
+$separator = ('-' x 78) . "\n";
+
+# Definition of standard (default) HTML file names and extensions:
+
+$default = 'index';
+
+%html_ext = ('scgi' => 4, 'cgi' => 3, 'shtml' => 2, 'html' => 1, 'htm' => 1);
+
+$map_ext = 'map';
+
+# ======================= User configurable constants: ========================
+
+# User under which CGI programs are run on your host (usually "nobody"):
+
+$nobody = 'nobody';
+
+# The pattern that uniquely identifies this host in URLs:
+
+$host_pattern = '\bwww\.sdm\.de\b';
+
+# The physical path of the directory the HTTP server uses as its root
+# directory for HTML pages (for example, "/usr/local/etc/httpd/htdocs/"):
+
+$html_root  = '/';
+
+# The physical path of the directory the HTTP server uses as its root
+# directory for CGI scripts (i.e., your "cgi-bin" directory):
+
+$cgi_root = '/';
+
+# (I.e., if "/cgi-bin/..." corresponds to "/usr/local/etc/httpd/cgi-bin/...",
+# set "$cgi_root" equal to "/usr/local/etc/httpd/")
+
+# Define here where the recursive descent should start (physical path):
+# (whatever subtree you want)
+
+$tree_root = '/e/www/.www/';
+
+# Where to put this script's log file (physical path):
+
+$logfile = "/e/www/.www/hilfe/$self.log";
+
+# Where to put this script's output file (physical path):
+
+$treefile = '/e/www/.www/hilfe/index.shtml';
+
+# Do not include the following subtrees or pages (URLs):
+
+push(@skip, '/e/www/none.cgi');
+
+#push(@skip, '/g/arcus/');
+push(@skip, '/g/arcus/cookbook/cbindex.htm');
+push(@skip, '/g/arcus/contact.htm');
+push(@skip, '/g/arcus/whatsnew.htm');
+push(@skip, '/g/arcus/team/tmindex.htm');
+push(@skip, '/g/arcus/publicat/pubindex.htm');
+push(@skip, '/g/arcus/sponsors.htm');
+push(@skip, '/g/arcus/links.htm');
+push(@skip, '/g/arcus/whitepap/whtpaidx.htm');
+push(@skip, '/g/arcus/cookbook/02basic/bookshlf.htm');
+
+# Add here file types to be displayed but whose contents is to be ignored:
+
+$html_ext{'jpeg'} = 5;
+$html_ext{'mpeg'} = 5;
+$html_ext{'tiff'} = 5;
+$html_ext{'jpg'} = 5;
+$html_ext{'mpg'} = 5;
+$html_ext{'gif'} = 5;
+$html_ext{'tif'} = 5;
+$html_ext{'txt'} = 5;
+$html_ext{'doc'} = 5;
+$html_ext{'xls'} = 5;
+$html_ext{'zip'} = 5;
+$html_ext{'bas'} = 5;
+$html_ext{'pas'} = 5;
+$html_ext{'for'} = 5;
+$html_ext{'tar'} = 5;
+$html_ext{'pl'}  = 5;
+$html_ext{'pm'}  = 5;
+$html_ext{'xs'}  = 5;
+$html_ext{'ps'}  = 5;
+$html_ext{'gz'}  = 5;
+$html_ext{'Z'}   = 5;
+$html_ext{'c'}   = 5;
+$html_ext{'h'}   = 5;
+
+# Enable this script to be able to recognize anchors (<A HREF="...">...</A>)
+# and titles (<TITLE>...</TITLE>) extending over
+#    1) one line       2) one paragraph   3) several paragraphs
+#    (no line breaks)  (no empty lines)   (line breaks and empty lines allowed)
+# by 1) not changing   2) setting to ''   3) undef'ing   the internal variable
+# "$/":
+
+undef $/;
+
+# =================================== Main ====================================
+
+# Set configuration dependent constants:
+
+$ext_pattern = join('|', keys(%html_ext));
+
+$html_root =~ s!/$!!;
+
+$cgi_root =~ s!/$!!;
+
+$root_pattern = "$html_root|$cgi_root";
+
+# Check if this script is running under root:
+
+if (($< == 0) || ($> == 0)) { &restore_root_id; }
+else
+{
+    die "$self: this script needs to be run under root!\n";
+}
+
+# Get nobody's UID and GID:
+
+unless (($nbdy_uid,$nbdy_gid) = (getpwnam($nobody))[2,3])
+{
+    die "$self: can't determine UID and GID of user '$nobody'!\n";
+}
+
+# Rename logfile if it already exists:
+
+if (-e $logfile)
+{
+    $counter = '000';
+    $backfile = "$logfile.$counter";
+    while (-e $backfile)
+    {
+        $counter++;
+        $backfile = "$logfile.$counter";
+    }
+    unless (rename($logfile,$backfile))
+    {
+        die "$self: can't rename '$logfile' to '$backfile': $!\n";
+    }
+    unless (($log_uid,$log_gid) = (stat($backfile))[4,5])
+    {
+        die "$self: can't stat '$backfile': $!\n";
+    }
+}
+else
+{
+    $logdir = $logfile;
+    $logdir =~ s!/[^/]*$!!;
+    unless (($log_uid,$log_gid) = (stat($logdir))[4,5])
+    {
+        die "$self: can't stat '$logdir': $!\n";
+    }
+}
+
+# Open logfile:
+
+unless (open(LOGFILE, ">$logfile"))
+{
+    die "$self: can't write '$logfile': $!\n";
+}
+
+# Write header information:
+
+$date = `date`;
+print LOGFILE $separator;
+print LOGFILE "$self   $version   $date";
+print LOGFILE $separator;
+
+$error = 0;
+
+# Rename treefile if it already exists:
+
+unless ($error)
+{
+    if (-e $treefile)
+    {
+        $counter = '000';
+        $backfile = "$treefile.$counter";
+        while (-e $backfile)
+        {
+            $counter++;
+            $backfile = "$treefile.$counter";
+        }
+        unless (rename($treefile,$backfile))
+        {
+            $error = 1;
+            print LOGFILE "can't rename '$treefile' to '$backfile': $!\n";
+        }
+        unless ($error)
+        {
+            unless (($tree_uid,$tree_gid) = (stat($backfile))[4,5])
+            {
+                $error = 1;
+                print LOGFILE "can't stat '$backfile': $!\n";
+            }
+        }
+    }
+    else
+    {
+        $treedir = $treefile;
+        $treedir =~ s!/[^/]*$!!;
+        unless (($tree_uid,$tree_gid) = (stat($treedir))[4,5])
+        {
+            $error = 1;
+            print LOGFILE "can't stat '$treedir': $!\n";
+        }
+    }
+}
+
+# Open treefile:
+
+unless ($error)
+{
+    unless (open(TREEFILE, ">$treefile"))
+    {
+        $error = 1;
+        print LOGFILE "can't write '$treefile': $!\n";
+    }
+}
+
+unless ($error)
+{
+    # The start page must be marked as visited here because
+    # "traverse_tree" only marks links it finds INSIDE an HTML page:
+
+    push(@skip, $tree_root);
+
+    # The page which is generated here is also excluded; first because
+    # it is still empty at the time of the scan, second because even
+    # if it weren't, it wouldn't make sense:
+
+    push(@skip, $treefile); # (file paths are not changed by "url_to_file"!)
+
+    # Mark certain links as visited to automatically skip them later:
+
+    foreach $file (@skip)
+    {
+        &url_to_file(\$file);
+        if (($thisdir,$thispage) = find_page($file))
+        {
+            if (($dev,$ino) = (stat($thispage))[0,1])
+            {
+                $visited{"$dev:$ino"} = 1;
+            }
+            else
+            {
+                print LOGFILE "can't stat file to skip '$thispage': $!\n";
+            }
+        }
+    }
+
+    # Slurp passwd file for user home directories:
+
+    setpwent;
+
+    while (($user,$dir) = (getpwent)[0,7])
+    {
+        if ($homedir{$user} eq '')
+        {
+            $dir =~ s!/$!!;
+            $homedir{$user} = $dir;
+        }
+    }
+
+    endpwent;
+
+    # Traverse tree:
+
+    $tree = [ ];
+
+    if (($root,$title) = &traverse_tree($tree_root,''))
+    {
+        &file_to_url(\$tree_root);
+        push(@{$tree},[$root,$tree_root,$title]);
+    }
+
+    # Output tree:
+
+    &html_header;
+    &html_body($tree,0) if (@{$tree});
+    &html_footer;
+
+    # Close treefile:
+
+    close(TREEFILE);
+
+    # Restore treefile ownership:
+
+    if (chown($tree_uid,$tree_gid,$treefile) != 1)
+    {
+        print LOGFILE "can't chown '$treefile'!\n";
+    }
+}
+
+# Write trailer information:
+
+$date = `date`;
+print LOGFILE "$self   $version   $date";
+print LOGFILE $separator;
+
+# Close logfile:
+
+close(LOGFILE);
+
+# Restore logfile ownership:
+
+if (chown($log_uid,$log_gid,$logfile) != 1)
+{
+    die "$self: can't chown '$logfile'!\n";
+}
+
+# Done:
+
+exit 0;
+
+# ================================ Subroutines ================================
+
+# Subroutine to find given page or default HTML file (index.html etc.)
+
+sub find_page
+{
+    my($thispage) = @_;
+    my($ext,$nextpage,$symlink);
+    my($type,$thisdir);
+
+    # uses globals %html_ext, $ext_pattern
+
+    $type = 0;
+    if (($thispage =~ m!/$!) || (-d $thispage))
+    {
+        $thisdir = $thispage;
+        $thisdir =~ s!/$!!;
+        $thispage = '';
+        EXT:
+        foreach $ext (keys(%html_ext))
+        {
+            $nextpage = "$thisdir/$default.$ext";
+            if (-f $nextpage)
+            {
+                $thispage = $nextpage; # $type = $html_ext{$ext};
+                last EXT;
+            }
+        }
+        unless ($thispage)
+        {
+            print LOGFILE "can't find any default file in directory '$thisdir'!\n";
+            return();
+        }
+    }
+    unless (-f $thispage)
+    {
+        print LOGFILE "can't find any file named '$thispage'!\n";
+        return();
+    }
+    while (-l $thispage)
+    {
+        $symlink = readlink($thispage);
+        if ($symlink =~ m!^/!)
+        {
+            $thispage = $symlink;
+        }
+        else
+        {
+            $thispage =~ s![^/]*$!$symlink!;
+        }
+    }
+    if ($thispage =~ m!\.($ext_pattern)$!io)
+    {
+        $type = $html_ext{$1};
+        if (($type == 1) && ((stat($thispage))[2] & 0001)) # equiv. to *.shtml
+        {
+            $type = 2; # html-file executable for: 0001 = "other", 0111 = any
+        }
+    }
+    $thisdir = $thispage;
+    $thisdir =~ s!/[^/]*$!!;
+    return($thisdir,$thispage,$type);
+}
+
+# Subroutine to substitute all server-side-includes (files only):
+
+sub server_side_includes
+{
+    my($line,$thisdir) = @_;   # first argument is a reference!
+    my($temp,$key,$file,$dir);
+
+    # uses global $html_root
+
+    $temp = '';
+    INC:
+    while (${$line} =~ m,<!--#include\s+(virtual|file)\s*=\s*"\s*(\S+?)\s*"\s*-->,i)
+    {
+        $temp .= $`;
+        ${$line} = $';
+        $key = $1;
+        $file = $2;
+        if ($key eq 'virtual') { $dir = $html_root; }
+        else                   { $dir = $thisdir;   }
+        $dir =~ s!/$!!;
+        $file =~ s!^/!!;
+        $file = "$dir/$file";
+        &url_to_file(\$file);
+        unless (open(SSI_FILE, "<$file"))
+        {
+            print LOGFILE "can't open SSI file '$file': $!\n";
+            next INC;
+        }
+        while (<SSI_FILE>)
+        {
+            $temp .= $_;
+        }
+        close(SSI_FILE);
+    }
+    $temp .= ${$line};
+    ${$line} = $temp;
+}
+
+# Routine to return the contents of a map file as a series of links:
+
+sub include_map_file
+{
+    my($nextpage) = @_;
+    my($result,$line,$link,$text,$thisdir,$thispage);
+
+    $result = '';
+    $thisdir = $nextpage;
+    $thisdir =~ s!/[^/]*$!!;
+    unless (open(MAP_FILE, "<$nextpage"))
+    {
+        print LOGFILE "can't open MAP file '$nextpage': $!\n";
+        return $result;
+    }
+    while($line = <MAP_FILE>)
+    {
+        while ($line =~ m!\b(?:rect|circle|poly|default)\s+([^<>'"\s]+)\s!i)
+        {
+            $line = $';
+
+            # since links inside a map file are relative to that
+            # map file, convert the links to absolute ones:
+
+            $thispage = qq!<A HREF="$1"></A>!;
+            if ((($link,$text,$nextpage) = parse_link(\$thispage,$thisdir)) &&
+                ($link ne ''))
+            {
+                $result .= qq!<A HREF="$link"></A>!;
+            }
+        }
+    }
+    close(MAP_FILE);
+    return $result;
+}
+
+# Subroutine to check for and extract a valid link:
+
+sub parse_link
+{
+    my($line,$thisdir) = @_;                # first argument is a reference!
+    my($follow,$host,$user,$path,$nextdir);
+    my($link,$text,$nextpage);
+
+    # uses globals $host_pattern, %homedir
+
+    if (${$line} =~ m!<A\s+HREF\s*=\s*"\s*(.*?)\s*"\s*>(.*?)</A\s*>!i)
+    {
+        ${$line} = $';
+        $link = $1;
+        $text = $2;
+        if (($link =~ m!^([^:/<>'"?=\s#]+)\s*:!) && (uc($1) ne 'HTTP'))
+        {
+            # ignore "mailto:...", "ftp:..." etc.:
+            $follow = 0;
+        }
+        elsif ($link =~ m!^
+                       (?:HTTP\s*:\s*)?
+                       //
+                       ([^:/<>'"?=\s#]+)
+                       (?::\d+)?
+                       ((?:/[^<>'"?=\s#]*)?)
+                       # strips off any cgi parameters or text anchor links
+                      !ix)
+        {
+            $host = $1;
+            $nextpage = $2;
+            $follow = ($host =~ m!$host_pattern!io);
+            $nextdir = '/';
+        }
+        elsif ($link =~ m!^
+                          (?:HTTP\s*:\s*)?
+                          ([^<>'"?=\s#]+)
+                          # strips off any cgi parameters or text anchor links
+                         !ix)
+        {
+            $nextpage = $1;
+            $follow = 1;
+            if (($nextpage eq '') || ($nextpage =~ m!^/!))
+                { $nextdir = '/'; }
+            else
+                { $nextdir = $thisdir; }
+        }
+        else
+        {
+            # text anchor link ("#subsection") or link of unknown format:
+            $follow = 0;
+            unless ($link =~ m!^#!)
+            {
+                print LOGFILE "can't parse link '$link' ($text)!\n";
+            }
+        }
+        if ($follow)
+        {
+            # map "~user" to user's homedir:
+
+            if (($nextpage =~ m!^~([^/]+)!) ||
+                ($nextpage =~ m!^%7E([^/]+)!i))
+            {
+                $user = $1;
+                $path = $';
+                $path =~ s!^/!!;
+                if ($homedir{$user} =~ m!^\s*$!)
+                {
+                    $nextpage = "/u/$user/$path"; # if homedir is unknown
+                }
+                else
+                {
+                    $nextpage = $homedir{$user};
+                    $nextpage =~ s!/$!!;
+                    $nextpage .= "/$path";
+                }
+            }
+            else
+            {
+                $nextdir =~ s!/$!!;
+                $nextpage =~ s!^/!!;
+                $nextpage = "$nextdir/$nextpage";
+            }
+            &url_to_file(\$nextpage);
+            $link = $nextpage;    # this converts a relative
+            &file_to_url(\$link); # to an absolute link!
+        }
+        else  # link found, but not followable:
+        {
+            $link = '';
+            $text = '';
+            $nextpage = '';
+        }
+        return($link,$text,$nextpage);
+    }
+    return(); # no more links found
+}
+
+# Subroutine to set up environment for (S)CGI script to run in:
+
+sub setup_for_cgi
+{
+    my($thispage,$type) = @_;
+    my($scgi_uid,$scgi_gid);
+
+    # uses globals $nbdy_uid, $nbdy_gid
+
+    if ($type == 3)
+    {
+        $( = $nbdy_gid; # set GID's first!
+        $) = $nbdy_gid;
+        $< = $nbdy_uid; # set real UID first!
+        $> = $nbdy_uid;
+    }
+    elsif ($type == 4)
+    {
+        unless (($scgi_uid,$scgi_gid) = (stat($thispage))[4,5])
+        {
+            print LOGFILE "can't stat SCGI script '$thispage': $!\n";
+            return 0;
+        }
+        $( = $scgi_gid; # set GID's first!
+        $) = $scgi_gid;
+        $< = $scgi_uid; # set real UID first!
+        $> = $scgi_uid;
+    }
+    else { return 0; }
+    &file_to_url(\$thispage);
+    $ENV{'HTTP_USER_AGENT'} = 'Mozilla/3.0';
+    $ENV{'SCRIPT_NAME'} = $thispage;
+    # can be made more sophisticated if needed...
+    return 1;
+}
+
+# Subroutine to restore root UID and GID:
+
+sub restore_root_id
+{
+    $< = 0;
+    $> = 0;
+    $( = 0;
+    $) = 0;
+}
+
+# Subroutine that does it all:
+
+sub traverse_tree
+{
+    my($thispage,$prevpage) = @_;
+    my($thisdir,$nextdir,$nextpage);
+    my($type,$line,$link,$text,$dev,$ino,$ref);
+    my(@nextpages);
+    my($result,$title);
+
+    # uses globals $map_ext, %visited
+
+    $title = '';
+    $result = [ ];
+    unless (($thisdir,$thispage,$type) = find_page($thispage))
+    {
+        print LOGFILE "(coming from '$prevpage' -\ntree pruned abnormally)\n";
+        print LOGFILE $separator;
+        return();
+    }
+    print LOGFILE "visiting '$thispage'...\n(coming from '$prevpage')\n";
+    if (($type == 1) || ($type == 2))
+    {
+        unless (open(THISPAGE, "<$thispage"))
+        {
+            print LOGFILE "can't open HTML file '$thispage': $!\n";
+            print LOGFILE $separator;
+            return();
+        }
+    }
+    elsif (($type == 3) || ($type == 4))
+    {
+        if (&setup_for_cgi($thispage,$type))
+        {
+            unless (open(THISPAGE, "$thispage |"))
+            {
+                print LOGFILE "can't open pipe from CGI script '$thispage': $!\n";
+                print LOGFILE $separator;
+                return();
+            }
+        }
+        else
+        {
+            print LOGFILE "can't create environment for CGI script '$thispage'!\n";
+            print LOGFILE $separator;
+            return();
+        }
+    }
+    elsif ($type == 5)
+    {
+        $title = $thispage;
+        $title =~ s!^.*/!!;
+        print LOGFILE $separator;
+        return($result,$title);
+    }
+    else
+    {
+        print LOGFILE "unknown HTML file type ($type) for file '$thispage'!\n";
+        print LOGFILE $separator;
+        return();
+    }
+    while ($line = <THISPAGE>)
+    {
+        $line =~ s![\n\r\t]+! !g;
+        &server_side_includes(\$line,$thisdir) if ($type == 2);
+        if (($title eq '') && ($line =~ m!<TITLE>(.*?)</TITLE>!i))
+        {
+            $title = $1;
+            $title =~ s!^\s*!!;
+            $title =~ s!\s*$!!;
+            $title =~ s!\s+! !g;
+        }
+        LINK:
+        while (($link,$text,$nextpage) = parse_link(\$line,$thisdir))
+        {
+            next LINK if ($link eq '');
+            if (($link =~ m!\.$map_ext!io) &&
+                ($text =~ m!^\s*<IMG\s!i) &&
+                ($text =~ m!\sSRC\s*=!i) &&
+                ($text =~ m!\sISMAP\b!i) && # beware: could be "... ISMAP>"!
+                ($text =~ m!>\s*$!))
+            {
+                $line = &include_map_file($nextpage) . $line;
+            }
+            elsif (($nextdir,$nextpage) = find_page($nextpage))
+            {
+                if (($dev,$ino) = (stat($nextpage))[0,1])
+                {
+                    if (! $visited{"$dev:$ino"})
+                    {
+                        $visited{"$dev:$ino"} = 1;
+                        push(@nextpages, [ $link, $nextpage ] );
+                    }
+                }
+                else { print LOGFILE "can't stat HTML file '$nextpage': $!\n"; }
+            }
+            else { }
+        }
+    }
+    close(THISPAGE);
+
+    # free memory:
+
+    $line = '';
+
+    # ("$line" may contain a whole page - simultaneously in every
+    # call of "traverse_tree" in the recursive descent!)
+
+    &restore_root_id if (($type == 3) || ($type == 4));
+    print LOGFILE $separator;
+    while (@nextpages)
+    {
+        $ref = shift(@nextpages);
+        $link     = ${$ref}[0];
+        $nextpage = ${$ref}[1];
+        if (($ref,$text) = &traverse_tree($nextpage,$thispage))
+        {
+            push(@{$result},[$ref,$link,$text]);
+        }
+    }
+    return($result,$title);
+}
+
+# Subroutine to give out the upper part of the HTML page:
+
+sub html_header
+{
+    # uses global TREEFILE
+
+    print TREEFILE <<"VERBATIM";
+<HTML>
+<HEAD>
+<TITLE>sd&amp;m - hilfe</TITLE>
+<!-- Immer "sd&amp;m - titel" -->
+</HEAD>
+
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#404040" VLINK="#808080" ALINK="#C0C0C0">
+
+<TABLE WIDTH="100%" BORDER="0" CELLSPACING="10" CELLPADDING="10">
+
+<!-- Zeile 1: [Logo] + Seite -->
+
+<TR>
+
+<!-- [Logo] -->
+
+<TD ALIGN="CENTER" VALIGN="TOP">
+    <IMG SRC="../img/sdm_logo_online.gif" BORDER="0" ALT="[Logo sd&amp;m]">
+</TD>
+
+<!-- Seite -->
+
+<TD ALIGN="LEFT" VALIGN="TOP" ROWSPAN="2">
+
+<!-- Textbeginn -->
+
+<H1>Navigations- und Orientierungs-Hilfe</H1>
+
+<H3>Verzeichnis aller Seiten auf dieser Web-Site:</H3>
+
+<P>
+HINWEIS: Diese Seite verzichtet bewu&szlig;t auf Grafik,
+damit sie so schnell wie m&ouml;glich geladen werden kann!
+<P>
+VERBATIM
+}
+
+# Subroutine to give out the main part of the HTML page:
+
+sub html_body
+{
+    my($tree,$level) = @_;
+    my($this,$next,$link,$title);
+
+    # uses global TREEFILE
+
+    print TREEFILE '        ' x $level, "<DL>\n";
+    while (@{$tree})
+    {
+        $this  = shift(@{$tree});
+        $next  = ${$this}[0];
+        $link  = ${$this}[1];
+        $title = ${$this}[2];
+        unless ($title) { $title = $link; }
+        $title =~ s!^sd&amp;m\s+-\s+!!; # remove "sd&m - "
+        print TREEFILE '        ' x ($level+1);
+        print TREEFILE qq!<DT></DT><DD><A HREF="$link">$title</A></DD>\n!;
+        if (@{$next})
+        {
+            &html_body($next,$level+1);
+            if (@{$tree}) { print TREEFILE '        ' x ($level+1), "<P>\n"; }
+        }
+    }
+    print TREEFILE '        ' x $level, "</DL>\n";
+}
+
+# Subroutine to give out the lower part of the HTML page:
+
+sub html_footer
+{
+    # uses global TREEFILE
+
+    print TREEFILE <<"VERBATIM";
+<P>
+Diese Seite wurde mit
+<A HREF="$self">$self $version</A>
+generiert. N&auml;here Informationen sind in der
+<A HREF="README">README</A>-Datei
+zu finden. Beide Dateien zusammen kann man auch
+<A HREF="$self-$VERSION.tar.gz">downloaden</A>.
+<P>
+
+<!-- Textende -->
+
+</TD>
+
+</TR>
+
+<!-- Zeile 2: [Banner] + Seite -->
+
+<TR>
+
+<!-- [Banner] -->
+
+<TD ALIGN="CENTER" VALIGN="MIDDLE">
+    <IMG SRC="img/hilfe_side.gif" ALT="[Banner]" WIDTH="39" HEIGHT="91">
+</TD>
+
+<!-- "Seite" bereits in Zeile 1 definiert, geht bis hierher -->
+
+</TR>
+
+<!-- Zeile 3: [Navleiste] -->
+
+<TR>
+
+<TD>
+    <!-- leer -->
+</TD>
+
+<!-- [Navleiste] -->
+
+<TD ALIGN="LEFT" VALIGN="TOP">
+
+<!--#include virtual="/e/www/navleisten/default1.nav"-->
+
+</TD>
+
+</TR>
+
+<!-- Zeile 4: Navleiste, Copyright + Webmaster -->
+
+<TR>
+
+<TD>
+    <!-- leer -->
+</TD>
+
+<!-- Navleiste, Copyright & Webmaster -->
+
+<TD>
+
+    <TABLE WIDTH="100%" BORDER="0">
+    <TR>
+    <TD ALIGN="LEFT" VALIGN="TOP">
+        <!--#include virtual="/e/www/navleisten/navleiste1.txt"-->
+    </TD>
+    <TD ALIGN="RIGHT" VALIGN="TOP">
+        <FONT COLOR="#A0A0A0">
+        <!--#include virtual="/e/www/navleisten/copyright1.txt"-->
+        Letzte &Auml;nderung: <!--#echo var="LAST_MODIFIED"--><BR>
+        </FONT>
+    </TD>
+    </TR>
+    </TABLE>
+
+</TD>
+
+</TR>
+
+</TABLE>
+
+</BODY>
+</HTML>
+VERBATIM
+}
+
+# Subroutine to convert a URL into a physical path in the file system:
+
+# (Doesn't change the input if it's already a physical path!)
+
+sub url_to_file
+{
+    my($thispage) = @_; # argument is a reference!
+
+    my($rootdir,$type,$doit);
+
+    # uses globals $html_root, $cgi_root, $root_pattern, $ext_pattern, %html_ext
+
+    # prepend path to root HTML or "cgi-bin" directory:
+
+    unless (${$thispage} =~ m!^(?:$root_pattern)!io)
+    {
+        $rootdir = $html_root;
+        if (${$thispage} =~ m!\.($ext_pattern)$!io)
+        {
+            $type = $html_ext{$1};
+            if (($type == 3) || ($type == 4)) { $rootdir = $cgi_root; }
+        }
+        ${$thispage} =~ s!^/!!;
+        ${$thispage} = "$rootdir/" . ${$thispage};
+    }
+
+    # transformation for hidden HTML subdirectories in user home directories:
+
+    $doit = 0;
+    if (${$thispage} =~ m!^/[egu]/[^/\s]+/([^/\s]+)!)
+    {
+        if (lc($1) ne '.www') { $doit = 1; }
+    }
+    elsif (${$thispage} =~ m!^/[egu]/[^/\s]!)
+    {
+        $doit = 1;
+    }
+    else { }
+    if ($doit)
+    {
+        ${$thispage} =~ s!^/([egu])/([^/\s]+)!/$1/$2/.www!;
+    }
+
+    # substitute "/directory/../" --> "/":
+
+    while (${$thispage} =~ m!/[^\./]+/\.\./!)
+    {
+        ${$thispage} =~ s!/[^\./]+/\.\./!/!g;
+    }
+}
+
+# Subroutine to convert a physical path in the file system into a URL:
+
+# (Doesn't change the input if it's already a URL!)
+
+sub file_to_url
+{
+    my($thispage) = @_; # argument is a reference!
+
+    # uses global $root_pattern
+
+    # remove leading path to root HTML or "cgi-bin" directory:
+
+    ${$thispage} =~ s!^(?:$root_pattern)!!io;
+
+    # transformation for hidden HTML subdirectories in user home directories:
+
+    if ((${$thispage} =~ m!^/[egu]/[^/\s]+/.www/!) ||
+        (${$thispage} =~ m!^/[egu]/[^/\s]+/.www$!))
+    {
+        ${$thispage} =~ s!^/([egu])/([^/\s]+)/.www!/$1/$2!;
+    }
+
+    # substitute "/directory/../" --> "/":
+
+    while (${$thispage} =~ m!/[^\./]+/\.\./!)
+    {
+        ${$thispage} =~ s!/[^\./]+/\.\./!/!g;
+    }
+}
+
+# The End:
+
+__END__
+

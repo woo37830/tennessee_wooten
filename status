@@ -1,0 +1,17 @@
+#!/bin/bash
+#
+# Get data about machine entered as argument using ssh
+#
+# Version: 1.0
+# Author: J. W. Wooten, Ph.D.
+# Date: 20 April 2014
+#
+if [ $# != 1 ]
+then
+    echo ' Useage: status <hostname>'
+    exit 1
+fi
+HOST=$1
+STATS=stats
+
+ssh $HOST $STATS

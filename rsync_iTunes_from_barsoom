@@ -1,0 +1,6 @@
+#!/bin/bash
+#
+# Definition: sync iTunes Movies from barsoom /Volumes/iTunes/Movies to local
+#
+rsync -vaz --rsh="ssh -l woo" barsoom:/Volumes/iTunes/Movies ~
+echo "All Done!"

@@ -1,0 +1,4 @@
+#	@(#)	Test Menu
+	set items =  `echo stc06 dsunx1 ucray bkznext`
+	set test = `Menu  -T 0 $items`
+	if ($status == 0) rlogin $test

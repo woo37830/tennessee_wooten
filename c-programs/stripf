@@ -1,0 +1,21 @@
+:
+# @(#) v1.0	Strip out function headers from c files
+#
+#		Author J. W. Wooten
+
+for FILE in $@
+do
+	sed -n -e '
+	/$/ {
+	s/$/.bp/p
+	: loop
+			n
+			/^{/b exit
+			p
+			b loop
+	: exit
+			i\
+{}
+			b
+	}' $FILE
+done

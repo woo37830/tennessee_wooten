@@ -1,0 +1,5 @@
+#!/bin/bash
+#
+# Definition: return the latest backup date
+#
+tmutil latestbackup | rev | cut -d/ -f1 | cut -d- -f2,3,4 | rev

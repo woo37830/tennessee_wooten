@@ -1,0 +1,58 @@
+*/
+/*                                                                       */
+/*                        MINUIT                                         */
+/*                                                                       */
+/*  A PROGRAM TO MINIMIZE A GENERAL FUNCTION OF N VARIABLES AND CALCULAT */
+/*  THE TRUE ERRORS.  AUTHORS:  F. JAMES AND M. ROOS  OF CERN            */
+/*  ADAPTED FOR THE UNIVERSITY OF NEBRASKA IBM 360/OS BY J. W. WOOTEN    */
+/*  LANGUAGE: FORTRAN IV                                                 */
+/*                                                                       */
+/*  DATA CARD FORMAT AND DESCRIPTION                                     */
+/*                                                                       */
+/*  FIRST CARD  -  IX (I10) ANY ODD NINE DIGIT INTEGER FOR PSEUDORANDOM  */
+/*                                                                       */
+/*  SECOND CARD: 7I1  (ISW(I),I=1,7)                                     */
+/** * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *  */
+/*  I  *   ISW(I) = 0           *      ISW(I) = 1                        */
+/** * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *  */
+/*  1  *  NORMAL MINIMIZATION   *    TERMINATES MINIMIZATION AFTER 1  ST */
+/*  2  *  NO CARDS PUNCHED      *    FITTED VALUES PUNCHED ON CARDS FOR  */
+/*  3  *  NOT USED              *    NOT USED                            */
+/*  4  *  NO ERROR CALCULATION  *    VARIANCE MATRIX AND PAER ERROR CALC */
+/*  5  *  NORMAL PRINT OUT      *    ADDITIONAL STEP-BY-STEP PRINT OUT   */
+/*  6  *  NOT USED              *    NOT USED                            */
+/*  7  *  NO MINOS ERROR        *    MINOS ERROR CALCULATION             */
+/** * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *  */
+/*                                                                       */
+/*THIRD CARD - BCD TITLE (20A4)                                          */
+/*FOURTH CARD - MDIGIT,NSTEP,UP,EPSI (2I10,2F10.5)                       */
+/*             MDIGIT (REF. SEEK) TYPICALLY 10                           */
+/*             NSTEP (REF. TAUROS) TYPICALLY 200                         */
+/*             UP (REF. SEC. 3)  TYPICALLY 1                             */
+/*             EPSI (REF. TAUROS) TYPICALLY .5                           */
+/*                                                                       */
+/* PARAMETER CARDS                                                       */
+/*    COLUMNS            CONTENT                             FORMAT      */
+/** * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *  */
+/*   1 - 10     *  EXTERNAL PARAMETER NUMBER              *  I10         */
+/*  11 - 20     *  PARAMETER NAMES                        * 2(1XA4)      */
+/*  21 - 30     *  STARTING VALUE                         * E10.3        */
+/*  31 - 40     *  STARTING ERROR (IF ZERO,HELD CONSTANT) * E10.3        */
+/*  41 - 50     *  LOWER LIMIT                            * E10.3        */
+/*  51 - 60     *  UPPER LIMIT                            * E10.3        */
+/*              (IF BOTH LIMITS ARE ZERO OR BLANK                        */
+/*               PARAMETER IS UNBOUNDED)                                 */
+/*                                                                       */
+/*      61      *  1 MEANS SEEK SEARCH FOR THIS PARAMETER *              */
+/*              *  0 MEANS NO MINOS ERROR REQUIRED        * I1           */
+/*      62      *  1 MEANS MINOS ERROR REQUIRED FOR                      */
+/*              *    THIS PARAMETER                       *              */
+/** * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *  */
+/*                                                                       */
+/*   ONE BLANK CARD   (STOPS THE READING OF PARAMETER CARDS)             */
+/*                                                                       */
+/*   ANOTHER BLANK CARD STOPS MINUIT OR THE SEQUENCE STARTING WITH       */
+/*   THE FIRST CARD MAY BE REPEATED                                      */
+/*                                                                       */
+/** * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *  */
+/*                                                                       */

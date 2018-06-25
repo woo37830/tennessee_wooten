@@ -1,0 +1,11 @@
+#! /bin/csh
+# @(#) checks that files are same type before overwriting
+#
+# rename file1 file2
+
+if ( "`file $1`" != "`file $2`" ) then
+	/bin/mv -i $1 $2
+else
+	/bin/mv $1 $2
+endif
+

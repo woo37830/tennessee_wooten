@@ -1,0 +1,45 @@
+:
+# @(#)	unmailfiles filename - strips apart spec. mailfiles	J. W. Wooten
+
+FILE=$1
+
+	cat $FILE | (read LINE; echo $LINE>/dev/null
+	
+	if [ "`echo $LINE | cut -c1,2`" = "%%" ]
+		then OUT="`echo $LINE | sed 's/%%//'`"
+#			 echo "----------Creating file $OUT.tmp$$"
+		else echo "File $FILE does not have proper header of %%filename"
+		exit
+		fi
+		
+	while read LINE
+	
+	do
+		if [ "`echo $LINE | cut -c1,2`" = "%%" ]
+			then OUT="`echo $LINE | sed 's/%%//'`"
+#			 	echo "----------Creating file $OUT.tmp$$"
+			else echo "$LINE">>$OUT.tmp$$
+			fi
+	done)	
+
+for i in `ls -F *.tmp$$`
+do
+
+	OUT="`echo $i | sed 's/%%//' | sed 's/\.tmp.*$//'`"
+#	echo "-----------Operating on file $OUT"
+	if [ -f $OUT ]
+		then 
+		     diff $OUT $OUT.tmp$$ >/dev/null
+		     if [ $? -gt 0 ]
+			then
+		     	     mv $OUT $OUT.bak
+			     mv $OUT.tmp$$ $OUT
+			     echo "......................replaced $OUT"
+			     echo ".<=$OUT.bak >=$OUT...differences are: "
+        	             diff $OUT.bak $OUT
+			else /bin/rm $OUT.tmp$$
+			fi
+		else mv $OUT.tmp$$ $OUT
+		     echo "......................added    $OUT"
+		fi
+done

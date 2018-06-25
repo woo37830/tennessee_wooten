@@ -1,0 +1,9 @@
+#!/bin/bash
+#
+# start the default editor on the file
+#
+if [[ $# -ne 1 ]] ; then
+    echo 'Useage: redit filename'
+else
+    open -a KomodoEdit $1
+fi

@@ -1,0 +1,108 @@
+#!/bin/bash
+#
+# Basic queue manager for running jobs remotely.
+#
+# Version: 0.1 (24th October 2007)
+# Author: Andrew
+#
+
+SENDUSER="jwooten37830@gmail.com"
+
+# Ensure a command to quit doesn't already exist
+rm -f ${QUEUEPATH}quit.job
+
+echo ' Queue Manager Initialising...'
+echo ' '
+echo ' Waiting for jobs...'
+while
+true # Loop forever
+do
+# Check to see if there are jobs
+ls ${QUEUEPATH} | grep .job > ${QUEUEPATH}contents.txt
+nextjob=`head -1 ${QUEUEPATH}contents.txt`
+rm -f ${QUEUEPATH}contents.txt
+# Then check to see if there's something in this variable. If not, then there's not job to run
+if [[ ! -z $nextjob ]]
+then
+# There's a job to run
+echo "Job ${nextjob%%.job} Started"
+# Extract notification information
+notification=`fgrep "#$" "${QUEUEPATH}$nextjob" | tr "[:upper:]" "[:lower:]" | fgrep "notify" | head -1 | tr -d " " | cut -c10-11`
+
+if [[ ! -z $notification ]]
+then
+# Extract email information
+emailadd=`fgrep "#$" "${QUEUEPATH}$nextjob" | tr "[:upper:]" "[:lower:]" | fgrep "email" | head -1 | tr -d " " | cut -c9-50`
+
+
+# Check to see if a notification should be sent at the start of the job
+if [[ ( $notification = 1 || $notification = 3 ) && ! -z $emailadd ]]
+then
+sendmail -f "${SENDUSER}" "$emailadd" <<EOF
+Subject: Job ${nextjob%%.job} Started
+    
+Hi,
+        As requested, this message is to inform you that:
+        job ${nextjob%%.job} started at `date`
+        
+    Regards,
+        John
+EOF
+
+fi
+fi
+
+# Run the job in a new bash shell
+started="`date +%y%m%d%H%M%S`"
+bash ${QUEUEPATH}$nextjob
+echo "Job ${nextjob%%.job} Started: ${started}, Ended: `date +%y%m%d%H%M%S`" >> ${QUEUEPATH}../jobs.log 
+# Job complete tell user
+
+if [[ ( $notification = 2 || $notification = 3 ) && ! -z $emailadd ]]
+then
+sendmail -f "${SENDUSER}" "$emailadd" <<EOF
+Subject: Job ${nextjob%%.job} Completed
+    
+Hi,
+        As requested, this message is to inform you that:
+        job ${nextjob%%.job} completed at `date`
+        
+    Regards,
+        John
+EOF
+
+fi
+
+# Now Job is complete. Remove the file
+rm -f ${QUEUEPATH}${nextjob}
+echo ' '
+echo "Job ${nextjob%%.job} Finished"
+
+else
+# There's no job to run
+
+# In order to save the poor computer, sleep for 5 seconds
+sleep 5
+fi
+
+# Need to check for the quit.job file and
+# confirm that the owner is whoami
+if [[ -e ${QUEUEPATH}quit.job ]]
+then
+if [[ -O ${QUEUEPATH}quit.job ]]
+then
+break
+else
+echo " Owner of file different from `whoami`. Removing file"
+rm -f ${QUEUEPATH}quit.job
+fi
+fi
+done
+
+# If outside the main loop, the quit file exists.
+# Need to delete the file and then inform user of
+# the quit command
+echo ' Quit file detected. The Queue Manager is shutting down...'
+# Delete the file
+rm -f ${QUEUEPATH}quit.job
+echo ' Clean-up complete. Queue Manager finished.'

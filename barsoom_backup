@@ -1,0 +1,6 @@
+#!/bin/bash
+#
+# Definition: Start a Time capsule backup on barsoom
+#
+ssh barsoom  "tmutil startbackup; exit"
+echo "Started Time Capsule backup on barsoom"

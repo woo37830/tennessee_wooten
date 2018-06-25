@@ -1,0 +1,14 @@
+:
+# @(#) strips v1.0	Strip shell comment headers		Author: J. W. Wooten
+
+for FILE in $@
+do
+	cat	$FILE | (read LINE; echo $LINE
+	while read LINE
+	do
+		if [ "`echo $LINE | cut -c1 `" = "#" ]
+			then	echo "$LINE"
+			else	exit
+		fi
+	done)
+done

@@ -1,0 +1,6 @@
+#! /bin/sh
+# @(#) Mail a file to a list of users 
+#
+for i in `cat /home/woo/sacam_users`
+	do echo "mail -f file-name $i"
+done

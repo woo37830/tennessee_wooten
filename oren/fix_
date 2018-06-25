@@ -1,0 +1,6 @@
+#! /bin/sh
+# @(#) changes file names with _ to -
+#
+for i in $@
+	do mv "$i" `echo "$i" | tr '_' '-'`
+done

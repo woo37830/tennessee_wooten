@@ -1,0 +1,7 @@
+#!/bin/bash
+#
+# Definition: sync iTunes Movies from barsoom /Volumes/iTunes/Movies to Seagate
+#
+rsync -vaz --rsh="ssh -l woo" barsoom:/Volumes/iTunes/Movies /Volumes/SeagateTimeCapsule-2
+rsync -vaz --rsh="ssh -l woo" barsoom:/Users/woo/backups/sql /Volumes/SeagateTimeCapsule-2
+echo "All Done!"

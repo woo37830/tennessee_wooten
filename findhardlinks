@@ -1,0 +1,28 @@
+#!/bin/bash
+if [[ $# -lt 1 ]] ; then
+    echo "Usage: findhardlinks [-root] <fileOrDirToFindFor> ..."
+    exit 1
+fi
+home=/Users/woo
+doIt=1
+echo $1
+while [[ $# -ge 1 ]] ; do
+  if [[ "-root" != "$1" ]] ; then
+    echo "Processing '$1'"
+    if [[ ! -r "$1" ]] ; then
+        echo "   '$1' is not accessible"
+    else
+        numlinks=$(ls -ld "$1" | awk '{print $2}')
+        inode=$(ls -id "$1" | awk '{print $1}' | tail -1l)
+        device=$(df "$1" | tail -1l | awk '{print $9}')
+        if [[ ${doIt} -eq 1 ]] ; then
+           device=$home
+        fi
+        echo "   '$1' has inode ${inode} on mount point '${device}'"
+        find ${device} -inum ${inode} 2>/dev/null | sed 's/^/        /'
+    fi
+  else
+    doIt=0
+  fi
+    shift
+done

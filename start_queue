@@ -1,0 +1,10 @@
+#!/bin/bash
+#
+# Start the queue_manager for batch jobs
+#
+# Version: 0.1
+# Author: J. Wooten, Ph.D.
+# Date:   17 April, 2014
+#
+`~/bin/queue_manager &`
+
