@@ -1,4 +1,5 @@
 #!/usr/bin/perl
+$version = "1.0";
 #
 # Usage: time_track_report.pl
 # Author: woo
@@ -118,9 +119,7 @@ foreach $client (sort keys(%client_list))  {
     &print_total("Client", $client_total);
 }
 close(STUFF);
-print "\n57->".&nice_time(57);
-print "\n'57'->".&nice_time("57");
-print "\nAll Done!\n";
+print "\nVersion: $version - All Done!\n";
 sub elapsed {
     $start_str = $_[0];
     $end_str = $_[1];
@@ -130,11 +129,10 @@ sub elapsed {
     return ($start_year, $start_mon, $start_day, $time);
 }
 sub nice_time {
-    my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = gmtime($_[0]*60);
-#    return ("Total Execution time: $yday days $hour hours $min minutes $sec seconds\n");
-    $min = $min+1 if( $sec >= 30 );
-    $hour = $hour+1 if( $min > 59);
-    return "$hour:$min";
+#    my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = gmtime($_[0]*60);
+     $hour = int(int($_[0])/int(60));
+     $min = $_[0] - ($hour * 60);
+     return "$hour:$min";
 }
 sub print_total {
     if( $_[1] != 0 ) {
@@ -161,13 +159,13 @@ sub elapsed_prt {
 
 
 format STDOUT =
-@<<<<<<<<<<<<<<<      @<<<<<<<<<<<<<<<<    @###########         @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-$start,          $end,             &elapsed_prt($times[3]),           $task
+@<<<<<<<<<<<<<<<      @<<<<<<<<<<<<<<<<    @>>>>>>>>>>>         @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+$start,          $end,             &nice_time(&elapsed_prt($times[3])),           $task
 .
 format ENDING =
 ========
-@<<<<<<<<<   Total:  @##########
-$period, $total                      
+                      @<<<<<<<<<   Total:  @>>>>>>>>>>>
+$period, &nice_time($total)                      
 
 .
 

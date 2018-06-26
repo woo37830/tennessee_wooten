@@ -15,7 +15,6 @@
 /internetcheck.bash/1.1.1.1/Sat Dec 14 21:49:59 2013//
 /ipaddress.bash/1.1.1.1/Sat Dec 14 21:49:59 2013//
 /itunesplaying.scpt/1.1.1.1/Sat Dec 14 21:49:59 2013//
-/main.bash/1.1.1.1/Sat Dec 14 21:49:59 2013//
 /main_network.bash/1.1.1.1/Sat Dec 14 21:49:59 2013//
 /networkactivity.sh/1.1.1.1/Sat Dec 14 21:49:59 2013//
 /niceuptime.bash/1.1.1.1/Sat Dec 14 21:49:59 2013//
@@ -28,14 +27,16 @@
 /rssreader.sh/1.1.1.1/Sat Dec 14 21:49:59 2013//
 /rssreadertitle.sh/1.1.1.1/Sat Dec 14 21:49:59 2013//
 /screenresolution.bash/1.1.1.1/Sat Dec 14 21:49:59 2013//
-/servercheck.bash/1.1.1.1/Sat Dec 14 21:49:59 2013//
 /sniffer.bash/1.1.1.1/Sat Dec 14 21:49:59 2013//
 /specific_list copy.scpt/1.1.1.1/Sat Dec 14 21:49:59 2013//
 /specific_list.scpt/1.1.1.1/Sat Dec 14 21:49:59 2013//
 /stock.bash/1.1.1.1/Sat Dec 14 21:49:59 2013//
 /timeout.bash/1.1.1.1/Sat Dec 14 21:49:59 2013//
-/tomorrow.bash/1.1.1.1/Sat Dec 14 21:49:59 2013//
 /trashsize.bash/1.1.1.1/Sat Dec 14 21:49:59 2013//
 /unreadmail.bash/1.1.1.1/Sat Dec 14 21:49:59 2013//
 /weather.bash/1.1.1.1/Sat Dec 14 21:49:59 2013//
+/main.bash/1.2/Mon Feb  3 17:55:22 2014//
+/servercheck.bash/1.2/Fri Dec 27 23:42:36 2013//
+/tomorrow.bash/1.2/Sat Jan  4 02:22:27 2014//
+/CPUMemDskUsage.glet/0/dummy timestamp//
 D
