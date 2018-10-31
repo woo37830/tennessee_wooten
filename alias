@@ -86,7 +86,6 @@ a	track='time_track.tcl'
 a       on='time_track.tcl start'
 a	off='time_track.tcl stop'
 a	billed='time_track.tcl summary'
-a	running="ps ax | grep \$@ |& grep -v 'grep \$@' "
 # --------- getting phone #'s and user ids etc. ---------
 a	phone="/Users/woo/bin/phone "
 a	whos="whois -h nic.ddn.mil"

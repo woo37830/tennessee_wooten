@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 #
-$diary = "/Users/woo/.diary";
-$todo = "/Users/woo/pers/.todo";
+$diary = "/Users/woo/Dropbox/Personal/Documents/Notes/.diary";
+$todo = "/Users/woo/Dropbox/Personal/Documents/Notes/.todo";
 
 open( DIARY, $diary ) || die "Unable to open file: $diary\n";
 #open( TODO, "+>$todo" ) || die "Unable to open file: $todo for read/write\n";

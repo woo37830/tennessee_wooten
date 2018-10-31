@@ -1,4 +1,7 @@
-:
+#!/bin/bash
+#
+# Find the README file in a compressed tar file (tarlib) and browse it.
+#
 # @(#)	whatis	Author: John Wooten
 #
 

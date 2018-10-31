@@ -30,7 +30,7 @@ if( length($month_number) == 1 )	{ $month_number = "0$month_number"; }
 $DIR = "$year$month_number";
 print "\n$month_abbr[$mon] $mday, $year\t$DIR\t$CURRENT_TIME\n";
 $LOGDIR = "$ENV{HOME}/pers/timelogs";
-open(PROJS, "$LOGDIR/projects") || die("No projects available");
+open(PROJS, "$LOGDIR/projects") || die("No projects available at $LOGDIR/projects");
 my @projects = <PROJS>;
 close PROJS;
 	if( !( -e "$LOGDIR/$DIR" ) )	{
