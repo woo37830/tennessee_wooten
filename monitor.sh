@@ -56,12 +56,15 @@ unset myUsedPer
 unset c
 
 
-mDisk=`df | awk '/dev\/disk0s2/ && NF>1 {print $5}' | sed 's/\%//'`
-myDisk =`expr 100 - $mDisk `
+mDisk=`df | awk '/dev\/disk1s2/ && NF>1 {print $5}' | sed 's/\%//'`
+
+#while [ $mDisk ]
+#do
+myDisk=`expr 100 - $mDisk `
 
 typeset -i a=9
 echo -e "Disk Usage   \c"
-while [ $a -lt $myDisk ]
+while [ $a -lt 100 ]
 do
 	echo -e "\033[1;36m*\033[0m\c"
 	a=`expr $a + 10`
@@ -78,3 +81,4 @@ echo -e "\r"
 unset myDisk
 unset mDisk
 unset a
+#done

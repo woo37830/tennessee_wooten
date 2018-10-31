@@ -14,6 +14,7 @@ a	pd=pushd
 a	pop=popd
 # ----------Useful directories
 a   crack='pushd /Users/woo/Downloads/john-1.7.9-jumbo-7-macosx-Intel-2/run'
+a   drush_dir='pushd /Users/woo/bin/drush'
 # ----------cvs shortcuts
 a	cvs-edits="cvs -Q status | grep -i locally"
 a	cvs-diffs="cvs -q diff --brief"
@@ -34,6 +35,8 @@ a   vpause='vagrant suspend'
 a   vsave="vagrant snapshot save \$@"
 a   caseflow="cd ~/vagrant_vms/precise64"
 a   vstart="vagrant snapshot restore root_password_set --no-provision"
+a   docker_clean="docker rm `docker ps --no-trunc -aq`"
+a   start_mssql="docker run -d --name sql_server_demo -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=Fester123.' -p 1433:1433 microsoft/mssql-server-linux"
 # ----------- listing files and directories ----------
 a	l='/bin/ls -FC'	# list files in columns and mark directories
 a	ll='/bin/ls -l'		# long listing
@@ -56,7 +59,7 @@ a	msgs="tail -50 /usr/adm/messages | more"
 a	lpderr="tail	-50 /usr/adm/lpd-errs | more"
 a	anynu="tail -24  /usr/adm/nu.log"
 a	whop="ps -agu"
-a	userp="ps -agu | grep \$@ |& grep -v 'grep $@' "
+a	userp="ps -agu | grep \$@ | grep -v 'grep \$@' "
 a	lastlog="last | head -20"
 a	usersum="ac -p"
 a	rup="/usr/local/lib/watcher/rupping"
@@ -65,21 +68,25 @@ a	syslog="tail -50 /private/var/log/system.log"
 a   findlocked="find . -flags uchange"
 a   unlock="chflags -R nouchg ."
 a   clear_history='cat /dev/null > ~/.bash_history && history -c && exit'
+a   report='time_track_report.pl'
 # -------------accessing remote sites ---
 a   jenkins='java -jar ~/bin/jenkins-cli.jar -s http://jwooten37830.com:8080/jenkins/ '
+a   sync-to-here='rsync --progress --partial -avz woo@\$@:\$@ \$@'
+a   sync-from-here='rsync --progress --partial -avz \$@ woo@\$@:\$@'
 # ----------managing jobs ----------------
-a	running="ps ax | grep \$@ |& grep -v 'grep \$@' "
+a	running="ps ax | grep \$@ | grep -v 'grep \$@' "
 a	slay='(set j=`ps -ax|grep \$@ |head -1`;kill -1 $j[1]) >& /dev/null'
 a	zap='(set j=`ps -ax|grep \$@ |head -1`;kill -9 $j[1]) >& /dev/null'
 # ---------- priviledged applications --------
 # ----------time management --------------
 a   set_time="echo 'Must be root';/usr/etc/ntp -sf tick.usno.navy.mil";
 a	timesheet='timelogger -i'
-a	todo='vi  + $HOME/pers/.todo'
+a	todo='vi  + $HOME/Dropbox/Personal/Documents/Notes/.todo'
 a	track='time_track.tcl'
-a   on='time_track.tcl start'
+a       on='time_track.tcl start'
 a	off='time_track.tcl stop'
 a	billed='time_track.tcl summary'
+a	running="ps ax | grep \$@ |& grep -v 'grep \$@' "
 # --------- getting phone #'s and user ids etc. ---------
 a	phone="/Users/woo/bin/phone "
 a	whos="whois -h nic.ddn.mil"
@@ -87,6 +94,7 @@ a	whos="whois -h nic.ddn.mil"
 a   kill_dashboard='defaults write com.apple.dashboard mcx-disabled -boolean YES;killall Dock'
 a   restore_dashboard='defaults write com.apple.dashboard mcx-disabled -boolean NO;killall Dock'
 # -----------miscellaneous aliases -----------------
+a       composer='php /Users/woo/bin/composer.phar'
 a	forth="/Users/woo/Development/Forth/Perl/perl-forth/forth"
 a	sforth="/Users/woo/Development/Forth/Cocoa-for-SwiftForth/SwiftForth/bin/osx/coco-sf"
 a   oddball='echo '\''load oddball.dict'\''; pushd ~/Development/Forth/Perl/perl-forth; forth; pop'

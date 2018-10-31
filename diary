@@ -1,14 +1,15 @@
 :
 # @(#) diary v1.0	Maintain a diary
 
-DIARY="$HOME/.diary"
+#DIARY="$HOME/.diary"
+DIARY="$HOME/Dropbox/Personal/Documents/Notes/.diary"
 #
 # Sync by copying last edited .diary in dropbox to $HOME/.diary
 #
-    cp /Users/woo/Dropbox/Personal/Documents/Notes/.diary $DIARY
+#    cp /Users/woo/Dropbox/Personal/Documents/Notes/.diary $DIARY
 
 	echo "----`date`---" >>$DIARY
 	echo "" >>$DIARY
 	vi + $DIARY
-	cp $DIARY /Users/woo/Dropbox/Personal/Documents/Notes
+#	cp $DIARY /Users/woo/Dropbox/Personal/Documents/Notes
 

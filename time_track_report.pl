@@ -14,7 +14,7 @@ $version = "1.0";
 
 # First open my database.  Complain if unable.
 
-open(STUFF, "/Users/woo/.time_track/time_track.txt") || die "Can't open datafile: $!\n";
+open(STUFF, "/Users/woo/Dropbox/Personal/Documents/Notes/time_track.txt") || die "Can't open datafile: $!\n";
 
 
 while(<STUFF>)  {
