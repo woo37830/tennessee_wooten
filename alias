@@ -93,6 +93,8 @@ a	whos="whois -h nic.ddn.mil"
 a   kill_dashboard='defaults write com.apple.dashboard mcx-disabled -boolean YES;killall Dock'
 a   restore_dashboard='defaults write com.apple.dashboard mcx-disabled -boolean NO;killall Dock'
 # -----------miscellaneous aliases -----------------
+a        compress="tar -czvf $1 $2"
+a        uncompress="tar -xzvf $1 "
 a       composer='php /Users/woo/bin/composer.phar'
 a	forth="/Users/woo/Development/Forth/Perl/perl-forth/forth"
 a	sforth="/Users/woo/Development/Forth/Cocoa-for-SwiftForth/SwiftForth/bin/osx/coco-sf"
