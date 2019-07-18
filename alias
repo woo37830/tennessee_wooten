@@ -36,7 +36,6 @@ a   vpause='vagrant suspend'
 a   vsave="vagrant snapshot save \$@"
 a   caseflow="cd ~/vagrant_vms/precise64"
 a   vstart="vagrant snapshot restore root_password_set --no-provision"
-a   docker_clean="docker rm `docker ps --no-trunc -aq`"
 a   start_mssql="docker run -d --name sql_server_demo -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=Fester123.' -p 1433:1433 microsoft/mssql-server-linux"
 # ----------- listing files and directories ----------
 a	l='/bin/ls -FC'	# list files in columns and mark directories

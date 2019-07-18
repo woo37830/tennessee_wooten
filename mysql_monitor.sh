@@ -12,3 +12,4 @@ printf "System Integrity Protection status: \033[1;31mdisabled\033[0m\n";
 else
 printf "System Integrity Protection status: \033[32menabled\033[0m\n";
 fi
+source ~/bin/check_docker.sh
