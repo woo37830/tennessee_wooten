@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 #br="$(tput -S <<<$'setaf 1\nbold\n')" # Bold Red
 br="\033[1;31m";
 #bg="$(tput -S <<<$'setaf 2\nbold\n')" # Bold Green

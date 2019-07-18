@@ -90,9 +90,9 @@ date
 
 # Information about your computer.
 $myscriptpath/computerinfo.bash
-~/bin/check_docker.sh
-~/bin/mysql_monitor.sh
-~/bin/sip_monitor.sh
+/bin/bash ~/bin/check_docker.sh
+/bin/bash ~/bin/mysql_monitor.sh
+/bin/bash ~/bin/sip_monitor.sh
 #
 # Show Current version - this is also in computerinfo.bash above amount of ram
 # sw_vers | tail -2 | head -1
