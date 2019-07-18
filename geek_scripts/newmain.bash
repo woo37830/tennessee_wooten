@@ -90,12 +90,14 @@ date
 
 # Information about your computer.
 $myscriptpath/computerinfo.bash
+~/bin/check_docker.sh
+~/bin/mysql_monitor.sh
+~/bin/sip_monitor.sh
 #
 # Show Current version - this is also in computerinfo.bash above amount of ram
 # sw_vers | tail -2 | head -1
 # Current uptime.
 #echo "uptime: `uptime`"
-source ~/bin/mysql_monitor.sh
 $myscriptpath/niceuptime.bash
 #
 # Show CPU usage
@@ -175,7 +177,7 @@ if [ "$NOINTERNET" -eq "2" ]; then
   # You can modify this script to show Temperature and/or Conditions
   # give weather.bash a zipcode
   #$myscriptpath/weather.bash 20653
-  #$myscriptpath/weather.bash 22202 
+  #$myscriptpath/weather.bash 22202
 
   # Do I have unread IMs in Adium?
   #$myscriptpath/adium.bash $myscriptpath
