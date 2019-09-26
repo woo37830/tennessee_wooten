@@ -23,7 +23,7 @@ stopServer() {
     if [ ! -z "$PID" ]; 
     then
         echo "... stopping mongodb-server with pid: $PID"
-     kill -2 $PID
+        kill -9 $PID
     else
         echo "... mongodb-server is not running!"
     fi

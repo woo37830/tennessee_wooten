@@ -1,12 +1,30 @@
 :
 # @(#) svnstat v1.0      Collect stats from svn for project
+#
+# Gather statistics for project in cvsrep
+#
 
+if [ "$#" -ne 1 ]; then
+    echo "Usage: cvsstat name_of_project"
+    exit 1
+fi
 cd ~/tmp
-mkdir cvsstat
+if [ ! -e cvsstat ]; then
+  mkdir cvsstat
+  echo "Created cvsstat directory in ~/tmp"
+fi
 cd cvsstat
 cvs -d :ext:woo@jwooten37830.com:/Users/woo/cvsrep co $1
+if [ $_ ]; then
+  echo "cvs checkout of $1 failed"
+  exit 1
+fi
 cd $1
 cvs log > $1.log
+if [ !-f ~/lib/jars/statcvs.jar ]; then
+  echo "jar file for statcvs.jar not located in ~/lib/jars"
+  exit 1
+fi
 java -jar ~/lib/jars/statcvs.jar $1.log .
 cd ~/tmp/cvsstat/$1
 /Applications/Firefox.app/Contents/MacOS/firefox -new-window index.html
