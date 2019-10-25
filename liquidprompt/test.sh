@@ -1,6 +1,20 @@
 #!/bin/sh
 
 
+# Run the testsuite with both bash and zsh
+if [ -z "$BASH_VERSION$ZSH_VERSION" ]; then
+    for sh in bash zsh
+    do
+	if [ -x /bin/$sh ]; then
+	    /bin/$sh "$0"
+	elif [ -x /usr/bin/$sh ]; then
+	    /usr/bin/$sh "$0"
+	fi
+    done
+    exit 0
+fi
+
+
 print_ok()
 {
     local OK="\\033[1;32m"
@@ -108,7 +122,13 @@ nproc()
 acpi()
 {
     echo "fake acpi $@" 1>&2
-    echo 'Battery 0: Discharging, 55%, 01:39:34 remaining'
+    if [[ "x$1" == --battery ]]; then
+	echo 'Battery 0: Discharging, 55%, 01:39:34 remaining'
+    elif [[ "x$1" == -t ]]; then
+	echo 'Thermal 0: ok, 36.0 degrees C'
+    else
+	return 1
+    fi
 }
 
 
