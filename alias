@@ -45,6 +45,7 @@ a	ll='/bin/ls -l'		# long listing
 a	la='/bin/ls -al'		# long listing of all files
 a	lt='/bin/ls -at'		#list by time modified
 a   fle="perl -pi -e 's/\r\n?/\n/g' "
+a   pcat='pygmentize -f terminal256 -O style=native -g'
 # ------------printing -------------------------------------
 a	ps_troff="tbl \$@ | ptroff -ms -t"
 a	prt_troff="tbl $@ | nroff -ms"
@@ -71,6 +72,7 @@ a   findlocked="find . -flags uchange"
 a   unlock="chflags -R nouchg ."
 a   clear_history='cat /dev/null > ~/.bash_history && history -c && exit'
 a   report='time_track_report.pl'
+a   makefile-targets='grep "^[^#[:space:]].*:" Makefile'
 # -------------accessing remote sites ---
 a   jenkins='java -jar ~/bin/jenkins-cli.jar -s http://jwooten37830.com:8080/jenkins/ '
 a   sync-to-here='rsync --progress --partial -avz woo@\$@:\$@ \$@'
@@ -98,7 +100,7 @@ a   restore_dashboard='defaults write com.apple.dashboard mcx-disabled -boolean 
 a        compress="tar -czvf $1 $2"
 a        uncompress="tar -xzvf $1 "
 a       composer='php /Users/woo/bin/composer.phar'
-a	forth="/Users/woo/Development/Forth/Perl/perl-forth/forth"
+a	forth="pushd /Users/woo/Development/Forth/Perl/perl-forth; forth; pop"
 a	sforth="/Users/woo/Development/Forth/Cocoa-for-SwiftForth/SwiftForth/bin/osx/coco-sf"
 a   oddball='echo '\''load oddball.dict'\''; pushd ~/Development/Forth/Perl/perl-forth; forth; pop'
 a	pforth="/Users/woo/Development/Forth/pforth_v27/fth/pforth"
@@ -234,7 +236,7 @@ alias mv='mv -i'
 alias mkdir='mkdir -p'
 
 alias ls='/bin/ls -hF' # add colors for filetype recognition
-alias l='/bin/ls -1'
+#alias l='/bin/ls -1'
 alias la='/bin/ls -Al' # show hidden files
 alias lx='/bin/ls -lXB' # sort by extension
 alias lk='/bin/ls -lSr' # sort by size
