@@ -58,53 +58,9 @@ if [ -e $myscriptpath/.$mynameofscript.txt ] ; then
   exit 0
 fi
 touch $myscriptpath/.$mynameofscript.txt
-
-###############################################################################################################
 #
-# CALENDAR SCRIPTS
-
-# Today's date, formated: Wed  Oct 14 2009
-# Left justified
-#$myscriptpath/todaydate.bash
-date
-# Centered over calendar
-#echo "   `$myscriptpath/todaydate.bash`"
-
-# The calendar with ## for the current day.
-#$myscriptpath/calendar.bash
-
-# The calendar, horizontal, with ## for the current day - uses calendar.bash
-# Edit the script to use cal and have ||'s around the current day.
-#$myscriptpath/calendarhorizontal.bash
-
-# Your iCal events for Today and Tomorrow
-# Note that ranged events may not be working correctly.
-# icalevents command line program is required
-#$myscriptpath/icaltodayevent.bash
-#$myscriptpath/icaltomorrowevent.bash
-
-#$myscriptpath/icalbuddy.bash
-###############################################################################################################
-#
-# COMPUTER INFORMATION SCRIPTS
-
-# Information about your computer.
-$myscriptpath/computerinfo.bash
-/bin/bash ~/bin/geek_scripts/check_docker.sh
-/bin/bash ~/bin/geek_scripts/mysql_monitor.sh
-/bin/bash ~/bin/geek_scripts/sip_monitor.sh
-#
-# Show Current version - this is also in computerinfo.bash above amount of ram
-# sw_vers | tail -2 | head -1
-# Current uptime.
-#echo "uptime: `uptime`"
-$myscriptpath/niceuptime.bash
-
-# What are my ip addresses?  Local and internet.
-echo "IP Addresses"
-$myscriptpath/ipaddress.bash
-source $myscriptpath/external_address.bash
-
+# Show last backup
+echo "Latest: `tmutil latestbackup | awk -F'/' '{print $6}'`"
 ###############################################################################################################
 #
 # END OF SCRIPT

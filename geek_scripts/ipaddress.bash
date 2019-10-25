@@ -1,6 +1,5 @@
 #! /bin/bash
 ifconfig | grep "inet" | grep -v 127.0.0.1 | grep -v inet6 | awk '{print $2}'
-echo
 exit
 #original below
 myen0=`ifconfig en0 | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}'`
