@@ -5,7 +5,10 @@ if [[ $# -eq 0 ]]; then
 fi
 echo "Searching diary"
 echo
-grep $1 ~/.diary
+grep $1 ~/Dropbox/Personal/Documents/Notes/.diary
+echo "Searching ToDo"
+echo
+grep $1 ~/Dropbox/Personal/Documents/Notes/.todo
 echo "Searching Language"
 echo
 grep $1 ~/Dropbox/Personal/Documents/Notes/Language.txt | sed 's:~/Dropbox/Personal/Documents/Notes/::'

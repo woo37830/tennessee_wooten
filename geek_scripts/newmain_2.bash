@@ -60,19 +60,19 @@ fi
 #touch $myscriptpath/.$mynameofscript.txt
 #
 # Show CPU usage
-echo "`top -l 1 | grep -E '^CPU' | awk '{print $1,$2,100-$7}'`"
+#echo "`top -l 1 | grep -E '^CPU' | awk '{print $1,$2,100-$7}'`"
 # Show Memory usage
-echo "`top -l 1 | grep -E '^Phys' | awk '{print $1,$2,$3}'`"
+#echo "`top -l 1 | grep -E '^Phys' | awk '{print $1,$2,$3}'`"
 
 # What processes are using up your cpu?
 # If this script isn't working, read it and update it.
 # processesbycpu.bash [number of processes to display]
-#$myscriptpath/processesbycpu.bash 3
+$myscriptpath/processesbycpu.bash 3
 
 # What processes are using up your memory?
 # If this script isn't working, read it and update it.
 # processesbymem.bash [number of processes to display]
-#$myscriptpath/processesbymem.bash 3
+$myscriptpath/processesbymem.bash 3
 
 # How charged is my battery?
 #$myscriptpath/battery.bash
@@ -178,8 +178,13 @@ $myscriptpath/trashsize.bash
 # Show hard drive usage and free space.
 #  Either of these seems to take a LONG time.
 #$myscriptpath/diskspace.bash
+<<<<<<< HEAD
 echo "Disk Space:"
 df -h | grep disk | awk '{ print "Used: " $5 " Available: " $4 }'
+=======
+#echo "Disk Space:"
+#df -h | grep disk | awk '{ print "Used: " $5 " Available: " $4 }'
+>>>>>>> 8be6f031a06467eb1515696493c31d4174c12a72
 
 ###############################################################################################################
 #

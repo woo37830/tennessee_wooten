@@ -1,25 +1,62 @@
 #!/usr/bin/perl
-$version = "1.0";
+$version = "1.1";
 #
-# Usage: time_track_report.pl
+# Usage: time_track_report.pl [month=NN] [year=YYYY] [client=abcde]
+#        where month will be for current year unless year is specified
+#        and year will show all months
+#        and client will restrict to that client.
 # Author: woo
 # Since: 20180625
 #
 # Open the time_track.txt file where time_track.tcl places its data
 # and print out a report summarizing by day, month, year, and client
-# Lesson Learned: The format string can confuse you when you're printout 
-# doesn't match the expected value.  For instanc, @####### will not print
+# Lesson Learned: The format string can confuse you when your printout 
+# doesn't match the expected value.  For instance, @####### will not print
 # '34:15' to look correct, but rather only the 34 part.  Change it to 
-# a string @<<<<<<<<<<<<<< and it print fine.
+# a string @<<<<<<<<<<<<<< and it will print fine.
 
+($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime();
+$mon++;
+$year += 1900;
+print "Default: $mon/$year\n";
+# Get the command line arguments
+$num_args = $#ARGV + 1;
+
+my %hash;
+if ($num_args > 0) {
+    foreach $argnum (0 .. $#ARGV) {
+       print "$ARGV[$argnum]\n";
+	   ($key,$value) = split (/=|\s+/,$ARGV[$argnum]);
+       $hash{$key} = $value;
+	}
+}
+		for my $item (keys %hash) {
+		print "$item => $hash{$item}\n";
+    }	
+#
+# Print out the useage if -help is entered
+#
+	if( exists($hash{-help})) {
+		print "Useage: time_track_report.pl [-help] | [-mon=NN] | [-year=YYYY] | [-client=ClientName]\n";
+		print "\tIf -mon or -year not given, then current month/year used\n";
+		print "\tTo get all months or years, use '*' as value e.g. -mon=*\n";
+		exit;
+	}
+	if( exists($hash{'-mon'}) ) {
+		$mon = $hash{'-mon'};
+	}
+	if( exists($hash{'-year'}) ) {
+		$year = $hash{'-year'};
+	}
+	print "Filter: $mon / $year / $hash{'-client'}\n";
 # First open my database.  Complain if unable.
-
-open(STUFF, "/Users/woo/Dropbox/Personal/Documents/Notes/time_track.txt") || die "Can't open datafile: $!\n";
+open(STUFF, "/Users/woo/.time_track/time_track.txt") || die "Can't open datafile: $!\n";
 
 
 while(<STUFF>)  {
 
     # Split the record into its fields.
+
 
     next unless /^\((.*)\s-\s(.*)\)\s(.*)@(.*)$/;
 #  /^(.*)\s-\s/;
@@ -28,24 +65,33 @@ while(<STUFF>)  {
     $client = $4;
     $task = $3;
     $start = $1;
+	($start_mon,$start_day,$start_year) = split('/',$start);
+	($start_year,$dummy) = split(' ',$start_year);
+	$start_mon += 0;
     $end = $2;
 #    print "\n $start, $end, '$task', $client";
     @info = ($start,$end,$task);
-#    print "\n@info";
+# If -client is given, then filter on client	
+	next unless !exists($hash{'-client'}) || $hash{'-client'} =~ $client;
+# If -year is given, then filter on year, else filter on present year
+	next unless  $year eq '*' || $year =~ $start_year;
+	next unless  $mon eq '*' || $mon =~ $start_mon;
     push @{$client_list{$client}}, @info;
-    print "\n\t$client";
-    print " " x (16 - length($client));
-    print "\t$info[0]";
-    print " " x (32 - length($info[1]));
-    print "$info[1],\t$info[2]";
+	
+#    print "\n\t$client";
+#    print " " x (16 - length($client));
+#    print "\t$info[0]";
+#    print " " x (32 - length($info[1]));
+#    print "$info[1],\t$info[2]";
     @item = pop(@{$client_list{$client}});
-    print ",\t$item[1]";
+#    print ",\t$item[1]";
     push @{$client_list{$client}}, @item;
 }
 # Now print the inverted entries out.
 print "\nClient          Task\n";
 print "_________       ____________\n";
 foreach $client (sort keys(%client_list))  {
+    # Here we check if we have a client argument.  If so, does it match, then print
     print "\n$client";
     $client_total = 0;
     $current_year_total = 0;

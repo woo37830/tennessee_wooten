@@ -92,6 +92,8 @@ date
 $myscriptpath/computerinfo.bash
 /bin/bash ~/bin/geek_scripts/check_docker.sh
 /bin/bash ~/bin/geek_scripts/mysql_monitor.sh
+/bin/bash ~/bin/geek_scripts/check_psql.sh
+/bin/bash ~/bin/geek_scripts/check_mongo.sh
 /bin/bash ~/bin/geek_scripts/sip_monitor.sh
 #
 # Show Current version - this is also in computerinfo.bash above amount of ram
