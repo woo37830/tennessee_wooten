@@ -66,7 +66,7 @@ touch $myscriptpath/.$mynameofscript.txt
 # Today's date, formated: Wed  Oct 14 2009
 # Left justified
 #$myscriptpath/todaydate.bash
-date
+#date
 # Centered over calendar
 #echo "   `$myscriptpath/todaydate.bash`"
 
