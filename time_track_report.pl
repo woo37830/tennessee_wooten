@@ -10,9 +10,9 @@ $version = "1.1";
 #
 # Open the time_track.txt file where time_track.tcl places its data
 # and print out a report summarizing by day, month, year, and client
-# Lesson Learned: The format string can confuse you when your printout 
+# Lesson Learned: The format string can confuse you when your printout
 # doesn't match the expected value.  For instance, @####### will not print
-# '34:15' to look correct, but rather only the 34 part.  Change it to 
+# '34:15' to look correct, but rather only the 34 part.  Change it to
 # a string @<<<<<<<<<<<<<< and it will print fine.
 
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime();
@@ -32,7 +32,7 @@ if ($num_args > 0) {
 }
 		for my $item (keys %hash) {
 		print "$item => $hash{$item}\n";
-    }	
+    }
 #
 # Print out the useage if -help is entered
 #
@@ -71,13 +71,13 @@ while(<STUFF>)  {
     $end = $2;
 #    print "\n $start, $end, '$task', $client";
     @info = ($start,$end,$task);
-# If -client is given, then filter on client	
+# If -client is given, then filter on client
 	next unless !exists($hash{'-client'}) || $hash{'-client'} =~ $client;
 # If -year is given, then filter on year, else filter on present year
 	next unless  $year eq '*' || $year =~ $start_year;
 	next unless  $mon eq '*' || $mon =~ $start_mon;
     push @{$client_list{$client}}, @info;
-	
+
 #    print "\n\t$client";
 #    print " " x (16 - length($client));
 #    print "\t$info[0]";
@@ -107,7 +107,7 @@ foreach $client (sort keys(%client_list))  {
         $end = $client_list{$client}[$i+1];
         @times = &elapsed($start,$end);
         if( $times[0] != $current_year ) {
-            print "\n\tTotal for year: $current_year: $current_year_total\n" unless $current_year == 0;
+            print "\n\tTotal for year: $current_year: $current_year_total\n" unless $current_year == 0 || exists($hash{'-mon'});
             $client_total += $current_year_total;
             $current_year = $times[0];
             $current_mon = $times[1];
@@ -123,7 +123,7 @@ foreach $client (sort keys(%client_list))  {
             $ttotal = &nice_time($total);
             $current_line = $-;
             $~ = "ENDING";
-            write;
+            write unless exists($hash{'-mon'});
             $period = "Monthly";
             $total = $current_mon_total;
             $ttotal = &nice_time($total);
@@ -132,7 +132,7 @@ foreach $client (sort keys(%client_list))  {
             write;
             $~ = "STDOUT";
             $- = $current_line+2;
-#            print "\n\tTotal for month: $current_mon: $current_mon_total\n"; 
+#            print "\n\tTotal for month: $current_mon: $current_mon_total\n";
             $current_year_total += $current_mon_total;
             $current_mon = $times[1];
             $current_day = 0;
@@ -143,7 +143,7 @@ foreach $client (sort keys(%client_list))  {
         }
         if( $times[2] != $current_day ) {
 #            print "\n\tTotal for day: $current_day: $current_day_total\n";
-            &print_total("Daily", $current_day_total);
+            &print_total("Daily", $current_day_total) unless exists($hash{'-mon'});
             $current_mon_total += $current_day_total;
             $current_day = $times[2];
             $current_day_total = $times[3] unless $times[3] < 0;
@@ -156,11 +156,11 @@ foreach $client (sort keys(%client_list))  {
         write;
         $i = $i + 3;
     }
-    &print_total("Daily", $current_day_total);
+    &print_total("Daily", $current_day_total) unless exists($hash{'-mon'});
     $current_mon_total += $current_day_total;
     &print_total("Monthly", $current_mon_total);
     $current_year_total += $current_mon_total;
-    &print_total("Yearly", $current_year_total);
+    &print_total("Yearly", $current_year_total) unless exists($hash{'-mon'});
     $client_total += $current_year_total;
     &print_total("Client", $client_total);
 }
@@ -169,8 +169,8 @@ print "\nVersion: $version - All Done!\n";
 sub elapsed {
     $start_str = $_[0];
     $end_str = $_[1];
-    my ($start_mon,$start_day,$start_year,$start_hr,$start_min) = ( $start_str =~ m/([0-9]{2})\/([0-9]{2})\/([0-9]{4}) ([0-9]{2}):([0-9]{2})/ ); 
-    my ($end_mon,$end_day,$end_year,$end_hr,$end_min) = ( $end_str =~ m/([0-9]{2})\/([0-9]{2})\/([0-9]{4}) ([0-9]{2}):([0-9]{2})/ ); 
+    my ($start_mon,$start_day,$start_year,$start_hr,$start_min) = ( $start_str =~ m/([0-9]{2})\/([0-9]{2})\/([0-9]{4}) ([0-9]{2}):([0-9]{2})/ );
+    my ($end_mon,$end_day,$end_year,$end_hr,$end_min) = ( $end_str =~ m/([0-9]{2})\/([0-9]{2})\/([0-9]{4}) ([0-9]{2}):([0-9]{2})/ );
     my $time = ($end_hr - $start_hr) * 60 + ($end_min - $start_min);
     return ($start_year, $start_mon, $start_day, $time);
 }
@@ -211,8 +211,6 @@ $start,          $end,             &nice_time(&elapsed_prt($times[3])),         
 format ENDING =
 ========
                       @<<<<<<<<<   Total:  @>>>>>>>>>>>
-$period, &nice_time($total)                      
+$period, &nice_time($total)
 
 .
-
-
