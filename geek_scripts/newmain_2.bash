@@ -178,8 +178,13 @@ $myscriptpath/trashsize.bash
 # Show hard drive usage and free space.
 #  Either of these seems to take a LONG time.
 #$myscriptpath/diskspace.bash
+<<<<<<< HEAD
+echo "Disk Space:"
+df -h | grep disk | awk '{ print "Used: " $5 " Available: " $4 }'
+=======
 #echo "Disk Space:"
 #df -h | grep disk | awk '{ print "Used: " $5 " Available: " $4 }'
+>>>>>>> 8be6f031a06467eb1515696493c31d4174c12a72
 
 ###############################################################################################################
 #

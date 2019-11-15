@@ -26,6 +26,9 @@ a clone='ssh -Y -o ConnectTimeOut=150 -i "/Users/woo/.ssh/id_rsa" -l ubuntu 18.2
 a woo_clone='ssh -Y -o ConnectTimeOut=150 -i "/Users/woo/.ssh/id_rsa" -l woo 18.222.156.148'
 a dcl_l='ssh -Y -o ConnectTimeOut=150 -i "/Users/woo/.ssh/id_rsa" -l ubuntu 172.31.41.149'
 a ursa-aws='ssh -i ~/.ssh/ursa-private-key.pem ec2-user@ec2-13-59-96-172.us-east-2.compute.amazonaws.com'
+# --------- patti shortcuts -----------------------------------
+a patti='pushd /Library/WebServer/Documents/patti'
+a patti-rails='pushd ~/Development/rails/patti'
 # ----------vm shortcuts
 a   vrestore='vagrant snapshot restore \$@ --no-provision'
 a   vlist='vagrant snapshot list'
@@ -53,6 +56,7 @@ a	fmt_report="enscript -GrE --color -Wh, -p - "
 a	prt_report="enscript -r -fCourier10 --rotate-even-pages -2 "
 a	prt_listing="enscript  -fCourier10 "
 a	prt_calendar="pscalendar -P$PRINTER "
+# ---------------------------------------------------------
 a	rmbak="/bin/rm -f *~"
 a	rmtex="/bin/rm -f *.{aux,cp,cps,dlog,dvi,fn,fns,ky,kys,log,pg,pgs,ps,toc,tp,tps,vr,vrs}"
 a   difftex="echo useage: 'latexdiff -t CFONT -f diff.tex old.tex new.tex '"
@@ -73,6 +77,7 @@ a   unlock="chflags -R nouchg ."
 a   clear_history='cat /dev/null > ~/.bash_history && history -c && exit'
 a   report='time_track_report.pl'
 a   makefile-targets='grep "^[^#[:space:]].*:" Makefile'
+a   show-hidden='defaults write com.apple.finder AppleShowAllFiles TRUE;killall Finder'
 # -------------accessing remote sites ---
 a   jenkins='java -jar ~/bin/jenkins-cli.jar -s http://jwooten37830.com:8080/jenkins/ '
 a   sync-to-here='rsync --progress --partial -avz woo@\$@:\$@ \$@'
