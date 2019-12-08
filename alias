@@ -197,7 +197,7 @@ function myip()
 # copy a stream in the X clipboard, e.g. "cat file | xcopy"
 alias xcopy="xclip -i -selection clipboard"
 
-# baskcup shortcuts
+# backup shortcuts
 alias rcp='rsync -avz --ignore-existing --progress --rsh "ssh -l woo" '
 alias rcp_443='rsync -avz --ignore-existing --progress --rsh "ssh -p 443 -l woo" '
 
@@ -209,6 +209,14 @@ alias rcp_443='rsync -avz --ignore-existing --progress --rsh "ssh -p 443 -l woo"
 # ff name
 function ff()
 { find . -type f -iname '*'$*'*' -ls ; }
+
+# Find files that contain a pattern from the current directory
+# fp pattern
+a fp='function _fp() { grep -Is $1 *.*; };_fp'
+
+# Find files that contain a pattern recursively from the current director
+# fr pattern
+a fr='function _fr() { grep -RIs $1 . ; };_fr'
 
 # move to ~/.Trash instead of rm a file
 function del()
@@ -405,6 +413,8 @@ echo "lm : pipe through 'less'"
 echo "md : mkdir, cd"
 echo "tree : nice alternative to 'ls'"
 echo "ff [pattern] : find a file with a pattern in name"
+echo "fp [pattern] : find files that contain pattern in this directory"
+echo "fr [pattern] : find files that contain pattern recursively from this directory"
 echo "myip : show the IP address of eth1 - wireless"
 echo "repeat [n] [command] : repeat n times command"
 echo "del   : move to .Trash instead of rm"
