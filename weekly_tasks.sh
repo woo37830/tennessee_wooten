@@ -1,10 +1,7 @@
 #!/bin/sh
-#
-# These daily, weekly, and monthly maintenance scripts
-# are involed from /etc/daily.local, weekly.local, and monthly.local
-#
 echo "Running from: " && echo "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-echo "Logs go to /var/log/daily.out"
+echo "Logs go to /var/log/weekly.out"
+echo "Remove local user weekly logs"
 
 rm -f /Users/woo/.freemind/log.*
 rm -f /Users/woo/.freemind/*.mm
@@ -16,6 +13,8 @@ rm -f /Applications/NetBeans/glassfish-3.1.2.2/glassfish/domains/domain1/logs/se
 echo "Starting to unlock locked files"
 chflags -R nouchg /Users/woo/
 echo "Done with unlocking locked files!"
+echo "Backup any weekly mysql local databases"
+
 if [ -e '/usr/local/bin/automysqlbackup' ]
 then
  echo 'doing automysqlbackup'
@@ -31,4 +30,4 @@ then
    chmod -R 755 /var/backup/db
 fi
 
-echo "All done with daily_tasks.sh"
+echo "All done with weekly_tasks.sh"
