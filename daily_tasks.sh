@@ -1,4 +1,8 @@
 #!/bin/sh
+#
+# These daily, weekly, and monthly maintenance scripts
+# are involed from /etc/daily.local, weekly.local, and monthly.local
+#
 echo "Running from: " && echo "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 echo "Logs go to /var/log/daily.out"
 
