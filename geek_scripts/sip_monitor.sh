@@ -10,7 +10,7 @@ ar="\033[0m ";
 #
 #printf "`csrutil status | grep --color 'disabled'`\n";
 if  csrutil status | grep 'disabled' &> /dev/null; then
-printf "System Integrity Protection status: ${br}disabled${ar}\n";
+printf "SIP status: ${br}disabled${ar}\n";
 else
-printf "System Integrity Protection status: ${bg}enabled${ar}\n";
+printf "SIP status: ${bg}enabled${ar}\n";
 fi
