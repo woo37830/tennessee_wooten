@@ -5,11 +5,16 @@ br="\033[1;31m";
 bg="\033[1;32m";
 #ar="$(tput sgr0)" # Text attributes reset
 ar="\033[0m ";
-
+FILE=/usr/local/mysql/bin/mysqld
+APP=MySQL
+if [ -e $FILE ]; then
 UP=$(pgrep mysqld | wc -l);
-if [ $UP != 1 ];
-then
-   printf "MYSQL is ${br}down.${ar}\n";
+  if [ $UP != 1 ];
+    then
+       printf "${APP} is ${br}down.${ar}\n";
+    else
+       printf "${APP} is ${bg}running.${ar}\n";
+  fi
 else
-   printf "MySQL is ${bg}running.${ar}\n";
+  printf "${APP} is ${bg}not available.${ar}\n";
 fi
