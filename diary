@@ -2,14 +2,19 @@
 # @(#) diary v1.0	Maintain a diary
 
 #DIARY="$HOME/.diary"
-DIARY="$HOME/Dropbox/Personal/Documents/Notes/.diary"
+# Get YYYY from todays date
+YYYY=`date +'%Y'`
+
+# format datetime to match Journal
+date_time=`date +"%Y%m%d %T"`
+#
+DIARY="$HOME/Dropbox/Personal/Documents/Notes/Journal_$YYYY.txt"
 #
 # Sync by copying last edited .diary in dropbox to $HOME/.diary
 #
 #    cp /Users/woo/Dropbox/Personal/Documents/Notes/.diary $DIARY
-
-	echo "----`date`---" >>$DIARY
+  echo "" >> $DIARY
+	echo "---$date_time" >>$DIARY
 	echo "" >>$DIARY
 	vi + $DIARY
 #	cp $DIARY /Users/woo/Dropbox/Personal/Documents/Notes
-
