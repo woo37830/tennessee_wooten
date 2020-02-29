@@ -29,6 +29,7 @@ a ursa-aws='ssh -i ~/.ssh/ursa-private-key.pem ec2-user@ec2-13-59-96-172.us-east
 # --------- patti shortcuts -----------------------------------
 a patti='pushd /Library/WebServer/Documents/patti'
 a patti-rails='pushd ~/Development/rails/patti'
+a aws='ssh -i ~/.ssh/Patti-AWS.pem ec2-user@44.231.61.194'
 # ----------vm shortcuts
 a   vrestore='vagrant snapshot restore \$@ --no-provision'
 a   vlist='vagrant snapshot list'
