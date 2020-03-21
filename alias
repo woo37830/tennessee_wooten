@@ -61,6 +61,7 @@ a	prt_calendar="pscalendar -P$PRINTER "
 a	rmbak="/bin/rm -f *~"
 a	rmtex="/bin/rm -f *.{aux,cp,cps,dlog,dvi,fn,fns,ky,kys,log,pg,pgs,ps,toc,tp,tps,vr,vrs}"
 a   difftex="echo useage: 'latexdiff -t CFONT -f diff.tex old.tex new.tex '"
+a   del-zero="find ./ -type f -size 0 -exec rm -f {} \;"
 # -----------  routines to check status of things ------
 a	con="tail -20 /var/log/system.log"
 a	msgs="tail -50 /usr/adm/messages | more"
