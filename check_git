@@ -1,11 +1,13 @@
 #!/bin/bash
-# Help from: http://www.leancrew.com/all-this/2010/12/batch-comparison-of-git-repositories/
-
+#
+# Checks the git status of the list of git repositories
+#
+# TODO - 20200321 - woo - The tool says the remote and local are out of
+#                         sync when git status says they are okay.
+#
 index=0
 gitrepos=()
 
-#TODO: There has got to be a better way to add all these folders to the array
-#add repos folder
 declare -a gitrepos=(~/.vim ~/bin /Library/WebServer/Documents/patti /Library/WebServer/Documents/indecks)
 
 
