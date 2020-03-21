@@ -17,7 +17,6 @@ for d in "${gitrepos[@]}"; do
     else
         continue
     fi
-    echo "Checking $d";
     if [  -e $d/.git ]; then
 
     reponame="`basename $d`"
