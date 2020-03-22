@@ -25,26 +25,26 @@ for d in "${gitrepos[@]}"; do
     ok=true
     git fetch --quiet origin 2>/dev/null
     if [ ! -z "`git diff  2> /dev/null`" ]; then
-        echo " $reponame --> Out of sync with origin/HEAD"
+        echo " $reponame --> Out of sync with origin/HEAD at $d"
         ok=false
     fi
     if [ ! -z "`git ls-files --other --exclude-standard 2> /dev/null`" ]; then
-        echo " $reponame --> Untracked files present"
+        echo " $reponame --> Untracked files present at $d"
         ok=false
     fi
     if [ ! -z "`git diff --cached --shortstat 2> /dev/null`" ]; then
-        echo " $reponame --> Changes to be committed"
+        echo " $reponame --> Changes to be committed at $d"
         ok=false
     fi
     if [ ! -z "`git diff --shortstat 2> /dev/null`" ]; then
-        echo " $reponame --> Changes to be staged/committed"
+        echo " $reponame --> Changes to be staged/committed at $d"
         ok=false
     fi
     if $ok; then
         echo " OK --> $reponame"
     fi
  else
-    echo " $reponame --> Not a git repository"
+    echo " $reponame --> Not a git repository at $d"
  fi
 done
  echo "All Done!";
