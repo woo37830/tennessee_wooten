@@ -1,0 +1,6 @@
+#!/bin/bash
+#
+# run a curl script to test various routes of the AWS thrivecart webhook
+#
+curl -d  '{"thrivecart_secret":"IEYDASLZ8FR7","event":"order.success","customer%5Bemail%5D":"aws@test5.com","base_product":"9"}' http://44.231.61.194/patti/webhook/thrivecart.php
+
