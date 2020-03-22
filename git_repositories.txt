@@ -1,0 +1,12 @@
+/Users/woo/bin
+/Library/WebServer/Documents/patti
+/Library/WebServer/Documents/notes
+/Library/WebServer/Documents/indecks
+/Library/WebServer/Documents/queue
+/Library/WebServer/Documents/frameworks
+/Users/woo/Development/nodejs
+/Users/woo/Development/Api-Php-Examples
+/Users/woo/Development/Forth/Perl/perl-forth
+/Users/woo/Development/rails/patti
+/Users/woo/Development/rails/blog
+

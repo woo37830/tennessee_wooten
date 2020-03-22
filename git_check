@@ -2,24 +2,25 @@
 #
 # Checks the git status of the list of git repositories
 #
-# TODO - 20200321 - woo - The tool says the remote and local are out of
-#                         sync when git status says they are okay.
 #
-index=0
-gitrepos=()
+declare -a gitrepos
+while read line; do
+#   echo $line
+   gitrepos+=($line)
+done < ~/bin/git_repositories.txt
 
-declare -a gitrepos=(~/.vim ~/bin /Library/WebServer/Documents/patti /Library/WebServer/Documents/indecks)
-
+#echo ${#gitrepos[@]}
 
 for d in "${gitrepos[@]}"; do
+    reponame="`basename $d`"
     if [ -d $d ]; then
         cd $d
     else
+        echo " $reponame --> Not a directory"
         continue
     fi
     if [  -e $d/.git ]; then
 
-    reponame="`basename $d`"
 
     ok=true
     git fetch --quiet origin 2>/dev/null
@@ -42,6 +43,8 @@ for d in "${gitrepos[@]}"; do
     if $ok; then
         echo " OK --> $reponame"
     fi
+ else
+    echo " $reponame --> Not a git repository"
  fi
 done
  echo "All Done!";
