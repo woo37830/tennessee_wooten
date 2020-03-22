@@ -1,0 +1,29 @@
+#!/bin/bash
+main() {
+    local -a repos=(/Library/WebServer/Documents/patti /Library/WebServer/Documents/indecks)
+    echo -e "repos: ${repos[@]}"
+    for path in "${repos[@]}"; do
+      check_repo "$path"
+    done
+}
+
+check_repo() {
+    local path="$1"
+    local name="`basename "$path"`"
+    local report=""
+    if [ ! -d "$path" ]; then
+      echo -e "$name\n not a directory: $path"
+      return
+    fi
+    cd "$path"
+    if [ "`echo foo 2> /dev/null`" ]; then
+        report+="\n oh oh"
+    fi
+    cd - > /dev/null
+    if [ -z "$report" ]; then
+        report+="\n OK"
+    fi
+    echo -e "$name$report"
+}
+
+main
