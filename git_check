@@ -13,6 +13,14 @@ done < ~/bin/git_repositories.txt
 
 for d in "${gitrepos[@]}"; do
     reponame="`basename $d`"
+    dir=$(dirname $d)
+    echo "${dir}"
+    if [ -e $dir ]; then
+        echo "looking in $dir"
+    else
+        dir="/Library/Server/Web/Data/Sites/Default/"
+        d="${dir}${reponame}"
+    fi
     if [ -d $d ]; then
         cd $d
     else
