@@ -16,7 +16,7 @@ for d in "${gitrepos[@]}"; do
     if [ -d $d ]; then
         cd $d
     else
-        echo " $reponame --> Not a directory"
+        echo " $reponame --> Not a directory at $d"
         continue
     fi
     if [  -e $d/.git ]; then
