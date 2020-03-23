@@ -60,5 +60,4 @@ for d in "${gitrepos[@]}"; do
     echo " $reponame --> Not a git repository at $d"
  fi
 done
- echo "All Done!";
 
