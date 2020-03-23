@@ -393,6 +393,9 @@ function git_archive()
     echo $name.zip
 }
 
+# Show the current git branch name
+alias git-branch="git rev-parse --abbrev-ref HEAD"
+
 #################
 # Configuration #
 #################
