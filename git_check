@@ -16,7 +16,8 @@ done < ~/bin/git_repositories.txt
 #echo ${#gitrepos[@]}
 
 for d in "${gitrepos[@]}"; do
-    reponame="`basename $d`"
+    branch=`git rev-parse --abbrev-ref HEAD`
+    reponame="`basename $d` [$branch]"
     dir=$(dirname $d)
     if [[ "$dir" != *"$home"* ]]; then
     if [ $host == $SERVER ]; then
