@@ -16,8 +16,8 @@ done < ~/bin/git_repositories.txt
 #echo ${#gitrepos[@]}
 
 for d in "${gitrepos[@]}"; do
-    branch=`git rev-parse --abbrev-ref HEAD`
-    reponame="`basename $d` [$branch]"
+    branch=$(git rev-parse --abbrev-ref HEAD)
+    reponame="`basename $d`"
     dir=$(dirname $d)
     if [[ "$dir" != *"$home"* ]]; then
     if [ $host == $SERVER ]; then
@@ -27,7 +27,7 @@ for d in "${gitrepos[@]}"; do
       fi
     fi
   fi
-    if [ -d $d ]; then
+  if [ -d $d ]; then
         cd $d
     else
 #        echo " $reponame --> Not a directory at $d"
@@ -39,28 +39,28 @@ for d in "${gitrepos[@]}"; do
     ok=true
     git fetch --quiet origin 2>/dev/null
     if [ ! -z "`git diff  2> /dev/null`" ]; then
-        echo " $reponame --> Out of sync with origin/HEAD at $d"
+        echo " $reponame [$branch] --> Out of sync with origin/HEAD at $d"
         ok=false
     fi
     if [ ! -z "`git ls-files --other --exclude-standard 2> /dev/null`" ]; then
-        echo " $reponame --> Untracked files present at $d"
+        echo " $reponame [$branch] --> Untracked files present at $d"
         ok=false
     fi
     if [ ! -z "`git diff --cached --shortstat 2> /dev/null`" ]; then
-        echo " $reponame --> Changes to be committed at $d"
+        echo " $reponame [$branch] --> Changes to be committed at $d"
         ok=false
     fi
     if [ ! -z "`git diff --shortstat 2> /dev/null`" ]; then
-        echo " $reponame --> Changes to be staged/committed at $d"
+        echo " $reponame [$branch] --> Changes to be staged/committed at $d"
         ok=false
     fi
 isInSync=`git status | grep -o "is up to date"`
     if [ $? -ne 0  ]; then
-        echo " $reponame --> Out of sync with remote at $d"
+        echo " $reponame [$branch] --> Out of sync with remote at $d"
         ok=false
     fi
     if $ok; then
-        echo " OK --> $reponame"
+        echo " OK --> $reponame [$branch]"
     fi
  else
     echo " $reponame --> Not a git repository at $d"
