@@ -3,6 +3,10 @@
 # Checks the git status of the list of git repositories
 #
 #
+nonWeb=/Users/woo/Development/
+SERVER=jwooten37830.com
+host=$(hostname)
+home=${HOME}
 declare -a gitrepos
 while read line; do
 #   echo $line
@@ -14,17 +18,18 @@ done < ~/bin/git_repositories.txt
 for d in "${gitrepos[@]}"; do
     reponame="`basename $d`"
     dir=$(dirname $d)
-    echo "${dir}"
-    if [ -e $dir ]; then
-        echo "looking in $dir"
-    else
+    if [[ "$dir" != *"$home"* ]]; then
+    if [ $host == $SERVER ]; then
+      if [[ "$dir" != *"$nonWeb"* ]]; then
         dir="/Library/Server/Web/Data/Sites/Default/"
         d="${dir}${reponame}"
+      fi
     fi
+  fi
     if [ -d $d ]; then
         cd $d
     else
-        echo " $reponame --> Not a directory at $d"
+#        echo " $reponame --> Not a directory at $d"
         continue
     fi
     if [  -e $d/.git ]; then
