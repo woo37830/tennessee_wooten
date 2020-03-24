@@ -3,6 +3,7 @@
 # Checks the git status of the list of git repositories
 #
 #
+cd /Users/woo/bin
 nonWeb=/Users/woo/Development/
 SERVER=jwooten37830.com
 host=$(hostname)
@@ -14,7 +15,6 @@ while read line; do
 done < ~/bin/git_repositories.txt
 
 #echo ${#gitrepos[@]}
-
 for d in "${gitrepos[@]}"; do
     br=$(git rev-parse --abbrev-ref HEAD)
     reponame="`basename $d`"
