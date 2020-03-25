@@ -1,4 +1,4 @@
-#!/usr/bin/perl5.001
+#!/usr/bin/perl
 
 open(ADDR,"/Users/woo/.addressbook") || die("Can't open .addressbook\n");
 open(NEW,">/Users/woo/Library/Addresses/Example.addresses/AddressBook.table") || die("Can't create Addressbook.table\n");

@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl
+#!/usr/bin/perl
 
 opendir(DIR,'.')	|| die("Can't open directory");
 
