@@ -1,0 +1,6 @@
+#/bin/bash
+#
+# Definition: start a time machine backup
+#
+tmutil startbackup; exit
+echo "Started Time Machine backup on barsoom"
