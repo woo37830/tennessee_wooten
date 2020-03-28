@@ -14,7 +14,7 @@ rm -f /Users/woo/Desktop/*.log
 rm -f /Applications/NetBeans/glassfish-3.1.2.2/glassfish/domains/domain1/logs/server.*
 
 echo "Starting to unlock locked files"
-chflags -R nouchg /Users/woo/
+chflags -R nouchg /Users/woo
 echo "Done with unlocking locked files!"
 if [ -e '/usr/local/bin/automysqlbackup' ]
 then
@@ -30,5 +30,10 @@ then
    chgrp -R wheel /var/backup/db
    chmod -R 755 /var/backup/db
 fi
-
+recover=/Users/woo/backups/aws
+if [ -e "$recover" ]
+then
+   echo "Removing archives in $recover older than two weeks"
+   find $recover/ -mindepth 1 -mtime +14 -exec rm '{}' \;
+fi
 echo "All done with daily_tasks.sh"
