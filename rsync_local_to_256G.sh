@@ -1,5 +1,9 @@
 #!/bin/bash
 #
+# Check that the external drive is mounted
+#
+drive=Exteranl_256G
+if mount | grep "/$drive" > /dev/null; then
 # If not running as root ( i.e. sudo, inform and quit )
 # Run the rsync template using the list of files in rsync_files.txt
 # Syncing to External_256G and logging there.
@@ -16,4 +20,7 @@ done <~woo/bin/rsync_files.txt
 
 
 date +'%c|Backup ended'   >> /Volumes/External_256G/sync.log
+else
+    echo "The drive $drive is not mounted"
+fi
 echo All Done!
