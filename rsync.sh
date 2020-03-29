@@ -4,6 +4,15 @@
 #             and copy them to xanadu/backups.
 #             Then save the latest in backups/sql.
 #
+#   This is only run on barsoom, so check for that.
+#
+LIVE=barsoom
+host=$(hostname)
+if [ $host != $LIVE ]
+then
+    echo "This command is only runnable on $LIVE"
+    exit
+fi
 echo "Run at: $(date) by $(whoami)"
 /usr/bin/rsync -avt --delete --exclude "*.DS_Store" --exclude ".fseventsd" --exclude ".Spotlight-V100" --exclude ".TemporaryItems" --exclude ".Trashes" --log-file=/Users/woo/backups/rsync/backup.log  /Users/woo/cvsrep woo@xanadu:backups/cvs
 
