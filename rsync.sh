@@ -6,11 +6,12 @@
 #
 #   This is only run on barsoom, so check for that.
 #
-LIVE=barsoom
+LIVE=jwooten37830.com
 host=$(hostname)
 if [ $host != $LIVE ]
 then
     echo "This command is only runnable on $LIVE"
+    echo "This hostname is: $host"
     exit
 fi
 echo "Run at: $(date) by $(whoami)"
