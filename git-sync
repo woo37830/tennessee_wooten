@@ -63,6 +63,7 @@ for d in "${gitrepos[@]}"; do
         echo " OK --> $reponame [$br]"
     else
         echo "Do a pull on $d on $host"
+        git pull
     fi
  else
     echo " $reponame --> Not a git repository at $d"
