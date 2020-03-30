@@ -1,0 +1,8 @@
+#!/bin/bash
+#
+# Do a diff with a file on a remote host
+#
+# Usage: diff-remote file-path remote-server
+#
+ssh $2 "cat $1" | diff - $1 
+echo "All Done!"
