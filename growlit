@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+# Notify of Homebrew updates via Growl on Mac OS X
+#
+# Author: Chris Streeter http://www.chrisstreeter.com
+# Requires: Growl Notify Extra to be installed. Install with
+#   brew install growlnotify
+
+
+TERM_APP='/Applications/Terminal.app'
+GROWL_NOTIFY='/usr/local/bin/growlnotify'
+GROWL_TITLE="Alert"
+GROWL_ARGS="-n 'Note' -d $GROWL_NOTIFY -a $BREW_EXEC"
+
+        # Send to growlnotify
+echo "$1" | $GROWL_NOTIFY $GROWL_ARGS -s -t $GROWL_TITLE
