@@ -3,7 +3,6 @@
 # Checks the git status of the list of git repositories
 #
 #
-cd /Users/woo/bin
 nonWeb=/Users/woo/Development/
 SERVER=jwooten37830.com
 host=$(hostname)
@@ -36,7 +35,6 @@ for d in "${gitrepos[@]}"; do
     if [  -e $d/.git ]; then
 
     ok=true
-    git fetch --quiet origin 2>/dev/null
     if [ ! -z "`git diff  2> /dev/null`" ]; then
         echo " $reponame [$br] --> Out of sync with origin/HEAD at $d"
         ok=false
