@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+# Monitor a list of users from a file and report
+# to patti any events involving them
+#
+declare -a users
+while read line; do
+   echo $line
+   users+=($line)
+done < ~/bin/monitor_users.txt
+for user in "${users[@]}"; do
+echo "Check $user"
+mysql -uwoo -p${1} -D users_db -h 44.231.61.194 -B -N -e "select id, received, email, request_json, status, commit_hash, branch from logs where email = '$user' order by id desc  " 
+done
+
+echo "All Done!"
