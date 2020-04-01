@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+# Create a report for patti for the indicated month
+#
+# Usage: create-patti-report mon-num
+#
+mons=(X Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)
+num=$1
+echo "num = $num, and mons[num] = ${mons[$1]}"
+file="/Users/woo/Desktop/patti_reports/${mons[$1]}.txt"
+/Users/woo/bin/time_track_report.pl -mon=$1 -client=patti > $file
+echo "Report for ${mons[$1]} written to $file"
+echo "All Done!"
