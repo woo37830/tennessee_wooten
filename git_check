@@ -52,7 +52,7 @@ for d in "${gitrepos[@]}"; do
         echo " $reponame [$br] --> Changes to be staged/committed at $d"
         ok=false
     fi
-    isInSync=`git status | grep -o "is up to date"`
+    isInSync=`git remote update>/dev/null; git status -uno | grep -o "is up to date"`
     if [ $? -ne 0  ]; then
         echo " $reponame [$br] --> Out of sync with remote at $d"
         ok=false
