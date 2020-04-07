@@ -94,7 +94,7 @@ a   set_time="echo 'Must be root';/usr/etc/ntp -sf tick.usno.navy.mil";
 a	timesheet='timelogger -i'
 a	todo='vi  + $HOME/Dropbox/Personal/Documents/Notes/.todo'
 a	track='time_track.tcl'
-a       on='time_track.tcl start'
+a   on='time_track.tcl start'
 a	off='time_track.tcl stop'
 a	billed='time_track.tcl summary'
 # --------- getting phone #'s and user ids etc. ---------
@@ -104,9 +104,9 @@ a	whos="whois -h nic.ddn.mil"
 a   kill_dashboard='defaults write com.apple.dashboard mcx-disabled -boolean YES;killall Dock'
 a   restore_dashboard='defaults write com.apple.dashboard mcx-disabled -boolean NO;killall Dock'
 # -----------miscellaneous aliases -----------------
-a        compress="tar -czvf $1 $2"
-a        uncompress="tar -xzvf $1 "
-a       composer='php /Users/woo/bin/composer.phar'
+a   compress="tar -czvf $1 $2"
+a   uncompress="tar -xzvf $1 "
+#a   composer='php /Users/woo/bin/composer.phar'
 a	forth="pushd /Users/woo/Development/Forth/Perl/perl-forth; forth; pop"
 a   oddball='echo '\''load oddball.dict'\''; pushd ~/Development/Forth/Perl/perl-forth; forth; pop'
 a	pforth="pushd /Users/woo/Development/Forth/pforth_v27/fth; pforth; pop"
@@ -365,12 +365,13 @@ function cpy()
     set -o pipefail
     $@ 2>&1 | colout -t python
 }
-
+# git shortcuts
 # shortcut to display the url config of remote repo in a git root
 alias git_remotes="grep -A 2 \"\[remote\" .git/config|grep -v fetch|sed \"s/\[remote \\\"//\"|sed ':a;N;\$!ba;s/\"\]\n\s*url = /\t/g'"
 
 # Pretty git log
 alias git_log="git log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+alias git-log="git log --oneline"
 
 # ignore all files that are not versioned in a git repository
 function git_ignore()
