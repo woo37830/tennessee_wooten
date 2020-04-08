@@ -5,6 +5,12 @@
 /Library/WebServer/Documents/queue
 /Library/WebServer/Documents/frameworks
 /Library/WebServer/Documents/library
+/Library/Server/Web/Data/Sites/Default/patti
+/Library/Server/Web/Data/Sites/Default/notes
+/Library/Server/Web/Data/Sites/Default/indecks
+/Library/Server/Web/Data/Sites/Default/queue
+/Library/Server/Web/Data/Sites/Default/frameworks
+/Library/Server/Web/Data/Sites/Default/library
 /Users/woo/Development/nodejs
 /Users/woo/Development/Forth/Perl/perl-forth
 /Users/woo/Development/rails/patti

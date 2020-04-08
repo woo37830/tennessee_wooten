@@ -19,14 +19,6 @@ for d in "${gitrepos[@]}"; do
     br=$(git rev-parse --abbrev-ref HEAD)
     reponame="`basename $d`"
     dir=$(dirname $d)
-    if [[ "$dir" != *"$home"* ]]; then
-      if [ $host == $SERVER ]; then
-        if [[ "$dir" != *"$nonWeb"* ]]; then
-          dir="/Library/Server/Web/Data/Sites/Default/"
-          d="${dir}${reponame}"
-        fi
-      fi
-    fi
     if [ -d $d ]; then
         cd $d
     else
@@ -60,17 +52,22 @@ for d in "${gitrepos[@]}"; do
        # git branch -v gives ahead/behind info
     # using perl - sorry for this
     MOD=`git branch -v | perl -wlne '/^..(\S+)\s+([a-f0-9]+)\s+(\[ahead\s+(\d+)\])/ or next; print "# Branch ahead: $1"; '`;
+#    echo $MOD  | tr -d '\040\011\012\015'
 
-    # a series of UGLY HACKs to get pretty-printing
-    [ ! -z "$MOD" ] && MOD="
-$MOD"
-    git status | grep -q '^# Changes' && MOD="$MOD #Uncommitted changes present"
-
+  
     # print summary
-    [ ! -z "$MOD" ] && ok=false && echo -e "$DIR:$MOD"
 
+    git status | grep -q '^# Changes' && MOD="$MOD #Uncommitted changes present"
+    [ ! -z "$MOD" ] &&  MOD="
+$MOD" | ok=false 
     if $ok; then
         echo " OK --> $reponame [$br]"
+    else
+       # a series of UGLY HACKs to get pretty-printing
+       MOD=`echo "   $MOD" | tr -d '\011\012\015' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'`
+       if [ ! -z "$MOD" ]; then
+          echo -e "$DIR $MOD" && continue
+       fi
     fi
  else
     echo " $reponame --> Not a git repository at $d"
