@@ -3,9 +3,12 @@ if [[ $# -eq 0 ]]; then
     echo 'Useage: search some_phrase'
     exit 0
 fi
-echo "Searching diary"
+#echo "Searching diary"
+#echo
+#grep $1 ~/Dropbox/Personal/Documents/Notes/.diary
+echo "Searching ToDo"
 echo
-grep $1 ~/.diary
+grep $1 ~/Dropbox/Personal/Documents/Notes/.todo
 echo "Searching Language"
 echo
 grep $1 ~/Dropbox/Personal/Documents/Notes/Language.txt | sed 's:~/Dropbox/Personal/Documents/Notes/::'
@@ -15,7 +18,32 @@ grep $1 ~/Dropbox/Personal/Documents/Notes/Port_Starboard.txt | sed 's:~/Dropbox
 echo "Searching Restaurants"
 echo
 grep $1 ~/Dropbox/Personal/Documents/Notes/Restaurants.txt | sed 's:~/Dropbox/Personal/Documents/Notes/Restaurants.txt::'
-echo "Searching Notes"
+echo "Searching bin directory"
 echo
-grep $1 ~/Dropbox/Personal/Documents/Notes/Notes*.txt | sed  's:/Users/woo/Dropbox/Personal/Documents/Notes/::'
+grep $1 ~/Dropbox/Personal/Documents/Notes/bin_scripts.csv
+echo
+#echo "Searching Notes"
+#echo
+#grep $1 ~/Dropbox/Personal/Documents/Notes/Notes*.txt | sed  's:/Users/woo/Dropbox/Personal/Documents/Notes/::'
+echo "Searching Journal"
+echo
+echo
+for fullpath in ~/Dropbox/Personal/Documents/Notes/Journal_*.txt; do
+   filename="${fullpath##*/}"                      # Strip longest match of */ from start
+   dir="${fullpath:0:${#fullpath} - ${#filename}}" # Substring from 0 thru pos of filename
+   base="${filename%.[^.]*}"                       # Strip shortest match of . plus at least one non-dot char from end
+   ext="${filename:${#base} + 1}"                  # Substring from len of base thru end
+   if [[ -z "$base" && -n "$ext" ]]; then          # If we have an extension and no base, it's really the base
+       base=".$ext"
+       ext=""
+   fi
+   if  grep -n -i -q $1 $fullpath; then
+
+      echo "-----------$base--------"
+      grep -n -i $1 $fullpath 
+      echo
+    fi
+
+done
+echo
 echo "All Done!"

@@ -1,0 +1,15 @@
+#!/bin/bash
+#
+# Backup a list of database files to ~/backups/sql
+#
+# Usage: backup_db password
+#
+FILE=/usr/local/bin/automysqlbackup
+if [ -e "$FILE" ]; then
+while read p; do
+mysqldump $p -u woo -p$1 > ~/backups/sql/$p.sql
+echo "$p backed up"
+done <~/backups/files.txt
+echo "sql backed up to ~/backups/sql"
+fi
+echo "All Done!"

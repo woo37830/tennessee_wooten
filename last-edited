@@ -1,0 +1,5 @@
+#!/bin/bash
+#
+# List the files in the git project sorted by last edited
+#
+find . -print0 | xargs -0 -n 100 stat -f"%m %Sm %N" | sort -n|awk '{$1="";print}' | grep -v tmp | grep -v git

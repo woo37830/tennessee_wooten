@@ -1,0 +1,12 @@
+#!/bin/bash
+#
+# Do a git-sync of each of the servers
+#
+servers=(woo-va-air.local woo-laptop.local barsoom.local xanadu.local)
+for server in ${servers[@]}
+do
+    echo "Examine $server"
+    ssh $server git-sync
+done
+echo "All Done!"
+

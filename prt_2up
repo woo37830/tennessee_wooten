@@ -2,4 +2,5 @@
 #
 # Print file two pages to the sheet
 #
-enscript -G -p - $1 | quarto -2 | lpr -P $PRINTER;
+#enscript -G -p - $1 | quarto -2 | lpr -P $PRINTER;
+enscript -2 -r -j --font=Times-Roman11 --word-wrap --mark-wrapped=arrow --rotate-even-pages $1

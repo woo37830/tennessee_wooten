@@ -1,0 +1,12 @@
+#!/bin/bash
+# Run the montly billing report for patti at this time.
+#
+# Usage: monthly 11, for November, 12, etc.
+#
+if [ $# -eq 0 ]; then
+  echo "Usage: monthly NN"
+  echo "   where NN is the month number"
+  exit
+fi
+~/bin/time_track_report.pl -mon=$1 -client=patti
+#

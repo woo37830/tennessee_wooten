@@ -26,6 +26,10 @@ a clone='ssh -Y -o ConnectTimeOut=150 -i "/Users/woo/.ssh/id_rsa" -l ubuntu 18.2
 a woo_clone='ssh -Y -o ConnectTimeOut=150 -i "/Users/woo/.ssh/id_rsa" -l woo 18.222.156.148'
 a dcl_l='ssh -Y -o ConnectTimeOut=150 -i "/Users/woo/.ssh/id_rsa" -l ubuntu 172.31.41.149'
 a ursa-aws='ssh -i ~/.ssh/ursa-private-key.pem ec2-user@ec2-13-59-96-172.us-east-2.compute.amazonaws.com'
+# --------- patti shortcuts -----------------------------------
+a patti='pushd /Library/WebServer/Documents/patti'
+a patti-rails='pushd ~/Development/rails/patti'
+a aws='ssh -i ~/.ssh/Patti-AWS.pem ec2-user@44.231.61.194'
 # ----------vm shortcuts
 a   vrestore='vagrant snapshot restore \$@ --no-provision'
 a   vlist='vagrant snapshot list'
@@ -36,24 +40,28 @@ a   vpause='vagrant suspend'
 a   vsave="vagrant snapshot save \$@"
 a   caseflow="cd ~/vagrant_vms/precise64"
 a   vstart="vagrant snapshot restore root_password_set --no-provision"
-a   docker_clean="docker rm `docker ps --no-trunc -aq`"
+if [ -f /usr/local/bin/docker ]; then
 a   start_mssql="docker run -d --name sql_server_demo -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=Fester123.' -p 1433:1433 microsoft/mssql-server-linux"
+fi
 # ----------- listing files and directories ----------
 a	l='/bin/ls -FC'	# list files in columns and mark directories
 a	ll='/bin/ls -l'		# long listing
 a	la='/bin/ls -al'		# long listing of all files
 a	lt='/bin/ls -at'		#list by time modified
 a   fle="perl -pi -e 's/\r\n?/\n/g' "
+a   pcat='pygmentize -f terminal256 -O style=native -g'
 # ------------printing -------------------------------------
 a	ps_troff="tbl \$@ | ptroff -ms -t"
 a	prt_troff="tbl $@ | nroff -ms"
 a	fmt_report="enscript -GrE --color -Wh, -p - "
-a	prt_report="enscript -r -fCourier12 "
-a	prt_listing="enscript  -fCourier12 "
+a	prt_report="enscript -r -fCourier10 --rotate-even-pages -2 "
+a	prt_listing="enscript  -fCourier10 "
 a	prt_calendar="pscalendar -P$PRINTER "
+# ---------------------------------------------------------
 a	rmbak="/bin/rm -f *~"
 a	rmtex="/bin/rm -f *.{aux,cp,cps,dlog,dvi,fn,fns,ky,kys,log,pg,pgs,ps,toc,tp,tps,vr,vrs}"
 a   difftex="echo useage: 'latexdiff -t CFONT -f diff.tex old.tex new.tex '"
+a   del-zero="find ./ -type f -size 0 -exec rm -f {} \;"
 # -----------  routines to check status of things ------
 a	con="tail -20 /var/log/system.log"
 a	msgs="tail -50 /usr/adm/messages | more"
@@ -70,6 +78,8 @@ a   findlocked="find . -flags uchange"
 a   unlock="chflags -R nouchg ."
 a   clear_history='cat /dev/null > ~/.bash_history && history -c && exit'
 a   report='time_track_report.pl'
+a   makefile-targets='grep "^[^#[:space:]].*:" Makefile'
+a   show-hidden='defaults write com.apple.finder AppleShowAllFiles TRUE;killall Finder'
 # -------------accessing remote sites ---
 a   jenkins='java -jar ~/bin/jenkins-cli.jar -s http://jwooten37830.com:8080/jenkins/ '
 a   sync-to-here='rsync --progress --partial -avz woo@\$@:\$@ \$@'
@@ -84,7 +94,7 @@ a   set_time="echo 'Must be root';/usr/etc/ntp -sf tick.usno.navy.mil";
 a	timesheet='timelogger -i'
 a	todo='vi  + $HOME/Dropbox/Personal/Documents/Notes/.todo'
 a	track='time_track.tcl'
-a       on='time_track.tcl start'
+a   on='time_track.tcl start'
 a	off='time_track.tcl stop'
 a	billed='time_track.tcl summary'
 # --------- getting phone #'s and user ids etc. ---------
@@ -94,13 +104,12 @@ a	whos="whois -h nic.ddn.mil"
 a   kill_dashboard='defaults write com.apple.dashboard mcx-disabled -boolean YES;killall Dock'
 a   restore_dashboard='defaults write com.apple.dashboard mcx-disabled -boolean NO;killall Dock'
 # -----------miscellaneous aliases -----------------
-a        compress="tar -czvf $1 $2"
-a        uncompress="tar -xzvf $1 "
-a       composer='php /Users/woo/bin/composer.phar'
-a	forth="/Users/woo/Development/Forth/Perl/perl-forth/forth"
-a	sforth="/Users/woo/Development/Forth/Cocoa-for-SwiftForth/SwiftForth/bin/osx/coco-sf"
+a   compress="tar -czvf $1 $2"
+a   uncompress="tar -xzvf $1 "
+#a   composer='php /Users/woo/bin/composer.phar'
+a	forth="pushd /Users/woo/Development/Forth/Perl/perl-forth; forth; pop"
 a   oddball='echo '\''load oddball.dict'\''; pushd ~/Development/Forth/Perl/perl-forth; forth; pop'
-a	pforth="/Users/woo/Development/Forth/pforth_v27/fth/pforth"
+a	pforth="pushd /Users/woo/Development/Forth/pforth_v27/fth; pforth; pop"
 a   latex2html="/usr/local/tex/latex2html/latex2html"
 a	mathematica="(stty erase '^?' kill '^X' intr '^C' quit '^\' eof '^D';math)"
 a	vt100="setenv TERM vt100"
@@ -135,7 +144,8 @@ a cache_stop='./bin/stop_cache'
 #a restart='sudo apachectl restart'
 #a jup='/Users/woo/Applications/atlassian-jira-enterprise-4.1.2-standalone/bin/startup.sh &'
 #a jdown='/Users/woo/Applications/atlassian-jira-enterprise-4.1.2-standalone/bin/shutdown.sh &'
-a mongod_start='/usr/local/bin/mongod &'
+a mongod_start='mongo_manage.sh start'
+a mongod_stop='mongo_manage.sh stop'
 a mongo='/usr/local/bin/mongo'
 a mysql_server='/usr/local/bin/mysql.server'
 a mysql_start='mysql_server start'
@@ -188,7 +198,7 @@ function myip()
 # copy a stream in the X clipboard, e.g. "cat file | xcopy"
 alias xcopy="xclip -i -selection clipboard"
 
-# baskcup shortcuts
+# backup shortcuts
 alias rcp='rsync -avz --ignore-existing --progress --rsh "ssh -l woo" '
 alias rcp_443='rsync -avz --ignore-existing --progress --rsh "ssh -p 443 -l woo" '
 
@@ -200,6 +210,14 @@ alias rcp_443='rsync -avz --ignore-existing --progress --rsh "ssh -p 443 -l woo"
 # ff name
 function ff()
 { find . -type f -iname '*'$*'*' -ls ; }
+
+# Find files that contain a pattern from the current directory
+# fp pattern
+a fp='function _fp() { grep -Is $1 *.*; };_fp'
+
+# Find files that contain a pattern recursively from the current director
+# fr pattern
+a fr='function _fr() { grep -RIs $1 . ; };_fr'
 
 # move to ~/.Trash instead of rm a file
 function del()
@@ -233,7 +251,7 @@ alias mv='mv -i'
 alias mkdir='mkdir -p'
 
 alias ls='/bin/ls -hF' # add colors for filetype recognition
-alias l='/bin/ls -1'
+#alias l='/bin/ls -1'
 alias la='/bin/ls -Al' # show hidden files
 alias lx='/bin/ls -lXB' # sort by extension
 alias lk='/bin/ls -lSr' # sort by size
@@ -347,12 +365,13 @@ function cpy()
     set -o pipefail
     $@ 2>&1 | colout -t python
 }
-
+# git shortcuts
 # shortcut to display the url config of remote repo in a git root
 alias git_remotes="grep -A 2 \"\[remote\" .git/config|grep -v fetch|sed \"s/\[remote \\\"//\"|sed ':a;N;\$!ba;s/\"\]\n\s*url = /\t/g'"
 
 # Pretty git log
 alias git_log="git log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+alias git-log="git log --oneline"
 
 # ignore all files that are not versioned in a git repository
 function git_ignore()
@@ -373,6 +392,9 @@ function git_archive()
     git archive --prefix=$name/ --format zip master > $name.zip
     echo $name.zip
 }
+
+# Show the current git branch name
+alias git-branch="git rev-parse --abbrev-ref HEAD"
 
 #################
 # Configuration #
@@ -396,6 +418,8 @@ echo "lm : pipe through 'less'"
 echo "md : mkdir, cd"
 echo "tree : nice alternative to 'ls'"
 echo "ff [pattern] : find a file with a pattern in name"
+echo "fp [pattern] : find files that contain pattern in this directory"
+echo "fr [pattern] : find files that contain pattern recursively from this directory"
 echo "myip : show the IP address of eth1 - wireless"
 echo "repeat [n] [command] : repeat n times command"
 echo "del   : move to .Trash instead of rm"

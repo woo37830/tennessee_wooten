@@ -2,6 +2,16 @@
 #
 # Definition: sync iTunes Movies from barsoom /Volumes/iTunes/Movies to Seagate
 #
+# Only allow from barsoom
+#
+LIVE=jwooten37830.com
+host=$(hostname)
+if [ $host != $LIVE ]
+then
+    echo "This command is only runnable on $LIVE"
+    echo "This hostname is: $host"
+    exit
+fi
 rsync -vaz --rsh="ssh -l woo" barsoom:/Volumes/iTunes/Movies /Volumes/SeagateTimeCapsule-2
 rsync -vaz --rsh="ssh -l woo" barsoom:/Users/woo/backups/sql /Volumes/SeagateTimeCapsule-2
 echo "All Done!"

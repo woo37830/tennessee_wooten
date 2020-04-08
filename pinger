@@ -1,0 +1,24 @@
+#!/bin/bash
+#
+# pinger is a bash shell script that monitors the network 
+# status every 15 seconds and records if it is up '1' or down '0'
+# into the file log.csv from whence it may be plotted.
+#
+# author: J. W. Wooten, Ph.D.
+# since: 11/12/2019
+# version: 1.0
+#
+TIMESTAMP=`date +%s`
+while [ 1 ]
+  do
+    nc -z -w 5 8.8.8.8 53  >/dev/null 2>&1
+online=$?
+    TIME=`date +%s`
+    if [ $online -eq 0 ]; then
+      echo "`date +%Y-%m-%d_%H:%M:%S_%Z` 1 $(($TIME-$TIMESTAMP))" | tee -a log.csv
+    else
+      echo "`date +%Y-%m-%d_%H:%M:%S_%Z` 0 $(($TIME-$TIMESTAMP))" | tee -a log.csv
+    fi
+    TIMESTAMP=$TIME
+    sleep 15
+  done;

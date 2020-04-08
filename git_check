@@ -1,0 +1,79 @@
+#!/bin/bash
+#
+# Checks the git status of the list of git repositories
+#
+#
+cd /Users/woo/bin
+nonWeb=/Users/woo/Development/
+SERVER=jwooten37830.com
+host=$(hostname)
+home=${HOME}
+declare -a gitrepos
+while read line; do
+#   echo $line
+   gitrepos+=($line)
+done < ~/bin/git_repositories.txt
+
+#echo ${#gitrepos[@]}
+for d in "${gitrepos[@]}"; do
+    br=$(git rev-parse --abbrev-ref HEAD)
+    reponame="`basename $d`"
+    dir=$(dirname $d)
+    if [[ "$dir" != *"$home"* ]]; then
+      if [ $host == $SERVER ]; then
+        if [[ "$dir" != *"$nonWeb"* ]]; then
+          dir="/Library/Server/Web/Data/Sites/Default/"
+          d="${dir}${reponame}"
+        fi
+      fi
+    fi
+    if [ -d $d ]; then
+        cd $d
+    else
+#        echo " $reponame --> Not a directory at $d"
+        continue
+    fi
+    if [  -e $d/.git ]; then
+
+    ok=true
+    if [ ! -z "`git diff  2> /dev/null`" ]; then
+        echo " $reponame [$br] --> Out of sync with origin/HEAD at $d"
+        ok=false
+    fi
+    if [ ! -z "`git ls-files --other --exclude-standard 2> /dev/null`" ]; then
+        echo " $reponame [$br] --> Untracked files present at $d"
+        ok=false
+    fi
+    if [ ! -z "`git diff --cached --shortstat 2> /dev/null`" ]; then
+        echo " $reponame [$br] --> Changes to be committed at $d"
+        ok=false
+    fi
+    if [ ! -z "`git diff --shortstat 2> /dev/null`" ]; then
+        echo " $reponame [$br] --> Changes to be staged/committed at $d"
+        ok=false
+    fi
+    isInSync=`git remote update>/dev/null; git status -uno | grep -o "is up to date"`
+    if [ $? -ne 0  ]; then
+        echo " $reponame [$br] --> Out of sync with remote at $d"
+        ok=false
+    fi
+       # git branch -v gives ahead/behind info
+    # using perl - sorry for this
+    MOD=`git branch -v | perl -wlne '/^..(\S+)\s+([a-f0-9]+)\s+(\[ahead\s+(\d+)\])/ or next; print "# Branch ahead: $1"; '`;
+
+    # a series of UGLY HACKs to get pretty-printing
+    [ ! -z "$MOD" ] && MOD="
+$MOD"
+    git status | grep -q '^# Changes' && MOD="$MOD #Uncommitted changes present"
+
+    # print summary
+    [ ! -z "$MOD" ] && ok=false && echo -e "$DIR:$MOD"
+
+    if $ok; then
+        echo " OK --> $reponame [$br]"
+    fi
+ else
+    echo " $reponame --> Not a git repository at $d"
+ fi
+done
+

@@ -1,0 +1,18 @@
+#/bin/bash
+#
+# Definition: start a time machine backup
+#
+#
+#   This is only run on barsoom, so check for that.
+#
+LIVE=jwooten37830.com
+host=$(hostname)
+if [ $host != $LIVE ]
+then
+    echo "This command is only runnable on $LIVE"
+    echo "This hostname is: $host"
+    exit
+fi
+
+tmutil startbackup; exit
+echo "Started Time Machine backup on barsoom"

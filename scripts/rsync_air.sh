@@ -18,7 +18,7 @@ REMOTE_CMD="/usr/bin/ssh"
 DESTDIR="."
 
 FILES="bin
-.alias
+.bashrc
 .bash_profile
 pers
 data"

@@ -1,0 +1,72 @@
+#!/bin/bash
+#
+# Checks the git status of the list of git repositories
+#
+#
+cd /Users/woo/bin
+nonWeb=/Users/woo/Development/
+barsoom=jwooten37830.com
+xanadu=xanadu.local
+host=$(hostname)
+home=${HOME}
+declare -a gitrepos
+while read line; do
+#   echo $line
+   gitrepos+=($line)
+done < ~/bin/git_repositories.txt
+
+#echo ${#gitrepos[@]}
+for d in "${gitrepos[@]}"; do
+    br=$(git rev-parse --abbrev-ref HEAD)
+    reponame="`basename $d`"
+    dir=$(dirname $d)
+    if [[ "$dir" != *"$home"* ]]; then
+      if [ $host == $barsoom ] || [ $host == $xanadu ]; then
+        if [[ "$dir" != *"$nonWeb"* ]]; then
+          dir="/Library/Server/Web/Data/Sites/Default/"
+          d="${dir}${reponame}"
+        fi
+      fi
+    fi
+    if [ -d $d ]; then
+        cd $d
+    else
+#        echo " $reponame --> Not a directory at $d"
+        continue
+    fi
+    if [  -e $d/.git ]; then
+
+    ok=true
+    git fetch --quiet origin 2>/dev/null
+    if [ ! -z "`git diff  2> /dev/null`" ]; then
+        echo " $reponame [$br] --> Out of sync with origin/HEAD at $d"
+        ok=false
+    fi
+    if [ ! -z "`git ls-files --other --exclude-standard 2> /dev/null`" ]; then
+        echo " $reponame [$br] --> Untracked files present at $d"
+        ok=false
+    fi
+    if [ ! -z "`git diff --cached --shortstat 2> /dev/null`" ]; then
+        echo " $reponame [$br] --> Changes to be committed at $d"
+        ok=false
+    fi
+    if [ ! -z "`git diff --shortstat 2> /dev/null`" ]; then
+        echo " $reponame [$br] --> Changes to be staged/committed at $d"
+        ok=false
+    fi
+    isInSync=`git status | grep -o "is up to date"`
+    if [ $? -ne 0  ]; then
+        echo " $reponame [$br] --> Out of sync with remote at $d"
+        ok=false
+    fi
+    if $ok; then
+        echo " OK --> $reponame [$br]"
+    else
+        echo "Do a pull on $d on $host"
+        git pull
+    fi
+ else
+    echo " $reponame --> Not a git repository at $d"
+ fi
+done
+

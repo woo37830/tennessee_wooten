@@ -1,0 +1,63 @@
+<html>
+<head>
+<script>
+function getURLParameters(paramName)
+{
+    var sURL = window.document.URL.toString();
+    alert('sURL = ' + sURL);
+    if (sURL.indexOf("?") > 0)
+    {
+        var arrParams = sURL.split("?");
+        var arrURLParams = arrParams[1].split("&");
+        var arrParamNames = new Array(arrURLParams.length);
+        var arrParamValues = new Array(arrURLParams.length);
+
+        var i = 0;
+        for (i = 0; i<arrURLParams.length; i++)
+        {
+            var sParam =  arrURLParams[i].split("=");
+            arrParamNames[i] = sParam[0];
+            if (sParam[1] != "")
+                arrParamValues[i] = unescape(sParam[1]);
+            else
+                arrParamValues[i] = "No Value";
+        }
+
+        for (i=0; i<arrURLParams.length; i++)
+        {
+            if (arrParamNames[i] == paramName)
+            {
+                alert("Parameter:" + arrParamValues[i]);
+                return arrParamValues[i];
+            }
+        }
+        return "No Parameters Found";
+    }
+}
+ function printDiv(divName) {
+     alert('In printDiv with divName '+divName);
+     var printContents = document.getElementById(divName).innerHTML;
+     var originalContents = document.body.innerHTML;
+
+     var replyStr = "Post parameters for 'dest':\r\n" + getURLParameters('dest'); // "1234";
+     alert(replyStr);
+     document.write(replyStr);
+//     document.body.innerHTML = replyStr;
+}
+</script>
+</head>
+<body>
+    <h1>Enter URL </h1>
+    <form >
+        <input type="text"  name="dest" value=""/><br/>
+        <br />
+        <input type="submit" name="submit" value="Submit Query" onClick="return(printDiv('printableArea'))"/>
+    </form>
+
+    <div id="content"></div>
+    <div id="printableArea">
+      <h1>Print me</h1>
+</div>
+
+</body>
+</html>
