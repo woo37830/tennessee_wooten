@@ -64,8 +64,7 @@ for d in "${gitrepos[@]}"; do
     # a series of UGLY HACKs to get pretty-printing
     [ ! -z "$MOD" ] && MOD="
 $MOD"
-    git status | grep -q '^# Changes' && MOD="$MOD
-# Uncommitted changes present"
+    git status | grep -q '^# Changes' && MOD="$MOD #Uncommitted changes present"
 
     # print summary
     [ ! -z "$MOD" ] && ok=false && echo -e "$DIR:$MOD"
