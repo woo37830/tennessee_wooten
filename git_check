@@ -29,10 +29,6 @@ for d in "${gitrepos[@]}"; do
     if [  -e $d/.git ]; then
 
     ok=true
-    if [ ! -z "`git diff  2> /dev/null`" ]; then
-        echo " $reponame [$br] --> Out of sync with origin/HEAD at $d"
-        ok=false
-    fi
     if [ ! -z "`git ls-files --other --exclude-standard 2> /dev/null`" ]; then
         echo " $reponame [$br] --> Untracked files present at $d"
         ok=false
@@ -45,18 +41,18 @@ for d in "${gitrepos[@]}"; do
         echo " $reponame [$br] --> Changes to be staged/committed at $d"
         ok=false
     fi
-    isInSync=`git remote update>/dev/null; git status -uno | grep -o "is up to date"`
-    if [ $? -ne 0  ]; then
-        echo " $reponame [$br] --> Out of sync with remote at $d"
+    if [ ! -z "`git diff  2> /dev/null`" ]; then
+      if [ ! $ok ]; then
+        echo " $reponame [$br] --> Out of sync with origin/HEAD at $d"
         ok=false
+      fi
     fi
 
-       # git branch -v gives ahead/behind info
-    # using perl - sorry for this
-#    MOD=`git branch -v | perl -wlne '/^..(\S+)\s+([a-f0-9]+)\s+([\[ahead\s+\d+\]|\[behind\s+\d+\]])/ or next; print "# Branch $1, $2, $3"; '`;
-#    MOD=`git branch -v | perl -wlne '/^..(\S+)\s+([a-f0-9]+)\s+(\[ahead\s+\d+\]|\[behind\s+\d+\])/ or next; print  "$3 --> $ENV{reponame} [$1] $2"; '`;
-
-#    git status | grep -q '^# Changes' && MOD="$MOD #Uncommitted changes present"
+#    isInSync=`git remote update>/dev/null; git status -uno | grep -o "is up to date"`
+#    if [ $? -ne 0  ]; then
+#        echo " $reponame [$br] --> Out of sync with remote at $d"
+#        ok=false
+#    fi
 
     if $ok; then
         rev=$(git rev-parse --short HEAD)
