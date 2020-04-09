@@ -395,7 +395,7 @@ function git_archive()
 
 # Show the current git branch name
 alias git-branch="git rev-parse --abbrev-ref HEAD"
-
+alias git-rev="git rev-parse --short HEAD"
 #################
 # Configuration #
 #################
