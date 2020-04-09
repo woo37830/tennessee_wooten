@@ -48,11 +48,11 @@ for d in "${gitrepos[@]}"; do
       fi
     fi
 
-#    isInSync=`git remote update>/dev/null; git status -uno | grep -o "is up to date"`
-#    if [ $? -ne 0  ]; then
-#        echo " $reponame [$br] --> Out of sync with remote at $d"
-#        ok=false
-#    fi
+    isInSync=`git remote update>/dev/null; git status -uno | grep -o "is up to date"`
+    if [ $? -ne 0  ]; then
+        echo " $reponame [$br] --> Out of sync with remote at $d"
+        ok=false
+    fi
 
     if $ok; then
         rev=$(git rev-parse --short HEAD)
