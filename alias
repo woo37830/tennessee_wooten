@@ -93,6 +93,7 @@ a	zap='(set j=`ps -ax|grep \$@ |head -1`;kill -9 $j[1]) >& /dev/null'
 a   set_time="echo 'Must be root';/usr/etc/ntp -sf tick.usno.navy.mil";
 a	timesheet='timelogger -i'
 a	todo='vi  + $HOME/Dropbox/Personal/Documents/Notes/.todo'
+a	time_adjust='vi  + $HOME/Dropbox/Personal/Documents/Notes/time_track.txt'
 a	track='time_track.tcl'
 a   on='time_track.tcl start'
 a	off='time_track.tcl stop'
