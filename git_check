@@ -17,7 +17,6 @@ done < ~/bin/git_repositories.txt
 #echo ${#gitrepos[@]}
 for d in "${gitrepos[@]}"; do
     br=$(git rev-parse --abbrev-ref HEAD)
-    rev=$(git rev-parse --short HEAD)
     reponame="`basename $d`"
     export reponame
     dir=$(dirname $d)
@@ -60,6 +59,7 @@ for d in "${gitrepos[@]}"; do
 #    git status | grep -q '^# Changes' && MOD="$MOD #Uncommitted changes present"
 
     if $ok; then
+        rev=$(git rev-parse --short HEAD)
         echo " OK --> $reponame [$br] $rev"
     fi
         git branch -v |
