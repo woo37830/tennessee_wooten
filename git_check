@@ -50,32 +50,25 @@ for d in "${gitrepos[@]}"; do
         echo " $reponame [$br] --> Out of sync with remote at $d"
         ok=false
     fi
-\
-git branch -v |
-perl -wlne'
-   print "$3 --> $ENV{reponame} [$1] $2"
-      if /^..(\S+)\s+([a-f0-9]+)\s+(\[(?:ahead|behind)\s+\d+\])/
-' |
-while IFS= read -r MOD; do
-   printf ' %s\n' "$MOD"  # Replace with code that uses $MOD
-done
+
        # git branch -v gives ahead/behind info
     # using perl - sorry for this
 #    MOD=`git branch -v | perl -wlne '/^..(\S+)\s+([a-f0-9]+)\s+([\[ahead\s+\d+\]|\[behind\s+\d+\]])/ or next; print "# Branch $1, $2, $3"; '`;
 #    MOD=`git branch -v | perl -wlne '/^..(\S+)\s+([a-f0-9]+)\s+(\[ahead\s+\d+\]|\[behind\s+\d+\])/ or next; print  "$3 --> $ENV{reponame} [$1] $2"; '`;
 
 #    git status | grep -q '^# Changes' && MOD="$MOD #Uncommitted changes present"
-    [ ! -z "$MOD" ] &&  MOD="$MOD" | ok=false
+
     if $ok; then
         echo " OK --> $reponame [$br]"
-    else
-       # a series of UGLY HACKs to get pretty-printing
-       MOD=`echo "$MOD" | tr -d '\011\012\015' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'` | sed -e 's/]#/]\
- #/'
-       if [ ! -z "$MOD" ]; then
-          echo -e " $MOD" && continue
-       fi
     fi
+        git branch -v |
+        perl -wlne'
+           print "$ENV{reponame} [$1] --> $3 $2"
+              if /^..(\S+)\s+([a-f0-9]+)\s+(\[(?:ahead|behind)\s+\d+\])/
+        ' |
+        while IFS= read -r MOD; do
+           printf ' %s\n' "$MOD"  # Replace with code that uses $MOD
+        done
  else
     echo " $reponame --> Not a git repository at $d"
  fi
