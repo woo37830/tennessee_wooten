@@ -9,6 +9,10 @@ fi
 echo "Searching ToDo"
 echo
 grep $1 ~/Dropbox/Personal/Documents/Notes/.todo
+echo "Search ~/alias"
+echo
+grep $1 ~/bin/alias | grep -v '^#'
+echo
 echo "Searching Language"
 echo
 grep $1 ~/Dropbox/Personal/Documents/Notes/Language.txt | sed 's:~/Dropbox/Personal/Documents/Notes/::'
