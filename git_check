@@ -48,8 +48,10 @@ for d in "${gitrepos[@]}"; do
       fi
     fi
 
-    isInSync=`git remote update>/dev/null; git status -uno | grep -o "is up to date"`
-    if [ $? -ne 0  ]; then
+    last_commit=`git log --oneline | head -n1 | grep -o "^\w*\b"`
+    rev=$(git rev-parse --short HEAD)
+    if [ "$last_commit" != "$rev"  ]; then
+        echo " last_commit=$last_commit, rev=$rev"
         echo " $reponame [$br] --> Out of sync with remote at $d"
         ok=false
     fi
