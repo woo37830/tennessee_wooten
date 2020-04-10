@@ -4,3 +4,4 @@ Added a line on barsoom
 Added another line on barsoom after setting credential to store
 Added a line to test branch output in git_check
 Added a line to test the fetch
+Added another line to test adding commit hash to ahead/behind
