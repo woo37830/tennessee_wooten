@@ -59,7 +59,7 @@ for d in "${gitrepos[@]}"; do
     if $ok; then
         rev=$(git rev-parse --short HEAD)
         echo " OK --> $reponame [$br] $rev"
-    else
+    fi
         git fetch>/dev/null && git branch -v |
         perl -wlne'
            print "$ENV{reponame} [$1] --> $3 $2"
@@ -68,7 +68,7 @@ for d in "${gitrepos[@]}"; do
         while IFS= read -r MOD; do
            printf ' %s\n' "$MOD"  # Replace with code that uses $MOD
         done
-    fi
+
  else
     echo " $reponame --> Not a git repository at $d"
  fi
