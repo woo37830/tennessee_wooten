@@ -1,0 +1,51 @@
+#!/bin/bash
+#
+# Checks the cvs status of the list of git repositories
+#
+#
+cd /Users/woo/bin
+nonWeb=/Users/woo/Development/
+SERVER=jwooten37830.com
+host=$(hostname)
+home=${HOME}
+declare -a cvsrepos
+while read line; do
+#   echo $line
+   cvsrepos+=($line)
+done < ~/bin/cvs_repositories.txt
+
+#echo ${#gitrepos[@]}
+for d in "${cvsrepos[@]}"; do
+    br="master"
+    reponame="`basename $d`"
+    export reponame
+    dir=$(dirname $d)
+    if [ -d $d ]; then
+        cd $d
+    else
+#        echo " $reponame --> Not a directory at $d"
+        continue
+    fi
+    if [  -e $d/CVS ]; then
+
+    ok=true
+    rev="cvs-rev"
+    export rev
+    if [ ! -z "`cvs diff 2> /dev/null`" ]; then
+        echo " $reponame [$br] --> Changes to be committed at $d"
+        ok=false
+    fi
+
+    if [ ! -z "`cvs -q -n update 2> /dev/null`" ]; then
+        echo " $reponame [$br] --> Out of sync at $d"
+        ok=false
+    fi
+
+    if $ok; then
+          echo " OK --> $reponame [$br] $rev"
+    fi
+
+ else
+    echo " $reponame --> Not a cvs repository at $d"
+ fi
+done

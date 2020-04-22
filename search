@@ -13,6 +13,10 @@ echo "Search ~/alias"
 echo
 grep $1 ~/bin/alias | grep -v '^#'
 echo
+echo "Searching bin scripts"
+echo
+grep $1 ~/Dropbox/Personal/Documents/Notes/bin_scripts.csv
+echo
 echo "Searching Language"
 echo
 grep $1 ~/Dropbox/Personal/Documents/Notes/Language.txt | sed 's:~/Dropbox/Personal/Documents/Notes/::'
