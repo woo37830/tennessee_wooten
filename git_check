@@ -16,9 +16,6 @@ done < ~/bin/git_repositories.txt
 
 #echo ${#gitrepos[@]}
 for d in "${gitrepos[@]}"; do
-    br=$(git rev-parse --abbrev-ref HEAD)
-    reponame="`basename $d`"
-    export reponame
     dir=$(dirname $d)
     if [ -d $d ]; then
         cd $d
@@ -27,6 +24,9 @@ for d in "${gitrepos[@]}"; do
         continue
     fi
     if [  -e $d/.git ]; then
+      br=$(git rev-parse --abbrev-ref HEAD)
+      reponame="`basename $d`"
+      export reponame
 
     ok=true
     if [ ! -z "`git ls-files --other --exclude-standard 2> /dev/null`" ]; then
