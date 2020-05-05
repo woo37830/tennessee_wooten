@@ -5,7 +5,6 @@
 /Library/WebServer/Documents/queue
 /Library/WebServer/Documents/frameworks
 /Library/WebServer/Documents/library
-/Library/WebServer/Documents/dashboard
 /Library/Server/Web/Data/Sites/Default/patti
 /Library/Server/Web/Data/Sites/Default/notes
 /Library/Server/Web/Data/Sites/Default/indecks
