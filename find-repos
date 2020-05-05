@@ -1,0 +1,11 @@
+#!/bin/bash
+#
+# Find repos starting at current directories
+#
+echo "Git repositories"
+find . -type d -name ".git" -print 2>/dev/null
+echo "CVS repositories"
+find . -type d -name "CVS" -print 2>/dev/null
+echo "SVN repositories"
+find . -type d -name ".svn" -print 2>/dev/null
+echo "All Done!"
