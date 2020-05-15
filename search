@@ -3,36 +3,40 @@ if [[ $# -eq 0 ]]; then
     echo 'Useage: search some_phrase'
     exit 0
 fi
+look_for()  {
+result=`grep -i $1 $2`
+if [ ! -z "$result" ]
+    then
+      echo "Searching $3"
+      echo
+      echo "$result"
+      echo
+    fi
+    }
+
 #echo "Searching diary"
 #echo
 #grep $1 ~/Dropbox/Personal/Documents/Notes/.diary
-echo "Searching ToDo"
+pattern=$1
+NOTES=/Users/woo/Dropbox/Personal/Documents/Notes
+look_for $pattern "$NOTES/.todo" "ToDo"
+look_for $pattern "/Users/woo/bin/alias" "~/bin/alias"
+look_for $pattern "$NOTES/bin_scripts.csv" "bin scripts documentation file"
+look_for $pattern "$NOTES/Language.txt"  "Language"
+#| sed 's:~/Dropbox/Personal/Documents/Notes/::'`
+look_for $pattern "$NOTES/Port_Starboard.txt" "Port Starboard"
+look_for $pattern "$NOTES/Restaurants.txt" "Restaurants"
+# This one has to be different to handle searching the directory
+result=`ls -l ~/bin | grep -- -.. | grep $1`
+if [ ! -z "$result" ]
+  then
+     echo "Searching ~/bin"
+     echo
+     echo "$result"
+     echo
+  fi
 echo
-grep $1 ~/Dropbox/Personal/Documents/Notes/.todo
-echo "Search ~/alias"
-echo
-grep $1 ~/bin/alias | grep -v '^#'
-echo
-echo "Searching bin scripts"
-echo
-grep $1 ~/Dropbox/Personal/Documents/Notes/bin_scripts.csv
-echo
-echo "Searching Language"
-echo
-grep $1 ~/Dropbox/Personal/Documents/Notes/Language.txt | sed 's:~/Dropbox/Personal/Documents/Notes/::'
-echo "Searching Port Starboard"
-echo
-grep $1 ~/Dropbox/Personal/Documents/Notes/Port_Starboard.txt | sed 's:~/Dropbox/Personal/Documents/Notes/Port_Starboard.txt::'
-echo "Searching Restaurants"
-echo
-grep $1 ~/Dropbox/Personal/Documents/Notes/Restaurants.txt | sed 's:~/Dropbox/Personal/Documents/Notes/Restaurants.txt::'
-echo "Searching bin directory"
-echo
-grep $1 ~/Dropbox/Personal/Documents/Notes/bin_scripts.csv
-echo
-#echo "Searching Notes"
-#echo
-#grep $1 ~/Dropbox/Personal/Documents/Notes/Notes*.txt | sed  's:/Users/woo/Dropbox/Personal/Documents/Notes/::'
+# This one searches a directory and then each of special files within
 echo "Searching Journal"
 echo
 echo
