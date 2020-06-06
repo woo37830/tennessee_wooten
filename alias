@@ -86,6 +86,7 @@ a   jenkins='java -jar ~/bin/jenkins-cli.jar -s http://jwooten37830.com:8080/jen
 a   sync-to-here='rsync --progress --partial -avz woo@\$@:\$@ \$@'
 a   sync-from-here='rsync --progress --partial -avz \$@ woo@\$@:\$@'
 a   awsmysql='mysql -h 44.231.61.194 -u woo -p'
+a   awsftp='sftp -i ~/.ssh/Patti-AWS.pem ec2-user@44.231.61.194'
 # ----------managing jobs ----------------
 a	running="ps ax | grep \$@ | grep -v 'grep \$@' "
 a	slay='(set j=`ps -ax|grep \$@ |head -1`;kill -1 $j[1]) >& /dev/null'
