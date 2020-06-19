@@ -23,7 +23,7 @@ for d in "${gitrepos[@]}"; do
 #        echo " $reponame --> Not a directory at $d"
         continue
     fi
-    if [  -e $d/.git ]; then
+if [  -e $d/.git ]; then
       br=$(git rev-parse --abbrev-ref HEAD)
       reponame="`basename $d`"
       export reponame
@@ -31,20 +31,20 @@ for d in "${gitrepos[@]}"; do
     ok=true
     if [ ! -z "`git ls-files --other --exclude-standard 2> /dev/null`" ]; then
         echo " $reponame [$br] --> Untracked files present at $d"
-        ok=false
+        export ok=false
     fi
     if [ ! -z "`git diff --cached --shortstat 2> /dev/null`" ]; then
         echo " $reponame [$br] --> Changes to be committed at $d"
-        ok=false
+        export ok=false
     fi
     if [ ! -z "`git diff --shortstat 2> /dev/null`" ]; then
         echo " $reponame [$br] --> Changes to be staged/committed at $d"
-        ok=false
+        export ok=false
     fi
     if [ ! -z "`git diff  2> /dev/null`" ]; then
       if [ ! $ok ]; then
         echo " $reponame [$br] --> Out of sync with origin/HEAD at $d"
-        ok=false
+        export ok=false
       fi
     fi
 
@@ -52,7 +52,7 @@ for d in "${gitrepos[@]}"; do
     rev=$(git rev-parse --short HEAD)
     if [ "$last_commit" != "$rev"  ]; then
         echo " $reponame [$br] --> Out of sync with remote at $d at $rev"
-        ok=false
+        export ok=false
     fi
 
     rev=$(git rev-parse --short HEAD)
@@ -63,13 +63,13 @@ for d in "${gitrepos[@]}"; do
               if /^..(\S+)\s+([a-f0-9]+)\s+(\[(?:ahead|behind)\s+\d+\])/
         ' |
         while IFS= read -r MOD; do
-           ok=false
+           export ok=false
            printf ' %s\n' "$MOD"  # Replace with code that uses $MOD
-        done
-        if $ok; then
-              echo " OK --> $reponame [$br] $rev"
-        fi
- else
+        done # end of pipe statement
+    if $ok; then
+          echo " OK --> $reponame [$br] $rev"
+    fi
+ else # end of if this is a git repository
     echo " $reponame --> Not a git repository at $d"
  fi
-done
+done # end of loop through repositories
