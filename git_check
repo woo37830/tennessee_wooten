@@ -23,7 +23,7 @@ for d in "${gitrepos[@]}"; do
 #        echo " $reponame --> Not a directory at $d"
         continue
     fi
-if [  -e $d/.git ]; then
+    if [  -e $d/.git ]; then
       br=$(git rev-parse --abbrev-ref HEAD)
       reponame="`basename $d`"
       export reponame
@@ -31,20 +31,20 @@ if [  -e $d/.git ]; then
     ok=true
     if [ ! -z "`git ls-files --other --exclude-standard 2> /dev/null`" ]; then
         echo " $reponame [$br] --> Untracked files present at $d"
-        export ok=false
+        ok=false
     fi
     if [ ! -z "`git diff --cached --shortstat 2> /dev/null`" ]; then
         echo " $reponame [$br] --> Changes to be committed at $d"
-        export ok=false
+        ok=false
     fi
     if [ ! -z "`git diff --shortstat 2> /dev/null`" ]; then
         echo " $reponame [$br] --> Changes to be staged/committed at $d"
-        export ok=false
+        ok=false
     fi
     if [ ! -z "`git diff  2> /dev/null`" ]; then
       if [ ! $ok ]; then
         echo " $reponame [$br] --> Out of sync with origin/HEAD at $d"
-        export ok=false
+        ok=false
       fi
     fi
 
@@ -52,24 +52,25 @@ if [  -e $d/.git ]; then
     rev=$(git rev-parse --short HEAD)
     if [ "$last_commit" != "$rev"  ]; then
         echo " $reponame [$br] --> Out of sync with remote at $d at $rev"
-        export ok=false
+        ok=false
     fi
 
     rev=$(git rev-parse --short HEAD)
     export rev
         git fetch>/dev/null && git branch -v |
+
         perl -wlne'
            print "$ENV{reponame} [$1] --> $3 $2"
               if /^..(\S+)\s+([a-f0-9]+)\s+(\[(?:ahead|behind)\s+\d+\])/
         ' |
         while IFS= read -r MOD; do
-           export ok=false
+           ok=false
            printf ' %s\n' "$MOD"  # Replace with code that uses $MOD
-        done # end of pipe statement
-    if $ok; then
-          echo " OK --> $reponame [$br] $rev"
-    fi
- else # end of if this is a git repository
+        done
+        if $ok; then
+              echo " OK --> $reponame [$br] $rev"
+        fi
+ else
     echo " $reponame --> Not a git repository at $d"
  fi
-done # end of loop through repositories
+done
