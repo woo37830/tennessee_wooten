@@ -1,19 +1,19 @@
-#!/bin/bash
+#!/usr/bin/perl -w
+#use Term::ANSIColor qw(:constants);
 #
 # Look at time log and see if anyone is being billed.
 #
-billing=`tail -n 1 ~/Dropbox/Personal/Documents/Notes/time_track.txt`
-IFS=')' # space is set as delimiter
-read -ra ADDR <<< "$billing" # str is read into an array as tokens separated
-echo ${ADDR[0]} # This is the time portion, 1 is the task
-IFS='-' 
-read -ra TIME <<< ${ADDR[0]}
-FROM=${TIME[0]}
-TO=${TIME[1]}
-echo "To: '$TO'"
-if [ -z "$TO" ]; then
-echo "Working on: ${ADDR[1]} since $FROM"
-else
-echo "Not billing"
-fi
-echo "All Done!"
+$file =  "/Users/woo/Dropbox/Personal/Documents/Notes/time_track.txt";
+my $lastline = do {
+    open my $pipe, '-|', tail => -1, $file
+        or die "Can't spawn tail: $!\n";
+    <$pipe>;
+};
+#print $lastline;
+$lastline =~ /^\((.*)\s-\s(.*)\)\s(.*)\s@(.*)$/;
+   print "$4: $3 since $1\n" unless $2;
+   print "No one\n" if $2;
+#   print RED,"$4: $3 since $1",RESET unless $2;
+#   print GREEN,"No one",RESET if $2;
+
+#print "\nAll Done!\n";
