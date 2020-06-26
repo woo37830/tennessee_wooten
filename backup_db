@@ -7,9 +7,10 @@
 FILE=/usr/local/bin/automysqlbackup
 if [ -e "$FILE" ]; then
 while read p; do
-mysqldump $p -u woo -p$1 > ~/backups/sql/$p.sql
+/usr/local/mysql/bin/mysqldump $p -u woo -p$1 2>>/Users/woo/logs/cronjob.log 1> /Users/woo/backups/sql/$p.sql
 echo "$p backed up"
 done <~/backups/files.txt
 echo "sql backed up to ~/backups/sql"
+echo "cronjob.log at ~/logs/cronjob.log"
 fi
 echo "All Done!"
