@@ -409,7 +409,7 @@ alias upgrade="sudo apt-get update && sudo apt-get dist-upgrade -y && sudo apt-g
 # alias I want to learn
 function ?()
 {
-echo "This is in .bashrc"
+echo "This is in ~/bin/alias"
 echo "l  : list files with / for directory, * for executable"
 echo "la : show hidden files"
 echo "lx : sort by extension"
@@ -433,6 +433,10 @@ echo "rcp : copy with rsync/ssh"
 echo "git_log : show the git log"
 echo "git_ignore : put all files not in repository into .gitignore"
 echo "git_archive : put all git files into an archive file"
+echo "pushd : put current dir on stack and go to arg"
+echo "pop : pop dir off of stack and cd to it"
+echo "dirs : show what's on the stack"
+echo "dirs -v : show dirs on stack preceded by number.  can go to an index"
 }
 #
 # Commands to set history size and formats
