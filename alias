@@ -31,6 +31,7 @@ a ursa-aws='ssh -i ~/.ssh/ursa-private-key.pem ec2-user@ec2-13-59-96-172.us-east
 a patti='pushd /Library/WebServer/Documents/patti'
 a patti-rails='pushd ~/Development/rails/patti'
 a aws='ssh -i ~/.ssh/Patti-AWS.pem ec2-user@44.231.61.194'
+a awsweb='pushd /var/www/html/patti'
 # ----------vm shortcuts
 a   vrestore='vagrant snapshot restore \$@ --no-provision'
 a   vlist='vagrant snapshot list'
@@ -60,7 +61,7 @@ a	prt_listing="enscript  -fCourier10 "
 a	prt_calendar="pscalendar -P$PRINTER "
 # ---------------------------------------------------------
 a	rmbak="/bin/rm -f *~"
-a	rmtex="/bin/rm -f *.{aux,cp,cps,dlog,dvi,fn,fns,ky,kys,log,pg,pgs,ps,toc,tp,tps,vr,vrs}"
+a	rmtex="/bin/rm -f *.{aux,cp,cps,dlog,dvi,fn,fns,ky,kys,lot,lof,bbl,blg,log,pg,pgs,ps,toc,tp,tps,vr,vrs}"
 a   difftex="echo useage: 'latexdiff -t CFONT -f diff.tex old.tex new.tex '"
 a   del-zero="find ./ -type f -size 0 -exec rm -f {} \;"
 # -----------  routines to check status of things ------
@@ -372,7 +373,7 @@ function cpy()
 # git shortcuts
 # shortcut to display the url config of remote repo in a git root
 alias git_remotes="grep -A 2 \"\[remote\" .git/config|grep -v fetch|sed \"s/\[remote \\\"//\"|sed ':a;N;\$!ba;s/\"\]\n\s*url = /\t/g'"
-
+alias git_remote_branches="git ls-remote"
 # Pretty git log
 alias git_log="git log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 alias git-log="git log --oneline"
@@ -428,15 +429,36 @@ echo "myip : show the IP address of eth1 - wireless"
 echo "repeat [n] [command] : repeat n times command"
 echo "del   : move to .Trash instead of rm"
 echo "clean : remove backup files (*~)"
+echo "rmtex : remove extraneous files when LaTeX-ing"
 echo "psg : ps aux | grep "
 echo "rcp : copy with rsync/ssh"
+echo "git_remotes : list the branches on the remote"
+echo "git_remote_branches : list the branches on the remote"
 echo "git_log : show the git log"
 echo "git_ignore : put all files not in repository into .gitignore"
 echo "git_archive : put all git files into an archive file"
+echo "git stash list [<options>]"
+echo "git stash show [<stash>]"
+echo "git stash drop [-q|--quiet] [<stash>]"
+echo "git stash ( pop | apply ) [--index] [-q|--quiet] [<stash>]"
+echo "git stash branch <branchname> [<stash>]"
+echo "git stash save [-p|--patch] [-k|--[no-]keep-index] [-q|--quiet]"
+echo "	     [-u|--include-untracked] [-a|--all] [<message>]"
+echo "git stash [push [-p|--patch] [-k|--[no-]keep-index] [-q|--quiet]"
+echo "	     [-u|--include-untracked] [-a|--all] [-m|--message <message>]]"
+echo "	     [--] [<pathspec>…​]]"
+echo "git stash clear"
+echo "git stash create [<message>]"
+echo "git stash store [-m|--message <message>] [-q|--quiet] <commit>"
 echo "pushd : put current dir on stack and go to arg"
 echo "pop : pop dir off of stack and cd to it"
 echo "dirs : show what's on the stack"
 echo "dirs -v : show dirs on stack preceded by number.  can go to an index"
+echo "cd ~# : cd to the # element on the stack from dirs -v"
+echo "patti : pushd to /Users/woo/WebServer/Documents/patti"
+echo "aws-latest.sh passwd : run the listing of the users_db.users and logs on aws"
+echo "awsmysql : start mysql pointing at aws database"
+echo "awsweb : pushd to /var/www/html/patti on aws"
 }
 #
 # Commands to set history size and formats
@@ -470,5 +492,3 @@ HISTTIMEFORMAT='%F %T '
 #if [[ $- == *i* ]] ; then
 #source /etc/profile.d/autojump.bash
 #fi
-
-
