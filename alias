@@ -82,6 +82,7 @@ a   clear_history='cat /dev/null > ~/.bash_history && history -c && exit'
 a   report='time_track_report.pl'
 a   makefile-targets='grep "^[^#[:space:]].*:" Makefile'
 a   show-hidden='defaults write com.apple.finder AppleShowAllFiles TRUE;killall Finder'
+a   hide-hidden='defaults write com.apple.finder AppleShowAllFiles FALSE;killall Finder'
 # -------------accessing remote sites ---
 a   jenkins='java -jar ~/bin/jenkins-cli.jar -s http://jwooten37830.com:8080/jenkins/ '
 a   sync-to-here='rsync --progress --partial -avz woo@\$@:\$@ \$@'
@@ -96,8 +97,8 @@ a	zap='(set j=`ps -ax|grep \$@ |head -1`;kill -9 $j[1]) >& /dev/null'
 # ----------time management --------------
 a   set_time="echo 'Must be root';/usr/etc/ntp -sf tick.usno.navy.mil";
 a	timesheet='timelogger -i'
-a	todo='vi  + $HOME/Dropbox/Personal/Documents/Notes/.todo'
-a	time_adjust='vi  + $HOME/Dropbox/Personal/Documents/Notes/time_track.txt'
+a	todo='vi  + $CLOUD/Documents/Personal/Documents/Notes//.todo'
+a	time_adjust='vi  + $CLOUD/Documents/Personal/Documents/Notes/time_track.txt'
 a	track='time_track.tcl'
 a   on='time_track.tcl start'
 a	off='time_track.tcl stop'
