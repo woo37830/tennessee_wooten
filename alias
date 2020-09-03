@@ -97,8 +97,8 @@ a	zap='(set j=`ps -ax|grep \$@ |head -1`;kill -9 $j[1]) >& /dev/null'
 # ----------time management --------------
 a   set_time="echo 'Must be root';/usr/etc/ntp -sf tick.usno.navy.mil";
 a	timesheet='timelogger -i'
-a	todo='vi  + $CLOUD/Documents/Personal/Documents/Notes//.todo'
-a	time_adjust='vi  + $CLOUD/Documents/Personal/Documents/Notes/time_track.txt'
+a	todo='vi  + /Users/woo/Documents/iDrive/Documents/Personal/Documents/Notes/.todo'
+a	time_adjust='vi  + /Users/woo/Documents/iDrive/Documents/Personal/Documents/Notes/time_track.txt'
 a	track='time_track.tcl'
 a   on='time_track.tcl start'
 a	off='time_track.tcl stop'
