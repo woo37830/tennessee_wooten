@@ -19,8 +19,8 @@ package provide TimeTrackCLI 1.3
 array set state [list \
     aliases {} \
     data {} \
-    data_file [file join $::env(CLOUD) Documents Personal Documents Notes  time_track.txt] \
-    alias_file [file join $::env(CLOUD) Documents Personal Documents Notes  aliases.txt] \
+    data_file [file join $::env(HOME) Dropbox Personal Documents Notes  time_track.txt] \
+    alias_file [file join $::env(HOME) Dropbox Personal Documents Notes  aliases.txt] \
     hooks_dir [file join $::env(HOME) .time_track ]
     ]
 

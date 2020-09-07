@@ -50,7 +50,7 @@ if ($num_args > 0) {
 	}
 	print "Filter: $mon / $year / $hash{'-client'}\n";
 # First open my database.  Complain if unable.
-open(STUFF, "/Users/woo/Documents/iDrive/Documents/Personal/Documents/Notes/time_track.txt") || die "Can't open datafile: $!\n";
+open(STUFF, "/Users/woo/.time_track/time_track.txt") || die "Can't open datafile: $!\n";
 
 
 while(<STUFF>)  {

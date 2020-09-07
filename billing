@@ -3,7 +3,7 @@
 #
 # Look at time log and see if anyone is being billed.
 #
-$file =  "/Users/woo//Documents/iDrive//Documents/Personal/Documents/Notes/time_track.txt";
+$file =  "/Users/woo/Dropbox/Personal/Documents/Notes/time_track.txt";
 my $lastline = do {
     open my $pipe, '-|', tail => -1, $file
         or die "Can't spawn tail: $!\n";
