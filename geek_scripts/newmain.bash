@@ -106,7 +106,13 @@ $myscriptpath/niceuptime.bash
 echo "IP Addresses"
 $myscriptpath/ipaddress.bash
 source $myscriptpath/external_address.bash
-
+#
+echo
+echo "Latest: `tmutil latestbackup | awk -F'/' '{print $6}'`"#
+echo
+du -sh ~/.Trash/ | awk '{print "Trash Size: " $1}'
+echo
+echo 'tell application "Mail" to return unread count of inbox as string & ""' | osascript | grep -v '0' | awk '{print "Unread Mail: " $1}'
 ###############################################################################################################
 #
 # END OF SCRIPT
