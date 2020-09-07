@@ -50,6 +50,7 @@ a	l='/bin/ls -FC'	# list files in columns and mark directories
 a	ll='/bin/ls -l'		# long listing
 a	la='/bin/ls -al'		# long listing of all files
 a	lt='/bin/ls -at'		#list by time modified
+a   le='/bin/ls -el'       # Show ACL info
 a   fle="perl -pi -e 's/\r\n?/\n/g' "
 a   pcat='pygmentize -f terminal256 -O style=native -g'
 # ------------printing -------------------------------------
@@ -420,6 +421,7 @@ echo "lc : sort by change time"
 echo "lu : sort by access time"
 echo "lr : recursive ls"
 echo "lt : sort by date"
+echo "le : show ACL info"
 echo "lm : pipe through 'less'"
 echo "md : mkdir, cd"
 echo "tree : nice alternative to 'ls'"
