@@ -6,6 +6,7 @@ if [ "$HOME" != "/Users/git" ]; then
     echo "Can only be used on git home directory"
     exit
 fi
+echo "To undo setup-gitshell, do chsh -s /bin/bash"
 chsh -s /usr/bin/git-shell
 mkdir $HOME/git-shell-commands
 cat >$HOME/git-shell-commands/no-interactive-login <<\EOF
