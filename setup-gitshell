@@ -1,0 +1,18 @@
+#!/bin/bash
+#
+# Disable interactive logins, displaying a greeting instead
+#
+if [ "$HOME" != "/Users/git" ]; then
+    echo "Can only be used on git home directory"
+    exit
+fi
+chsh -s /usr/bin/git-shell
+mkdir $HOME/git-shell-commands
+cat >$HOME/git-shell-commands/no-interactive-login <<\EOF
+#!/bin/sh
+printf '%s\n' "Hi $USER! You've successfully authenticated, but I do not"
+printf '%s\n' "provide interactive shell access."
+exit 128
+EOF
+chmod +x $HOME/git-shell-commands/no-interactive-login
+
