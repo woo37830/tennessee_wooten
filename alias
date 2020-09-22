@@ -62,7 +62,7 @@ a	prt_listing="enscript  -fCourier10 "
 a	prt_calendar="pscalendar -P$PRINTER "
 # ---------------------------------------------------------
 a	rmbak="/bin/rm -f *~"
-a	rmtex="/bin/rm -f *.{aux,cp,cps,dlog,dvi,fn,fns,ky,kys,lot,lof,bbl,blg,log,pg,pgs,ps,toc,tp,tps,vr,vrs,glo,idx,ilg,ind,ist}"
+a	rmtex="/bin/rm -f *.{aux,cp,cps,dlog,dvi,fn,fns,ky,kys,lot,lof,bbl,blg,log,pg,pgs,ps,toc,tp,tps,vr,vrs,glo,idx,ilg,ind,ist,equ}"
 a   difftex="echo useage: 'latexdiff -t CFONT -f diff.tex old.tex new.tex '"
 a   del-zero="find ./ -type f -size 0 -exec rm -f {} \;"
 # -----------  routines to check status of things ------
