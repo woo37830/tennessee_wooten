@@ -6,6 +6,11 @@
 #
 # Check that there are two arguments
 #
+if [ "$#" -ne 2 ]; then
+    echo "Illegal number of parameters"
+    echo "Useage: $0 directory files-to-leave"
+    exit 1
+fi
 (
 cd $1
 current = `pwd`
