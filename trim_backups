@@ -13,10 +13,14 @@ if [ "$#" -ne 2 ]; then
 fi
 (
 cd $1
-current = `pwd`
+current=$PWD
 echo "pwd = $current"
 num=$(ls -1 | wc -l)
 echo "There are $num files in $1"
+if [ "$num" -lt $2 ]; then
+    echo "There aren't $2 files in $current, skipping"
+    exit 0
+fi
 leave=$2
 echo "Leave $leave files"
 remove=$(($num - $leave))
