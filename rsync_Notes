@@ -1,0 +1,11 @@
+#!/bin/bash
+#
+# Rsync contents of the Data directory in the webapp notes so
+# that the latest version is alwoys on all included systems
+#
+# Run this from barsoom every 15 minutes?
+#
+# Check that we are on barsoom
+#
+rsync -rtuv /Users/woo/Dropbox/Personal/Documents/Notes/* /Library/WebServer/Documents/notes/Data
+rsync -rtuv /Library/WebServer/Documents/notes/Data/* /Users/woo/Dropbox/Personal/Documents/Notes
