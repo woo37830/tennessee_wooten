@@ -63,8 +63,8 @@ a	prt_calendar="pscalendar -P$PRINTER "
 # ---------------------------------------------------------
 a	rmbak="/bin/rm -f *~"
 a	rmtex="/bin/rm -f *.{aux,cp,cps,dlog,dvi,fn,fns,ky,kys,lot,lof,bbl,blg,log,pg,pgs,ps,toc,tp,tps,vr,vrs,glo,idx,ilg,ind,ist,equ,glsdefs}"
-a   difftex="echo useage: 'latexdiff -t CFONT -f diff.tex old.tex new.tex '"
-a   del-zero="find ./ -type f -size 0 -exec rm -f {} \;"
+a difftex="echo useage: 'latexdiff -t CFONT -f diff.tex old.tex new.tex '"
+a del-zero="find ./ -type f -size 0 -exec rm -f {} \;"
 # -----------  routines to check status of things ------
 a	con="tail -20 /var/log/system.log"
 a	msgs="tail -50 /usr/adm/messages | more"
@@ -123,7 +123,7 @@ a	vt100="setenv TERM vt100"
 a	mail=/usr/bin/mail
 a	sbp='sbprolog -p 100000 -m 200000 /usr/local/src/sbprolog/modlib/\$readloop'
 #a	amslatex "virtex \&amsplain"
-#a	latex	"virtex \&lplain"
+a	latex="latex $1; latex $1; bibtex $1; latex $1"
 a   insult="afplay ~/Library/Sounds/HabQuch.au"
 a   analyze-sql='perl ~/Development/Forth/Perl/analyzeFile.pl'
 a   fortran="gfortran -w -std=legacy -L /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib"
@@ -136,39 +136,14 @@ a teco='/Applications/Utilities/teco/teco'
 a adventure='emacs -batch -l dunnet'
 a last_logs='ls -al /var/log/*.out'
 # ---------------- starting and stopping processes and daemons
-#a cms_start='sudo /Applications/Plone-2.5.2/Instance/bin/zopectl start'
-#a cms_stop='sudo /Applications/Plone-2.5.2/Instance/bin/zopectl stop'
-#a jboss_start='/Applications/jboss-4.2.2.GA/bin/run.sh&'
-#a jboss_stop='/Applications/jboss-4.2.2.GA/bin/shutdown.sh -S'
-#a tc5_start='/Library/Tomcat/apache-tomcat-5.5.12/bin/startup.sh'
-#a tc5_stop='/Library/Tomcat/apache-tomcat-5.5.12/bin/shutdown.sh'
-#a jbpm_start='/Users/woo/Development/Applications/jbpm-jpdl-3.2.2/server/bin/run.sh -c jbpm &'
-#a jbpm_stop='/Users/woo/Development/Applications/jbpm-jpdl-3.2.2/server/bin/shutdown.sh -S '
 a cache='./bin/start_cache'
 a cache_stop='./bin/stop_cache'
-#a tcu='./bin/start_tomcat'
-#a tcd='./bin/stop_tomcat'
-#a restart='sudo apachectl restart'
-#a jup='/Users/woo/Applications/atlassian-jira-enterprise-4.1.2-standalone/bin/startup.sh &'
-#a jdown='/Users/woo/Applications/atlassian-jira-enterprise-4.1.2-standalone/bin/shutdown.sh &'
 a mongod_start='mongo_manage.sh start'
 a mongod_stop='mongo_manage.sh stop'
 a mongo='/usr/local/bin/mongo'
 a mysql_server='/usr/local/bin/mysql.server'
 a mysql_start='mysql_server start'
 a mysql_stop='mysql_server stop'
-#a mysql_start='sudo /usr/local/mysql/bin/mysqld_safe &'
-#a mysql=/Applications/MAMP/Library/bin/mysql
-#a mysql=/usr/local/mysql/bin/mysql
-#a mysqladmin=/usr/local/mysql/bin/mysqladmin
-#a mysql0='sudo launchctl unload -w /Library/LaunchDaemons/StartupParameters.plist'
-#a mysql1='sudo launchctl load -w /Library/LaunchDaemons/StartupParameters.plist'
-#a plone='sudo /Applications/Plone-2.5.2/instance/bin/zopectl start;echo http://localhost:8080/Plone'
-#a plone_stop='sudo /Applications/Plone-2.5.2/Instance/bin/zopectl stop'
-#
-#a ldap_stop='sudo launchctl unload /Library/LaunchDaemons/org.apache.directory.server.plist'
-#a ldap_start='sudo launchctl load /Library/LaunchDaemons/org.apache.directory.server.plist'
-
 #a webshare='python -c "import SimpleHTTPServer;SimpleHTTPServer.test()"'
 # ------------- compiling programs ----------------
 a cc='cc.sh'
@@ -230,7 +205,7 @@ a fr='function _fr() { grep -RIs $1 . ; };_fr'
 function del()
 {
     for i in $* ; do
-mv $i ~/.Trash
+      mv $i ~/.Trash
     done
 }
 
@@ -241,8 +216,8 @@ up()
     local count=0
     while [[ "$count" -lt "$1" ]] ;
     do
-str=$str"../"
-        let count=count+1
+      str=$str"../"
+      let count=count+1
     done
 cd $str
 }
@@ -317,9 +292,9 @@ function notify() {
     cmd="$1"
     $@
     if [[ $? ]] ; then
-msg="Your \"$cmd\" command is completed"
+      msg="Your \"$cmd\" command is completed"
     else
-msg="There was an error in your \"$cmd\" command"
+      msg="There was an error in your \"$cmd\" command"
     fi
 zenity --info --text "$msg\nin $((e-s)) s\n$(date)" &
 
@@ -327,7 +302,7 @@ zenity --info --text "$msg\nin $((e-s)) s\n$(date)" &
     # then say loudly that it ended
     e=$SECONDS
     if [[ $((e-s)) -ge 60 ]] ; then
-espeak -s 110 "$msg" 2>/dev/null >/dev/null
+      espeak -s 110 "$msg" 2>/dev/null >/dev/null
     fi
 }
 
@@ -384,9 +359,9 @@ alias git-log="git log --oneline"
 function git_ignore()
 {
     if [[ ! -f .gitignore ]] ; then
-echo ".gitignore" > .gitignore
+      echo ".gitignore" > .gitignore
     fi
-git ls-files --other --exclude-standard >> .gitignore
+    git ls-files --other --exclude-standard >> .gitignore
 }
 
 # Take a snapshot of the current git repository and zip it.
@@ -465,7 +440,7 @@ echo "awsweb : pushd to /var/www/html/patti on aws"
 }
 #
 # Commands to set history size and formats
-# do not permits to recall dangerous commands in bash history
+# do not permit to recall dangerous commands in bash history
 #
 export HISTIGNORE='&:[bf]g:exit:*>|*:*rm*-rf*:*rm*-f*'
 # append history rather than overwrite

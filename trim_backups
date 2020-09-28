@@ -1,0 +1,30 @@
+#!/bin/bash
+#
+# Go to indicated directory and remove all but the latest N entries
+#
+# Useage: trim_backups directory Number-of-files-to-keep
+#
+# Check that there are two arguments
+#
+if [ "$#" -ne 2 ]; then
+    echo "Illegal number of parameters"
+    echo "Useage: $0 directory files-to-leave"
+    exit 1
+fi
+(
+cd $1
+current=$PWD
+echo "pwd = $current"
+num=$(ls -1 | wc -l)
+echo "There are $num files in $1"
+if [ "$num" -lt $2 ]; then
+    echo "There aren't $2 files in $current, skipping"
+    exit 0
+fi
+leave=$2
+echo "Leave $leave files"
+remove=$(($num - $leave))
+echo "We will remove $remove"
+ls -t | tail -n $remove | xargs rm --
+echo "All Done in cleaning $1 directory"
+)

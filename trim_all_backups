@@ -1,0 +1,12 @@
+#!/bin/bash
+#
+# cd to the ~/backups directory and run daily, weekly, monthly, and yearly
+#
+(
+cd ~/backups
+/home/ec2-user/bin/trim_backups daily 30 # Leave 30 latest daily backups
+/home/ec2-user/bin/trim_backups weekly 15 # Leave 3 months of weekly backups
+/home/ec2-user/bin/trim_backups monthly 12 # Leave 1 year of monthly backups
+/home/ec2-user/bin/trim_backups yearly 3 # Leave 3 years of yearly backups
+echo "Cleanup all done"
+) 

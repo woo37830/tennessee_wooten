@@ -1,0 +1,8 @@
+#!/bin/bash
+(
+touch -t 20200912 test_6_days_old
+touch -t 20200911 test_7_days_old
+touch -t 20200910 test_8_days_old
+touch -t 20200909 test_9_days_old
+touch -t 20200908 test_10_days_old
+)

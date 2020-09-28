@@ -1,8 +1,0 @@
-drush_version=6.0-rc3
-
-; Information added by drupal.org packaging script on 2013-07-19
-version = "8.x-6.0-rc3"
-core = "8.x"
-project = "drush"
-datestamp = "1374252969"
-
