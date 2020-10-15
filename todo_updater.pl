@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 #
-$diary = "/Users/woo/Dropbox/Personal/Documents/Notes/.diary";
-$todo = "/Users/woo/Dropbox/Personal/Documents/Notes/.todo";
+$diary = "$ENV{'NOTES_DIR'}/.diary";
+$todo = "$ENV{'NOTES_DIR'}/.todo";
 
 open( DIARY, $diary ) || die "Unable to open file: $diary\n";
 #open( TODO, "+>$todo" ) || die "Unable to open file: $todo for read/write\n";
@@ -17,4 +17,3 @@ while(<DIARY>) {
     print "$_\n";
 }
 print "All Done!\n";
-
