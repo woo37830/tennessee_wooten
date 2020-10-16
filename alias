@@ -1,4 +1,5 @@
 alias   a=alias		# short name for alias command
+NOTES_DIR=/Users/woo/Dropbox/Personal/Documents/Notes
 
 a	help=apropos
 a	h=history		# short name for history command
