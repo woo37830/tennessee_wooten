@@ -33,6 +33,7 @@ a patti='pushd /Library/WebServer/Documents/patti'
 a patti-rails='pushd ~/Development/rails/patti'
 a aws='ssh -i ~/.ssh/Patti-AWS.pem ec2-user@44.231.61.194'
 a awsweb='pushd /var/www/html/patti'
+a aws-patti='ssh -i ~/.ssh/PattiAWS.pem ec2-user@ec2-44-241-140-144.us-west-2.compute.amazonaws.com'
 # ----------vm shortcuts
 a   vrestore='vagrant snapshot restore \$@ --no-provision'
 a   vlist='vagrant snapshot list'
@@ -91,6 +92,7 @@ a   sync-to-here='rsync --progress --partial -avz woo@\$@:\$@ \$@'
 a   sync-from-here='rsync --progress --partial -avz \$@ woo@\$@:\$@'
 a   awsmysql='mysql -h 44.231.61.194 -u woo -p'
 a   awsftp='sftp -i ~/.ssh/Patti-AWS.pem ec2-user@44.231.61.194'
+a   pattiftp='sftp -i ~/.ssh/PattiAWS.pem ec2-user@44.241.140.144'
 # ----------managing jobs ----------------
 a	running="ps ax | grep \$@ | grep -v 'grep \$@' "
 a	slay='(set j=`ps -ax|grep \$@ |head -1`;kill -1 $j[1]) >& /dev/null'
