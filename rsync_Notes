@@ -9,3 +9,5 @@
 #
 rsync -rtuv /Users/woo/Dropbox/Personal/Documents/Notes/* /Library/WebServer/Documents/notes/Data
 rsync -rtuv /Library/WebServer/Documents/notes/Data/* /Users/woo/Dropbox/Personal/Documents/Notes
+rsync -rtuv /Users/woo/Dropbox/Personal/Documents/Notes/.todo /Library/WebServer/Documents/notes/Data/.todo
+rsync -rtuv /Library/WebServer/Documents/notes/Data/.todo /Users/woo/Dropbox/Personal/Documents/Notes/.todo
