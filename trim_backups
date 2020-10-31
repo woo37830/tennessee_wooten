@@ -1,0 +1,21 @@
+#!/bin/bash
+#
+# Go to indicated directory and remove all but the latest N entries
+#
+# Useage: trim_backups directory Number-of-files-to-keep
+#
+# Check that there are two arguments
+#
+(
+cd $1
+current = `pwd`
+echo "pwd = $current"
+num=$(ls -1 | wc -l)
+echo "There are $num files in $1"
+leave=$2
+echo "Leave $leave files"
+remove=$(($num - $leave))
+echo "We will remove $remove"
+ls -t | tail -n $remove | xargs rm --
+echo "All Done in cleaning $1 directory"
+)
