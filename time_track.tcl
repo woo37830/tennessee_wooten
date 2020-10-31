@@ -19,8 +19,8 @@ package provide TimeTrackCLI 1.3
 array set state [list \
     aliases {} \
     data {} \
-    data_file [file join $::env(HOME) Dropbox Personal Documents Notes  time_track.txt] \
-    alias_file [file join $::env(HOME) Dropbox Personal Documents Notes  aliases.txt] \
+    data_file [file join $::env(NOTES_DIR)  time_track.txt] \
+    alias_file [file join $::env(NOTES_DIR)  aliases.txt] \
     hooks_dir [file join $::env(HOME) .time_track ]
     ]
 
@@ -153,7 +153,7 @@ proc line_to_components {line} {
 
 proc components_to_line {components} {
     array set parts $components
-    
+
     if {$parts(code) ne ""} {
         set message "$parts(message) @$parts(code)"
     } else {
@@ -242,7 +242,7 @@ proc get_code_from_alias {alias} {
 
 proc execute_hook {name args_list} {
     set path [file join $::state(hooks_dir) $name]
-    
+
     if {![file executable $path]} {
         return
     }
@@ -352,7 +352,7 @@ proc cmd.cancel {options argv} {
     if {$params(resume) && [llength $::state(data)] > 0} {
         set line [lindex $::state(data) end]
         array set parts [line_to_components $line]
-        
+
         set parts(end_time) ""
 
         set ::state(data) [lreplace $::state(data) end end [components_to_line [array get parts]]]

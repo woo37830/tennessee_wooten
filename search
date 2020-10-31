@@ -40,7 +40,7 @@ echo
 echo "Searching Journal"
 echo
 echo
-for fullpath in ~/Dropbox/Personal/Documents/Notes/Journal_*.txt; do
+for fullpath in $NOTES/Journal_*.txt; do
    filename="${fullpath##*/}"                      # Strip longest match of */ from start
    dir="${fullpath:0:${#fullpath} - ${#filename}}" # Substring from 0 thru pos of filename
    base="${filename%.[^.]*}"                       # Strip shortest match of . plus at least one non-dot char from end

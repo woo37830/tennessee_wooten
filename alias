@@ -1,4 +1,5 @@
 alias   a=alias		# short name for alias command
+NOTES_DIR=/Users/woo/Dropbox/Personal/Documents/Notes
 
 a	help=apropos
 a	h=history		# short name for history command
@@ -32,6 +33,7 @@ a patti='pushd /Library/WebServer/Documents/patti'
 a patti-rails='pushd ~/Development/rails/patti'
 a aws='ssh -i ~/.ssh/Patti-AWS.pem ec2-user@44.231.61.194'
 a awsweb='pushd /var/www/html/patti'
+a aws-patti='ssh -i ~/.ssh/PattiAWS.pem ec2-user@ec2-44-241-140-144.us-west-2.compute.amazonaws.com'
 # ----------vm shortcuts
 a   vrestore='vagrant snapshot restore \$@ --no-provision'
 a   vlist='vagrant snapshot list'
@@ -50,6 +52,7 @@ a	l='/bin/ls -FC'	# list files in columns and mark directories
 a	ll='/bin/ls -l'		# long listing
 a	la='/bin/ls -al'		# long listing of all files
 a	lt='/bin/ls -at'		#list by time modified
+a   le='/bin/ls -el'       # Show ACL info
 a   fle="perl -pi -e 's/\r\n?/\n/g' "
 a   pcat='pygmentize -f terminal256 -O style=native -g'
 # ------------printing -------------------------------------
@@ -61,9 +64,9 @@ a	prt_listing="enscript  -fCourier10 "
 a	prt_calendar="pscalendar -P$PRINTER "
 # ---------------------------------------------------------
 a	rmbak="/bin/rm -f *~"
-a	rmtex="/bin/rm -f *.{aux,cp,cps,dlog,dvi,fn,fns,ky,kys,lot,lof,bbl,blg,log,pg,pgs,ps,toc,tp,tps,vr,vrs,glo,idx,ilg,ind,ist}"
-a   difftex="echo useage: 'latexdiff -t CFONT -f diff.tex old.tex new.tex '"
-a   del-zero="find ./ -type f -size 0 -exec rm -f {} \;"
+a	rmtex="/bin/rm -f *.{aux,cp,cps,dlog,dvi,fn,fns,ky,kys,lot,lof,bbl,blg,log,pg,pgs,ps,toc,tp,tps,vr,vrs,glo,idx,ilg,ind,ist,equ,glsdefs}"
+a difftex="echo useage: 'latexdiff -t CFONT -f diff.tex old.tex new.tex '"
+a del-zero="find ./ -type f -size 0 -exec rm -f {} \;"
 # -----------  routines to check status of things ------
 a	con="tail -20 /var/log/system.log"
 a	msgs="tail -50 /usr/adm/messages | more"
@@ -82,12 +85,14 @@ a   clear_history='cat /dev/null > ~/.bash_history && history -c && exit'
 a   report='time_track_report.pl'
 a   makefile-targets='grep "^[^#[:space:]].*:" Makefile'
 a   show-hidden='defaults write com.apple.finder AppleShowAllFiles TRUE;killall Finder'
+a   hide-hidden='defaults write com.apple.finder AppleShowAllFiles FALSE;killall Finder'
 # -------------accessing remote sites ---
 a   jenkins='java -jar ~/bin/jenkins-cli.jar -s http://jwooten37830.com:8080/jenkins/ '
 a   sync-to-here='rsync --progress --partial -avz woo@\$@:\$@ \$@'
 a   sync-from-here='rsync --progress --partial -avz \$@ woo@\$@:\$@'
 a   awsmysql='mysql -h 44.231.61.194 -u woo -p'
 a   awsftp='sftp -i ~/.ssh/Patti-AWS.pem ec2-user@44.231.61.194'
+a   pattiftp='sftp -i ~/.ssh/PattiAWS.pem ec2-user@44.241.140.144'
 # ----------managing jobs ----------------
 a	running="ps ax | grep \$@ | grep -v 'grep \$@' "
 a	slay='(set j=`ps -ax|grep \$@ |head -1`;kill -1 $j[1]) >& /dev/null'
@@ -96,8 +101,8 @@ a	zap='(set j=`ps -ax|grep \$@ |head -1`;kill -9 $j[1]) >& /dev/null'
 # ----------time management --------------
 a   set_time="echo 'Must be root';/usr/etc/ntp -sf tick.usno.navy.mil";
 a	timesheet='timelogger -i'
-a	todo='vi  + $HOME/Dropbox/Personal/Documents/Notes/.todo'
-a	time_adjust='vi  + $HOME/Dropbox/Personal/Documents/Notes/time_track.txt'
+a	todo="vi  + $NOTES_DIR/.todo"
+a	time_adjust="vi  + $NOTES_DIR/time_track.txt"
 a	track='time_track.tcl'
 a   on='time_track.tcl start'
 a	off='time_track.tcl stop'
@@ -121,7 +126,7 @@ a	vt100="setenv TERM vt100"
 a	mail=/usr/bin/mail
 a	sbp='sbprolog -p 100000 -m 200000 /usr/local/src/sbprolog/modlib/\$readloop'
 #a	amslatex "virtex \&amsplain"
-#a	latex	"virtex \&lplain"
+a	latex="latex $1; latex $1; bibtex $1; latex $1"
 a   insult="afplay ~/Library/Sounds/HabQuch.au"
 a   analyze-sql='perl ~/Development/Forth/Perl/analyzeFile.pl'
 a   fortran="gfortran -w -std=legacy -L /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib"
@@ -134,39 +139,14 @@ a teco='/Applications/Utilities/teco/teco'
 a adventure='emacs -batch -l dunnet'
 a last_logs='ls -al /var/log/*.out'
 # ---------------- starting and stopping processes and daemons
-#a cms_start='sudo /Applications/Plone-2.5.2/Instance/bin/zopectl start'
-#a cms_stop='sudo /Applications/Plone-2.5.2/Instance/bin/zopectl stop'
-#a jboss_start='/Applications/jboss-4.2.2.GA/bin/run.sh&'
-#a jboss_stop='/Applications/jboss-4.2.2.GA/bin/shutdown.sh -S'
-#a tc5_start='/Library/Tomcat/apache-tomcat-5.5.12/bin/startup.sh'
-#a tc5_stop='/Library/Tomcat/apache-tomcat-5.5.12/bin/shutdown.sh'
-#a jbpm_start='/Users/woo/Development/Applications/jbpm-jpdl-3.2.2/server/bin/run.sh -c jbpm &'
-#a jbpm_stop='/Users/woo/Development/Applications/jbpm-jpdl-3.2.2/server/bin/shutdown.sh -S '
 a cache='./bin/start_cache'
 a cache_stop='./bin/stop_cache'
-#a tcu='./bin/start_tomcat'
-#a tcd='./bin/stop_tomcat'
-#a restart='sudo apachectl restart'
-#a jup='/Users/woo/Applications/atlassian-jira-enterprise-4.1.2-standalone/bin/startup.sh &'
-#a jdown='/Users/woo/Applications/atlassian-jira-enterprise-4.1.2-standalone/bin/shutdown.sh &'
 a mongod_start='mongo_manage.sh start'
 a mongod_stop='mongo_manage.sh stop'
 a mongo='/usr/local/bin/mongo'
 a mysql_server='/usr/local/bin/mysql.server'
 a mysql_start='mysql_server start'
 a mysql_stop='mysql_server stop'
-#a mysql_start='sudo /usr/local/mysql/bin/mysqld_safe &'
-#a mysql=/Applications/MAMP/Library/bin/mysql
-#a mysql=/usr/local/mysql/bin/mysql
-#a mysqladmin=/usr/local/mysql/bin/mysqladmin
-#a mysql0='sudo launchctl unload -w /Library/LaunchDaemons/StartupParameters.plist'
-#a mysql1='sudo launchctl load -w /Library/LaunchDaemons/StartupParameters.plist'
-#a plone='sudo /Applications/Plone-2.5.2/instance/bin/zopectl start;echo http://localhost:8080/Plone'
-#a plone_stop='sudo /Applications/Plone-2.5.2/Instance/bin/zopectl stop'
-#
-#a ldap_stop='sudo launchctl unload /Library/LaunchDaemons/org.apache.directory.server.plist'
-#a ldap_start='sudo launchctl load /Library/LaunchDaemons/org.apache.directory.server.plist'
-
 #a webshare='python -c "import SimpleHTTPServer;SimpleHTTPServer.test()"'
 # ------------- compiling programs ----------------
 a cc='cc.sh'
@@ -228,7 +208,7 @@ a fr='function _fr() { grep -RIs $1 . ; };_fr'
 function del()
 {
     for i in $* ; do
-mv $i ~/.Trash
+      mv $i ~/.Trash
     done
 }
 
@@ -239,8 +219,8 @@ up()
     local count=0
     while [[ "$count" -lt "$1" ]] ;
     do
-str=$str"../"
-        let count=count+1
+      str=$str"../"
+      let count=count+1
     done
 cd $str
 }
@@ -315,9 +295,9 @@ function notify() {
     cmd="$1"
     $@
     if [[ $? ]] ; then
-msg="Your \"$cmd\" command is completed"
+      msg="Your \"$cmd\" command is completed"
     else
-msg="There was an error in your \"$cmd\" command"
+      msg="There was an error in your \"$cmd\" command"
     fi
 zenity --info --text "$msg\nin $((e-s)) s\n$(date)" &
 
@@ -325,7 +305,7 @@ zenity --info --text "$msg\nin $((e-s)) s\n$(date)" &
     # then say loudly that it ended
     e=$SECONDS
     if [[ $((e-s)) -ge 60 ]] ; then
-espeak -s 110 "$msg" 2>/dev/null >/dev/null
+      espeak -s 110 "$msg" 2>/dev/null >/dev/null
     fi
 }
 
@@ -382,9 +362,9 @@ alias git-log="git log --oneline"
 function git_ignore()
 {
     if [[ ! -f .gitignore ]] ; then
-echo ".gitignore" > .gitignore
+      echo ".gitignore" > .gitignore
     fi
-git ls-files --other --exclude-standard >> .gitignore
+    git ls-files --other --exclude-standard >> .gitignore
 }
 
 # Take a snapshot of the current git repository and zip it.
@@ -419,6 +399,7 @@ echo "lc : sort by change time"
 echo "lu : sort by access time"
 echo "lr : recursive ls"
 echo "lt : sort by date"
+echo "le : show ACL info"
 echo "lm : pipe through 'less'"
 echo "md : mkdir, cd"
 echo "tree : nice alternative to 'ls'"
@@ -462,7 +443,7 @@ echo "awsweb : pushd to /var/www/html/patti on aws"
 }
 #
 # Commands to set history size and formats
-# do not permits to recall dangerous commands in bash history
+# do not permit to recall dangerous commands in bash history
 #
 export HISTIGNORE='&:[bf]g:exit:*>|*:*rm*-rf*:*rm*-f*'
 # append history rather than overwrite

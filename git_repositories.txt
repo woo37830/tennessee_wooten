@@ -18,3 +18,4 @@
 /Users/woo/Development/rails/patti
 /Users/woo/Development/rails/blog
 /Users/woo/Development/unity
+/Users/woo/Documents/Projects/Quantellia

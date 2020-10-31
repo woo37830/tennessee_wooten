@@ -1,7 +1,7 @@
 #! /bin/csh
 # execute as  tarlist to-dir name1 name2 name3
 set TO = $1
-set DATE = `ddmmyy -n`
+set DATE = `date +"%y%m%d" `
 shift
 foreach i  ($argv)
 	echo "tarring $i to $TO"
