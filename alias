@@ -1,158 +1,159 @@
 alias   a=alias		# short name for alias command
 NOTES_DIR=/Users/woo/Dropbox/Personal/Documents/Notes
 
-a	help=apropos
-a	h=history		# short name for history command
+alias	help=apropos
+alias	h=history		# short name for history command
 # ----------security with some utilities ------------
-a	rm='rm -i'		# prompt before removing any file
-a	cp='cp -i'		# prompt before overwriting any file with cp
-a	mv='mv -i'		# prompt before overwriting any file with mv
+alias	rm='rm -i'		# prompt before removing any file
+alias	cp='cp -i'		# prompt before overwriting any file with cp
+alias	mv='mv -i'		# prompt before overwriting any file with mv
 #set +o noclobber
 #set noclobber			# forbid use of > to automatically overwrite
 # -----------moving around in directories -------
-a	back='set back=$old; cd $back; unset back'
-a	pd=pushd
-a	pop=popd
+alias	back='set back=$old; cd $back; unset back'
+alias	pd=pushd
+alias	pop=popd
 # ----------Useful directories
-a   crack='pushd /Users/woo/Downloads/john-1.7.9-jumbo-7-macosx-Intel-2/run'
-a   drush_dir='pushd /Users/woo/bin/drush'
+alias   crack='pushd /Users/woo/Downloads/john-1.7.9-jumbo-7-macosx-Intel-2/run'
+alias   drush_dir='pushd /Users/woo/bin/drush'
 # ----------cvs shortcuts
-a	cvs-edits="cvs -Q status | grep -i locally"
-a	cvs-diffs="cvs -q diff --brief"
+alias	cvs-edits="cvs -Q status | grep -i locally"
+alias	cvs-diffs="cvs -q diff --brief"
 
-# ---------- quantellia shortcuts
-a humongous='ssh -Y -o ConnectTimeOut=150 -i "/Users/woo/.ssh/id_rsa" -l ubuntu 18.216.122.7'
-a quantellia='ssh -Y -o ConnectTimeOut=150 -i "/Users/woo/.ssh/id_rsa" -l ubuntu 18.217.212.159'
-a woo_server='ssh -Y -o ConnectTimeOut=150 -i "/Users/woo/.ssh/id_rsa" -l woo 18.217.212.159'
-a clone='ssh -Y -o ConnectTimeOut=150 -i "/Users/woo/.ssh/id_rsa" -l ubuntu 18.222.156.148'
-a woo_clone='ssh -Y -o ConnectTimeOut=150 -i "/Users/woo/.ssh/id_rsa" -l woo 18.222.156.148'
-a dcl_l='ssh -Y -o ConnectTimeOut=150 -i "/Users/woo/.ssh/id_rsa" -l ubuntu 172.31.41.149'
-a ursa-aws='ssh -i ~/.ssh/ursa-private-key.pem ec2-user@ec2-13-59-96-172.us-east-2.compute.amazonaws.com'
+# ---------- quantellialias shortcuts
+alias humongous='ssh -Y -o ConnectTimeOut=150 -i "/Users/woo/.ssh/id_rsa" -l ubuntu 18.216.122.7'
+alias quantellia='ssh -Y -o ConnectTimeOut=150 -i "/Users/woo/.ssh/id_rsa" -l ubuntu 18.217.212.159'
+alias woo_server='ssh -Y -o ConnectTimeOut=150 -i "/Users/woo/.ssh/id_rsa" -l woo 18.217.212.159'
+alias clone='ssh -Y -o ConnectTimeOut=150 -i "/Users/woo/.ssh/id_rsa" -l ubuntu 18.222.156.148'
+alias woo_clone='ssh -Y -o ConnectTimeOut=150 -i "/Users/woo/.ssh/id_rsa" -l woo 18.222.156.148'
+alias dcl_l='ssh -Y -o ConnectTimeOut=150 -i "/Users/woo/.ssh/id_rsa" -l ubuntu 172.31.41.149'
+alias ursa-aws='ssh -i ~/.ssh/ursa-private-key.pem ec2-user@ec2-13-59-96-172.us-east-2.compute.amazonaws.com'
 # --------- patti shortcuts -----------------------------------
-a patti='pushd /Library/WebServer/Documents/patti'
-a patti-rails='pushd ~/Development/rails/patti'
-a aws='ssh -i ~/.ssh/Patti-AWS.pem ec2-user@44.231.61.194'
-a awsweb='pushd /var/www/html/patti'
-a aws-patti='ssh -i ~/.ssh/PattiAWS.pem ec2-user@ec2-44-241-140-144.us-west-2.compute.amazonaws.com'
+alias patti='pushd /Library/WebServer/Documents/patti'
+alias patti-rails='pushd ~/Development/rails/patti'
+alias aws='ssh -i ~/.ssh/Patti-AWS.pem ec2-user@44.231.61.194'
+alias awsweb='pushd /var/www/html/patti'
+alias aws-patti='ssh -i ~/.ssh/PattiAWS.pem ec2-user@ec2-44-241-140-144.us-west-2.compute.amazonaws.com'
 # ----------vm shortcuts
-a   vrestore='vagrant snapshot restore \$@ --no-provision'
-a   vlist='vagrant snapshot list'
-a   vssh='vagrant ssh'
-a   vstatus='vagrant status'
-a   vhalt='vagrant halt'
-a   vpause='vagrant suspend'
-a   vsave="vagrant snapshot save \$@"
-a   caseflow="cd ~/vagrant_vms/precise64"
-a   vstart="vagrant snapshot restore root_password_set --no-provision"
+alias   vrestore='vagrant snapshot restore \$@ --no-provision'
+alias   vlist='vagrant snapshot list'
+alias   vssh='vagrant ssh'
+alias   vstatus='vagrant status'
+alias   vhalt='vagrant halt'
+alias   vpause='vagrant suspend'
+alias   vsave="vagrant snapshot save \$@"
+alias   caseflow="cd ~/vagrant_vms/precise64"
+alias   vstart="vagrant snapshot restore root_password_set --no-provision"
 if [ -f /usr/local/bin/docker ]; then
-a   start_mssql="docker run -d --name sql_server_demo -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=Fester123.' -p 1433:1433 microsoft/mssql-server-linux"
+alias   start_mssql="docker run -d --name sql_server_demo -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=Fester123.' -p 1433:1433 microsoft/mssql-server-linux"
 fi
+alias   cfd='docker container run -ti --rm -v $PWD/data -w /data  myopenfoam:v6.0'
 # ----------- listing files and directories ----------
-a	l='/bin/ls -FC'	# list files in columns and mark directories
-a	ll='/bin/ls -l'		# long listing
-a	la='/bin/ls -al'		# long listing of all files
-a	lt='/bin/ls -at'		#list by time modified
-a   le='/bin/ls -el'       # Show ACL info
-a   fle="perl -pi -e 's/\r\n?/\n/g' "
-a   pcat='pygmentize -f terminal256 -O style=native -g'
+alias	l='/bin/ls -FC'	# list files in columns and mark directories
+alias	ll='/bin/ls -l'		# long listing
+alias	la='/bin/ls -al'		# long listing of all files
+alias	lt='/bin/ls -at'		#list by time modified
+alias   le='/bin/ls -el'       # Show ACL info
+alias   fle="perl -pi -e 's/\r\n?/\n/g' "
+alias   pcat='pygmentize -f terminal256 -O style=native -g'
 # ------------printing -------------------------------------
-a	ps_troff="tbl \$@ | ptroff -ms -t"
-a	prt_troff="tbl $@ | nroff -ms"
-a	fmt_report="enscript -GrE --color -Wh, -p - "
-a	prt_report="enscript -r -fCourier10 --rotate-even-pages -2 "
-a	prt_listing="enscript  -fCourier10 "
-a	prt_calendar="pscalendar -P$PRINTER "
+alias	ps_troff="tbl \$@ | ptroff -ms -t"
+alias	prt_troff="tbl $@ | nroff -ms"
+alias	fmt_report="enscript -GrE --color -Wh, -p - "
+alias	prt_report="enscript -r -fCourier10 --rotate-even-pages -2 "
+alias	prt_listing="enscript  -fCourier10 "
+alias	prt_calendar="pscalendar -P$PRINTER "
 # ---------------------------------------------------------
-a	rmbak="/bin/rm -f *~"
-a	rmtex="/bin/rm -f *.{aux,cp,cps,dlog,dvi,fn,fns,ky,kys,lot,lof,bbl,blg,log,pg,pgs,ps,toc,tp,tps,vr,vrs,glo,idx,ilg,ind,ist,equ,glsdefs}"
-a difftex="echo useage: 'latexdiff -t CFONT -f diff.tex old.tex new.tex '"
-a del-zero="find ./ -type f -size 0 -exec rm -f {} \;"
+alias	rmbak="/bin/rm -f *~"
+alias	rmtex="/bin/rm -f *.{aux,cp,cps,dlog,dvi,fn,fns,ky,kys,lot,lof,bbl,blg,log,pg,pgs,ps,toc,tp,tps,vr,vrs,glo,idx,ilg,ind,ist,equ,glsdefs}"
+alias difftex="echo useage: 'latexdiff -t CFONT -f diff.tex old.tex new.tex '"
+alias del-zero="find ./ -type f -size 0 -exec rm -f {} \;"
 # -----------  routines to check status of things ------
-a	con="tail -20 /var/log/system.log"
-a	msgs="tail -50 /usr/adm/messages | more"
-a	lpderr="tail	-50 /usr/adm/lpd-errs | more"
-a	anynu="tail -24  /usr/adm/nu.log"
-a	whop="ps -agu"
-a	userp="ps -agu | grep \$@ | grep -v 'grep \$@' "
-a	lastlog="last | head -20"
-a	usersum="ac -p"
-a	rup="/usr/local/lib/watcher/rupping"
-a	rstat="/usr/local/lib/watcher/rshuptime"
-a	syslog="tail -50 /private/var/log/system.log"
-a   findlocked="find . -flags uchange"
-a   unlock="chflags -R nouchg ."
-a   clear_history='cat /dev/null > ~/.bash_history && history -c && exit'
-a   report='time_track_report.pl'
-a   makefile-targets='grep "^[^#[:space:]].*:" Makefile'
-a   show-hidden='defaults write com.apple.finder AppleShowAllFiles TRUE;killall Finder'
-a   hide-hidden='defaults write com.apple.finder AppleShowAllFiles FALSE;killall Finder'
+alias	con="tail -20 /var/log/system.log"
+alias	msgs="tail -50 /usr/adm/messages | more"
+alias	lpderr="tail	-50 /usr/adm/lpd-errs | more"
+alias	anynu="tail -24  /usr/adm/nu.log"
+alias	whop="ps -agu"
+alias	userp="ps -agu | grep \$@ | grep -v 'grep \$@' "
+alias	lastlog="last | head -20"
+alias	usersum="ac -p"
+alias	rup="/usr/local/lib/watcher/rupping"
+alias	rstat="/usr/local/lib/watcher/rshuptime"
+alias	syslog="tail -50 /private/var/log/system.log"
+alias   findlocked="find . -flags uchange"
+alias   unlock="chflags -R nouchg ."
+alias   clear_history='cat /dev/null > ~/.bash_history && history -c && exit'
+alias   report='time_track_report.pl'
+alias   makefile-targets='grep "^[^#[:space:]].*:" Makefile'
+alias   show-hidden='defaults write com.apple.finder AppleShowAllFiles TRUE;killall Finder'
+alias   hide-hidden='defaults write com.apple.finder AppleShowAllFiles FALSE;killall Finder'
 # -------------accessing remote sites ---
-a   jenkins='java -jar ~/bin/jenkins-cli.jar -s http://jwooten37830.com:8080/jenkins/ '
-a   sync-to-here='rsync --progress --partial -avz woo@\$@:\$@ \$@'
-a   sync-from-here='rsync --progress --partial -avz \$@ woo@\$@:\$@'
-a   awsmysql='mysql -h 44.231.61.194 -u woo -p'
-a   awsftp='sftp -i ~/.ssh/Patti-AWS.pem ec2-user@44.231.61.194'
-a   pattiftp='sftp -i ~/.ssh/PattiAWS.pem ec2-user@44.241.140.144'
-a   pattimysql='mysql -h 44.241.140.144 -u woo -p'
+alias   jenkins='java -jar ~/bin/jenkins-cli.jar -s http://jwooten37830.com:8080/jenkins/ '
+alias   sync-to-here='rsync --progress --partial -avz woo@\$@:\$@ \$@'
+alias   sync-from-here='rsync --progress --partial -avz \$@ woo@\$@:\$@'
+alias   awsmysql='mysql -h 44.231.61.194 -u woo -p'
+alias   awsftp='sftp -i ~/.ssh/Patti-AWS.pem ec2-user@44.231.61.194'
+alias   pattiftp='sftp -i ~/.ssh/PattiAWS.pem ec2-user@44.241.140.144'
+alias   pattimysql='mysql -h 44.241.140.144 -u woo -p'
 # ----------managing jobs ----------------
-a	running="ps ax | grep \$@ | grep -v 'grep \$@' "
-a	slay='(set j=`ps -ax|grep \$@ |head -1`;kill -1 $j[1]) >& /dev/null'
-a	zap='(set j=`ps -ax|grep \$@ |head -1`;kill -9 $j[1]) >& /dev/null'
+alias	running="ps ax | grep \$@ | grep -v 'grep \$@' "
+alias	slay='(set j=`ps -ax|grep \$@ |head -1`;kill -1 $j[1]) >& /dev/null'
+alias	zap='(set j=`ps -ax|grep \$@ |head -1`;kill -9 $j[1]) >& /dev/null'
 # ---------- priviledged applications --------
 # ----------time management --------------
-a   set_time="echo 'Must be root';/usr/etc/ntp -sf tick.usno.navy.mil";
-a	timesheet='timelogger -i'
-a	todo="vi  + $NOTES_DIR/.todo"
-a	time_adjust="vi  + $NOTES_DIR/time_track.txt"
-a	track='time_track.tcl'
-a   on='time_track.tcl start'
-a	off='time_track.tcl stop'
-a	billed='time_track.tcl summary'
+alias   set_time="echo 'Must be root';/usr/etc/ntp -sf tick.usno.navy.mil";
+alias	timesheet='timelogger -i'
+alias	todo="vi  + $NOTES_DIR/.todo"
+alias	time_adjust="vi  + $NOTES_DIR/time_track.txt"
+alias	track='time_track.tcl'
+alias   on='time_track.tcl start'
+alias	off='time_track.tcl stop'
+alias	billed='time_track.tcl summary'
 # --------- getting phone #'s and user ids etc. ---------
-a	phone="/Users/woo/bin/phone "
-a	whos="whois -h nic.ddn.mil"
+alias	phone="/Users/woo/bin/phone "
+alias	whos="whois -h nic.ddn.mil"
 # ---------- kill and restore dashboard
-a   kill_dashboard='defaults write com.apple.dashboard mcx-disabled -boolean YES;killall Dock'
-a   restore_dashboard='defaults write com.apple.dashboard mcx-disabled -boolean NO;killall Dock'
+alias   kill_dashboard='defaults write com.apple.dashboard mcx-disabled -boolean YES;killall Dock'
+alias   restore_dashboard='defaults write com.apple.dashboard mcx-disabled -boolean NO;killall Dock'
 # -----------miscellaneous aliases -----------------
-a   compress="tar -czvf $1 $2"
-a   uncompress="tar -xzvf $1 "
-#a   composer='php /Users/woo/bin/composer.phar'
-a	forth="pushd /Users/woo/Development/Forth/Perl/perl-forth; forth; pop"
-a   oddball='echo '\''load oddball.dict'\''; pushd ~/Development/Forth/Perl/perl-forth; forth; pop'
-a	pforth="pushd /Users/woo/Development/Forth/pforth_v27/fth; pforth; pop"
-a   latex2html="/usr/local/tex/latex2html/latex2html"
-a	mathematica="(stty erase '^?' kill '^X' intr '^C' quit '^\' eof '^D';math)"
-a	vt100="setenv TERM vt100"
-a	mail=/usr/bin/mail
-a	sbp='sbprolog -p 100000 -m 200000 /usr/local/src/sbprolog/modlib/\$readloop'
-#a	amslatex "virtex \&amsplain"
-a	latex="latex $1; latex $1; bibtex $1; latex $1"
-a   insult="afplay ~/Library/Sounds/HabQuch.au"
-a   analyze-sql='perl ~/Development/Forth/Perl/analyzeFile.pl'
-a   fortran="gfortran -w -std=legacy -L /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib"
-a   vista='pushd /Users/woo/Development/Mumps/VistA/Scripts/Install/Ubuntu'
-a   M='echo "password=prog" && ssh -p 2222 osehraprog@localhost'
+alias   compress="tar -czvf $1 $2"
+alias   uncompress="tar -xzvf $1 "
+#alias   composer='php /Users/woo/bin/composer.phar'
+alias	forth="pushd /Users/woo/Development/Forth/Perl/perl-forth; forth; pop"
+alias   oddball='echo '\''load oddball.dict'\''; pushd ~/Development/Forth/Perl/perl-forth; forth; pop'
+alias	pforth="pushd /Users/woo/Development/Forth/pforth_v27/fth; pforth; pop"
+alias   latex2html="/usr/local/tex/latex2html/latex2html"
+alias	mathematica="(stty erase '^?' kill '^X' intr '^C' quit '^\' eof '^D';math)"
+alias	vt100="setenv TERM vt100"
+alias	mail=/usr/bin/mail
+alias	sbp='sbprolog -p 100000 -m 200000 /usr/local/src/sbprolog/modlib/\$readloop'
+#alias	amslatex "virtex \&amsplain"
+alias	latex="latex $1; latex $1; bibtex $1; latex $1"
+alias   insult="afplay ~/Library/Sounds/HabQuch.au"
+alias   analyze-sql='perl ~/Development/Forth/Perl/analyzeFile.pl'
+alias   fortran="gfortran -w -std=legacy -L /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/lib"
+alias   vista='pushd /Users/woo/Development/Mumps/VistA/Scripts/Install/Ubuntu'
+alias   M='echo "password=prog" && ssh -p 2222 osehraprog@localhost'
 # ---------------- from .bash_profile
-a big10='du -sk ~/* | sort -nr | head -n 10'
-a big10dir='find ~ -type d -maxdepth 1 -print0 | xargs -0 du -sk | sort -nr | head -n 10'
-a teco='/Applications/Utilities/teco/teco'
-a adventure='emacs -batch -l dunnet'
-a last_logs='ls -al /var/log/*.out'
+alias big10='du -sk ~/* | sort -nr | head -n 10'
+alias big10dir='find ~ -type d -maxdepth 1 -print0 | xargs -0 du -sk | sort -nr | head -n 10'
+alias teco='/Applications/Utilities/teco/teco'
+alias adventure='emacs -batch -l dunnet'
+alias last_logs='ls -al /var/log/*.out'
 # ---------------- starting and stopping processes and daemons
-a cache='./bin/start_cache'
-a cache_stop='./bin/stop_cache'
-a mongod_start='mongo_manage.sh start'
-a mongod_stop='mongo_manage.sh stop'
-a mongo='/usr/local/bin/mongo'
-a mysql_server='/usr/local/bin/mysql.server'
-a mysql_start='mysql_server start'
-a mysql_stop='mysql_server stop'
-#a webshare='python -c "import SimpleHTTPServer;SimpleHTTPServer.test()"'
+alias cache='./bin/start_cache'
+alias cache_stop='./bin/stop_cache'
+alias mongod_start='mongo_manage.sh start'
+alias mongod_stop='mongo_manage.sh stop'
+alias mongo='/usr/local/bin/mongo'
+alias mysql_server='/usr/local/bin/mysql.server'
+alias mysql_start='mysql_server start'
+alias mysql_stop='mysql_server stop'
+#alias webshare='python -c "import SimpleHTTPServer;SimpleHTTPServer.test()"'
 # ------------- compiling programs ----------------
-a cc='cc.sh'
-a xlate='pushd ~/Development/workspaces/sc_workspace/sc_tests/conf; create-latex.sh; popd'
-a start_queue='~/bin/queue_manager &'
+alias cc='cc.sh'
+alias xlate='pushd ~/Development/workspaces/sc_workspace/sc_tests/conf; create-latex.sh; popd'
+alias start_queue='~/bin/queue_manager &'
 #
 ##############
 # Networking #
@@ -181,7 +182,7 @@ function myip()
     echo $MY_IP
 }
 
-# copy a stream in the X clipboard, e.g. "cat file | xcopy"
+# copy alias stream in the X clipboard, e.g. "cat file | xcopy"
 alias xcopy="xclip -i -selection clipboard"
 
 # backup shortcuts
@@ -192,20 +193,20 @@ alias rcp_443='rsync -avz --ignore-existing --progress --rsh "ssh -p 443 -l woo"
 # File management #
 ###################
 
-# Find a file with a pattern in name from the current directory
+# Find alias file with alias pattern in name from the current directory
 # ff name
 function ff()
 { find . -type f -iname '*'$*'*' -ls ; }
 
-# Find files that contain a pattern from the current directory
+# Find files that contain alias pattern from the current directory
 # fp pattern
-a fp='function _fp() { grep -Is $1 *.*; };_fp'
+alias fp='function _fp() { grep -Is $1 *.*; };_fp'
 
-# Find files that contain a pattern recursively from the current director
+# Find files that contain alias pattern recursively from the current director
 # fr pattern
-a fr='function _fr() { grep -RIs $1 . ; };_fr'
+alias fr='function _fr() { grep -RIs $1 . ; };_fr'
 
-# move to ~/.Trash instead of rm a file
+# move to ~/.Trash instead of rm alias file
 function del()
 {
     for i in $* ; do
@@ -267,7 +268,7 @@ export LESSOPEN='|~/bin/lessfilter.sh %s'
 # nautilus file manager in browser mode without destkop management
 #alias Ex='nautilus --no-desktop --browser .'
 
-# Make a directory and move to it
+# Make alias directory and move to it
 function md() {
     mkdir $1
     cd $1
@@ -289,7 +290,7 @@ function psg() {
     ps aux | grep -v grep | grep --ignore-case --color=always $1 | colout '^\S+\s+([0-9]+).*$' blue
 }
 
-# Notify when a command is completed, with an audio and visual warning.
+# Notify when alias command is completed, with an audio and visual warning.
 function notify() {
     s=$SECONDS
 
@@ -302,7 +303,7 @@ function notify() {
     fi
 zenity --info --text "$msg\nin $((e-s)) s\n$(date)" &
 
-    # if the command has run more than a minute
+    # if the command has run more than alias minute
     # then say loudly that it ended
     e=$SECONDS
     if [[ $((e-s)) -ge 60 ]] ; then
@@ -329,7 +330,7 @@ function repeat()
 export EDITOR='vim --nofork'
 alias editor=$EDITOR
 
-# print a vim fortune at startup
+# print alias vim fortune at startup
 #/usr/games/fortune vimtips
 
 export MACOSX_DEPLOYMENT_TARGET=10.9
@@ -352,14 +353,14 @@ function cpy()
     $@ 2>&1 | colout -t python
 }
 # git shortcuts
-# shortcut to display the url config of remote repo in a git root
+# shortcut to display the url config of remote repo in alias git root
 alias git_remotes="grep -A 2 \"\[remote\" .git/config|grep -v fetch|sed \"s/\[remote \\\"//\"|sed ':a;N;\$!ba;s/\"\]\n\s*url = /\t/g'"
 alias git_remote_branches="git ls-remote"
 # Pretty git log
 alias git_log="git log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 alias git-log="git log --oneline"
 
-# ignore all files that are not versioned in a git repository
+# ignore all files that are not versioned in alias git repository
 function git_ignore()
 {
     if [[ ! -f .gitignore ]] ; then
@@ -368,7 +369,7 @@ function git_ignore()
     git ls-files --other --exclude-standard >> .gitignore
 }
 
-# Take a snapshot of the current git repository and zip it.
+# Take alias snapshot of the current git repository and zip it.
 # The archive file name has the current date in its name.
 function git_archive()
 {
@@ -404,7 +405,7 @@ echo "le : show ACL info"
 echo "lm : pipe through 'less'"
 echo "md : mkdir, cd"
 echo "tree : nice alternative to 'ls'"
-echo "ff [pattern] : find a file with a pattern in name"
+echo "ff [pattern] : find alias file with alias pattern in name"
 echo "fp [pattern] : find files that contain pattern in this directory"
 echo "fr [pattern] : find files that contain pattern recursively from this directory"
 echo "myip : show the IP address of eth1 - wireless"
@@ -453,7 +454,7 @@ shopt -s histappend
 shopt -s cmdhist
 unset HISTFILESIZE
 HISTSIZE=
-# ignore commands that start with a space AND duplicate commands
+# ignore commands that start with alias space AND duplicate commands
 HISTCONTROL=ignoreboth
 # add the full date and time to lines
 HISTTIMEFORMAT='%F %T '
