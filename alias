@@ -88,12 +88,13 @@ alias   makefile-targets='grep "^[^#[:space:]].*:" Makefile'
 alias   show-hidden='defaults write com.apple.finder AppleShowAllFiles TRUE;killall Finder'
 alias   hide-hidden='defaults write com.apple.finder AppleShowAllFiles FALSE;killall Finder'
 # -------------accessing remote sites ---
-alias   jenkins='javalias -jar ~/bin/jenkins-cli.jar -s http://jwooten37830.com:8080/jenkins/ '
+alias   jenkins='java -jar ~/bin/jenkins-cli.jar -s http://jwooten37830.com:8080/jenkins/ '
 alias   sync-to-here='rsync --progress --partial -avz woo@\$@:\$@ \$@'
 alias   sync-from-here='rsync --progress --partial -avz \$@ woo@\$@:\$@'
 alias   awsmysql='mysql -h 44.231.61.194 -u woo -p'
 alias   awsftp='sftp -i ~/.ssh/Patti-AWS.pem ec2-user@44.231.61.194'
 alias   pattiftp='sftp -i ~/.ssh/PattiAWS.pem ec2-user@44.241.140.144'
+alias   pattimysql='mysql -h 44.241.140.144 -u woo -p'
 # ----------managing jobs ----------------
 alias	running="ps ax | grep \$@ | grep -v 'grep \$@' "
 alias	slay='(set j=`ps -ax|grep \$@ |head -1`;kill -1 $j[1]) >& /dev/null'

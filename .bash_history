@@ -192,3 +192,64 @@ sftp Old-Macbook-Pro.local
 ssh woo-va-air.local
 ssh woo-laptop.local
 exit
+cd $FOAM_RUN
+ls
+whoami
+exit
+help
+man openfoam
+man openFoam
+tutorial
+ls
+a
+alias
+tut
+ls
+cd basic
+ls
+cd ../incompressible/
+ls
+cd icoFoam
+ls
+cd elbow
+ls
+ls -al
+cat Allrun
+cd ..
+ls
+cp elbow elbow_bak
+cd elbow
+ls
+Allrun
+ls -al
+alias
+./Allrun
+exit
+tut
+ls
+cd basic
+ls
+cd ..
+cd incompressible/
+ls
+cd simpleFoam/
+ls
+cd windAroundBuildings/
+ls
+ls constant
+ls system
+run
+cd ..
+run
+help
+a
+alias
+run
+cd
+run
+a FOAM_RUN
+alias FOAM_RUN
+echo $FOAM_RUN
+pwd
+cd run
+exit
