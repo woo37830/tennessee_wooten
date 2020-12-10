@@ -19,3 +19,4 @@
 /Users/woo/Development/rails/blog
 /Users/woo/Development/unity
 /Users/woo/Documents/Projects/Quantellia
+/Users/woo/Containers/openfoam8-macos/run/aachenBomb
