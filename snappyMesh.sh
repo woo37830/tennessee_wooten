@@ -40,6 +40,8 @@ cp -r "../skeleton_case/input/system" system
 
 cp  -r $stl_directory constant/triSurface
 
+python ~/bin/joinstl.py constant/triSurface/ constant/triSurface/tmp
+
 # create a background mesh from the prepared model
 python ~/bin/create_blockmesh.py constant/triSurface/$output $cell_size $expand_factor
 
@@ -51,25 +53,30 @@ surfaceFeatureExtract
 
 # background mesh
 blockMesh
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions 
+\cp 0/T.orig 0/T
+runApplication setFields
+runApplication $(getApplication)
+
 
 # remove output.stl used to create blockMesh
 rm -f constant/triSurface/$output
 
 # meshing in parallel: system/decomposeParDict must be defined;
 # use mpiexec on windows and mpirun on linux
-decomposePar -force
-mpiexec -np 4 snappyHexMesh -parallel
-reconstructParMesh -latestTime
+#decomposePar -force
+#mpiexec -np 4 snappyHexMesh -parallel
+#reconstructParMesh -latestTime
 
 # sets and zones, if there's anything in system/topoSetDict;
 # also, updates on patches if there's anything in system/changeDictionaryDict
-topoSet
-setsToZones
-changeDictionary
+#topoSet
+#setsToZones
+#changeDictionary
 
 # check and see
-checkMesh
-paraFoam
+#checkMesh
+#paraFoam
 
 # convert output files to vtk for ParaView
 foamToVTK
