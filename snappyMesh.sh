@@ -2,28 +2,43 @@
 # prepare your STL files and edit this script to match their names and directories
 # command-line input
 
-   if (( $# < 5 ))
+if [[ ! -d "skeleton_case" ]]
+  then
+    echo "You must be in a directory with master 'skeleton_case' directory present"
+    exit
+fi
+   if (( $# < 3 ))
    then
-      echo 'Usage: snappyMesh.sh <case_name> <dir-of-stls> <meta_data> <ouput.stl> <hex size [m]> [expand-factor]'
+      echo 'Usage: snappyMesh.sh <case_name> <dir-of-stls>  <hex size [m]> [expand-factor]'
      exit 1
     fi
-    $case=$1
-    $meta=$2
-    directory=$3
-    output=$4
-    cell_size=$5
+    case=$1
+    mkdir $case
+    cd $case
 
-    if (( $# > 5))
+    meta_path="../skeleton_case/input/meta_bc";
+
+    cp  -r $meta_path 0
+
+
+    stl_directory=../$2;
+    cell_size=$3
+
+    if (( $# > 3))
        then
-        expand_factor=$6
+        expand_factor=$4
     else
         expand_factor=1.001
     fi
+output="tmp.stl"
 
-# command-line input
-echo  $2
+cp -r "../skeleton_case/input/constant" constant
+
+cp -r "../skeleton_case/input/system" system
+
 # snappyHexMesh reads from constant/triSurface
-mv $2 constant/triSurface
+
+cp  -r $stl_directory constant/triSurface
 
 # create a background mesh from the prepared model
 python ~/bin/create_blockmesh.py constant/triSurface/$output $cell_size $expand_factor
