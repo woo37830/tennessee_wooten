@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+# Change the extension $1 to $2
+#
+if [[ "$#" -ne 2 ]]; then
+  echo "Usage: chgext 'txt' 'text'"
+  exit
+fi
+#
+for f in *.$1; do
+  mv -- "$f" "${f%.$1}.$2"
+done
+echo "All Done!"
