@@ -46,7 +46,7 @@ python ~/bin/joinstl.py constant/triSurface/ constant/triSurface/tmp
 python ~/bin/create_blockmesh.py constant/triSurface/$output $cell_size $expand_factor
 
 # remove relics from old tries
-rm -r 1 2 3
+#rm -r 1 2 3
 
 # edges and other features; system/surfaceFeatureExtractDict must be defined
 surfaceFeatureExtract
