@@ -32,6 +32,7 @@ alias ubuntu='ssh -X -i "/Users/woo/.ssh/id_rsa" 104.42.221.124'
 alias bigubuntu='ssh -X -i "/Users/woo/.ssh/id_rsa" john@40.83.181.171'
 alias ubuntuftp='sftp -i "/Users/woo/.ssh/id_rsa" 104.42.221.124'
 alias bigubuntuftp='sftp -i "/Users/woo/.ssh/id_rsa" john@40.83.181.171'
+alias QSimVNC='ssh -L 5901:127.0.0.1:5901 -C -N -l john 40.83.181.171 &'
 # --------- patti shortcuts -----------------------------------
 alias patti='pushd /Library/WebServer/Documents/patti'
 alias patti-rails='pushd ~/Development/rails/patti'
