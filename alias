@@ -29,7 +29,9 @@ alias woo_clone='ssh -Y -o ConnectTimeOut=150 -i "/Users/woo/.ssh/id_rsa" -l woo
 alias dcl_l='ssh -Y -o ConnectTimeOut=150 -i "/Users/woo/.ssh/id_rsa" -l ubuntu 172.31.41.149'
 alias ursa-aws='ssh -i ~/.ssh/ursa-private-key.pem ec2-user@ec2-13-59-96-172.us-east-2.compute.amazonaws.com'
 alias ubuntu='ssh -X -i "/Users/woo/.ssh/id_rsa" 104.42.221.124'
+alias bigubuntu='ssh -X -i "/Users/woo/.ssh/id_rsa" john@40.83.181.171'
 alias ubuntuftp='sftp -i "/Users/woo/.ssh/id_rsa" 104.42.221.124'
+alias bigubuntuftp='sftp -i "/Users/woo/.ssh/id_rsa" john@40.83.181.171'
 # --------- patti shortcuts -----------------------------------
 alias patti='pushd /Library/WebServer/Documents/patti'
 alias patti-rails='pushd ~/Development/rails/patti'
