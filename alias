@@ -33,6 +33,7 @@ alias bigubuntu='ssh -X -i "/Users/woo/.ssh/id_rsa" john@40.83.181.171'
 alias ubuntuftp='sftp -i "/Users/woo/.ssh/id_rsa" 104.42.221.124'
 alias bigubuntuftp='sftp -i "/Users/woo/.ssh/id_rsa" john@40.83.181.171'
 alias QSimVNC='ssh -L 5901:127.0.0.1:5901 -C -N -l john 40.83.181.171 &'
+alias netVersant='sftp  john@104.42.194.119'
 # --------- patti shortcuts -----------------------------------
 alias patti='pushd /Library/WebServer/Documents/patti'
 alias patti-rails='pushd ~/Development/rails/patti'
@@ -53,6 +54,9 @@ if [ -f /usr/local/bin/docker ]; then
 alias   start_mssql="docker run -d --name sql_server_demo -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=Fester123.' -p 1433:1433 microsoft/mssql-server-linux"
 fi
 alias   cfd='docker container run -ti --rm -v $PWD/data -w /data  myopenfoam:v6.0'
+# ----------- pythonn and virtualenv commands --------
+alias activate="source ~/Environments/default/bin/activate \$@"
+alias default="source ~/Environments/default/bin/activate default" 
 # ----------- listing files and directories ----------
 alias	l='/bin/ls -FC'	# list files in columns and mark directories
 alias	ll='/bin/ls -l'		# long listing
@@ -388,6 +392,10 @@ function git_archive()
 # Show the current git branch name
 alias git-branch="git rev-parse --abbrev-ref HEAD"
 alias git-rev="git rev-parse --short HEAD"
+#
+# Clean up a git repository
+#
+alias bfg="java -jar ~/bin/bfg-1.14.0.jar"
 #################
 # Configuration #
 #################
