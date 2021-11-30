@@ -1,0 +1,1 @@
+curl http://textbelt.com/text -d number=8653004774 -d key=56b28bd7b593bb51bda08ced036b955e59602b68tV63EGcYSq0iAf2baHAJ4nQyY -d "message=$1";echo message sent;
