@@ -395,6 +395,10 @@ function git_archive()
 # Show the current git branch name
 alias git-branch="git rev-parse --abbrev-ref HEAD"
 alias git-rev="git rev-parse --short HEAD"
+#
+# Clean up a git repository
+#
+alias bfg="java -jar ~/bin/bfg-1.14.0.jar"
 #################
 # Configuration #
 #################
