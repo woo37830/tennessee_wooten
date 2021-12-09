@@ -34,7 +34,8 @@ alias ubuntuftp='sftp -i "/Users/woo/.ssh/id_rsa" 104.42.221.124'
 alias bigubuntuftp='sftp -i "/Users/woo/.ssh/id_rsa" john@40.83.181.171'
 alias QSimVNC='ssh -L 5901:127.0.0.1:5901 -C -N -l john 40.83.181.171 &'
 alias netVersant='sftp  john@104.42.194.119'
-alias cirrus='ssh login.cirrus.ac.uk'
+alias cirrus="ssh login.cirrus.ac.uk "
+alias _cirrus="_ssh woo login.cirrus.ac.uk 'CkqY5b5LV<,+UR3T'"
 alias cirrusftp='sftp login.cirrus.ac.uk'
 # --------- patti shortcuts -----------------------------------
 alias patti='pushd /Library/WebServer/Documents/patti'
