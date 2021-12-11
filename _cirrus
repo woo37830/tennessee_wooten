@@ -2,7 +2,7 @@
 #
 #  provide the password to cirrus from this script
 #
-
+function _ssh() {
 USER=$1
 HOST=$2
 PSWD=$3
@@ -31,4 +31,7 @@ PSWD=$3
    send_user "Disconnected\n"
    close
 EOD
+}
+
+_ssh woo login.cirrus.ac.uk 'CkqY5b5LV<,+UR3T'
 
