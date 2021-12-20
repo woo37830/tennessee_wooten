@@ -1,6 +1,5 @@
 #!/bin/bash
-#
-#  provide the password to cirrus from this script
+#  provide the info to remote-host from this script
 #
 function _ssh() {
 USER=$1
@@ -8,10 +7,12 @@ HOST=$2
 PSWD=$3
 
 /usr/local/bin/expect<<EOD
+   exp_internal 1
    set timeout 30
    log_user 1
    set send_slow {1 .01}
    log_file ~/log/ssh_tmp.log
+   set prompt  {*~\]\$ $}
 
    send_log "Connecting to $HOST using $USER user\n"
    eval spawn ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o ConnectTimeout=30 "$USER\@$HOST"
@@ -22,16 +23,37 @@ PSWD=$3
       }
    expect {
       timeout { send_user "timeout waiting for prompt\n"; exit }
-      "*]#"  { send_user "Login successful to $HOST\n" }
-      }
-   send "\hostname\r"
+      "*Welcome*" {  send_user "Welcome: \n" }
+   }
    expect {
-      "[woo.*~]$"  { send "exit\r" }
+      timeout { send_user "timeout waiting for prompt\n"; exit }
+      "" {  send_user "... \n" }
+   }
+   expect {
+      timeout { send_user "timeout waiting for prompt\n"; exit }
+      "" {  send_user "... \n" }
+   }
+   expect {
+      timeout { send_user "timeout waiting for prompt\n"; exit }
+      "" {  send_user "... \n" }
+   }
+   expect {
+      timeout { send_user "timeout waiting for prompt\n"; exit }
+      "" {  send_user "... \n" }
+   }
+   expect {
+      timeout { send_user "timeout waiting for prompt\n"; exit }
+      "*\]\$ " { send_user "Login successful to $HOST\n" }
+   }
+   expect {
+   while true {
+	  timeout { send_user "timeout waiting for input\n"; exit }
+	  "" { send_user " ... " ; exit; sleep 10 }
+>>>>>>> 631c5f75e52adb32f16cc14fe2c782e7ba4892f8
       }
-   send_user "Disconnected\n"
+   }
    close
 EOD
 }
-
 _ssh woo login.cirrus.ac.uk 'CkqY5b5LV<,+UR3T'
 
