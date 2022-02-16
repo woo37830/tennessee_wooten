@@ -1,0 +1,9 @@
+#!/bin/bash
+#
+#
+#
+parse_git_branch() {
+     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+}
+USER_PROMPT_COMMAND=" \[\e[91m\]\$(parse_git_branch)\[\e[00m\]$ "
+export USER_PROMPT_COMMAND
