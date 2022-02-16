@@ -1,0 +1,25 @@
+#!/bin/bash
+#
+# Add todo items or remove completed ones
+# Update the diary with note about what was removed and added.
+#
+YYYY=`date +'%Y'`
+
+# format datetime to match Journal
+date_time=`date +"%Y%m%d %T"`
+#
+DIARY="$NOTES_DIR/Journal_$YYYY.txt"
+TODO="$NOTES_DIR/.todo"
+#
+#
+  echo "" >> $DIARY
+	echo "---$date_time" >>$DIARY
+	echo "" >>$DIARY
+	echo "Edited ToDo List" >> $DIARY
+
+# Create a backup of the .todo file
+/bin/cp -r $TODO ~/tmp/.todo
+vim + $TODO
+diff $TODO ~/tmp/.todo | awk '/[<>]/{print}' | tr '>' 'C' | tr '<' 'A' >>$DIARY
+rm -f ~/tmp/.todo
+

@@ -114,7 +114,6 @@ alias	zap='(set j=`ps -ax|grep \$@ |head -1`;kill -9 $j[1]) >& /dev/null'
 # ----------time management --------------
 alias   set_time="echo 'Must be root';/usr/etc/ntp -sf tick.usno.navy.mil";
 alias	timesheet='timelogger -i'
-alias	todo="vi  + $NOTES_DIR/.todo"
 alias	time_adjust="vi  + $NOTES_DIR/time_track.txt"
 alias	track='time_track.tcl'
 alias   on='time_track.tcl start'
