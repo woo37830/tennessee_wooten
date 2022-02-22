@@ -29,7 +29,8 @@ for row in range(1,len(vmLines)-2):
     rowElements = sep.split(rowText)
     vmStats[(rowElements[0])] = int(rowElements[1].strip('\.')) * 4096
     
-percentUsed =  (100-100*vmStats["Pages free"]/1024/1024/65536 )
+percentUsed =  (100-100*vmStats["Pages free"]/(1024*1024*1024*8)) 
+
 
 #print 'Wired Memory:\t\t%d MB' % ( vmStats["Pages wired down"]/1024/1024 )
 #print 'Active Memory:\t\t%d MB' % ( vmStats["Pages active"]/1024/1024 )
