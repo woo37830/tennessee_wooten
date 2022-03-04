@@ -20,3 +20,4 @@
 /Users/woo/Development/unity
 /Users/woo/Documents/Projects/Quantellia
 /Users/woo/Projects/cfd
+/Users/woo/Projects/WorksafeAI
