@@ -55,7 +55,7 @@ alias   vstart="vagrant snapshot restore root_password_set --no-provision"
 if [ -f /usr/local/bin/docker ]; then
 alias   start_mssql="docker run -d --name sql_server_demo -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=Fester123.' -p 1433:1433 microsoft/mssql-server-linux"
 fi
-alias   cfd='docker container run -ti --rm -v $PWD/data -w /data  myopenfoam:v6.0'
+alias   cfd='docker container run -ti --rm -v $PWD:/data -v /Volumes/SSD-1:/runs -w /data openfoamplus/of_v2006_centos73 /bin/bash'
 # ----------- pythonn and virtualenv commands --------
 alias activate="source ~/Environments/default/bin/activate \$@"
 alias default="source ~/Environments/default/bin/activate default" 
