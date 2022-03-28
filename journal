@@ -1,0 +1,15 @@
+#!/bin/bash
+#
+# Open the Journal file for the given year
+#
+txt="Usage: $0 YYYY [line_number]"
+line=1
+if [ "$#" == 0 ]; then
+    echo $txt
+    exit
+fi
+if [ "$#" == 2 ]; then
+    line=$2
+fi
+vim $NOTES_DIR/Journal_$1.txt +$line
+
