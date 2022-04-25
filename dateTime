@@ -1,0 +1,7 @@
+#!/bin/bash
+#
+#  Expression for getting and showing formatted dateTime
+#
+dateTime=$(TZ="America/New_York"  date "+%Y%m%d_%H%M%S")
+echo "--------- $dateTime --------"
+

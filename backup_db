@@ -4,7 +4,7 @@
 #
 # Usage: backup_db password
 #
-FILE=/usr/local/bin/automysqlbackup
+FILE=/usr/local/mysql/bin/mysqldump
 if [ -e "$FILE" ]; then
 while read p; do
 /usr/local/mysql/bin/mysqldump $p -u woo -p$1 2>>/Users/woo/logs/cronjob.log 1> /Users/woo/backups/sql/$p.sql
