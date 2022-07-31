@@ -95,6 +95,13 @@ $myscriptpath/computerinfo.bash
 /bin/bash ~/bin/geek_scripts/check_psql.sh
 /bin/bash ~/bin/geek_scripts/check_mongo.sh
 /bin/bash ~/bin/geek_scripts/sip_monitor.sh
+if [ $HOSTNAME == "woo-pro.local" ]; then
+	echo "Document root at: /usr/local/var/www"
+elif  [ $HOSTNAME == "woo-va-air.local" ]; then
+	echo "Document root at: /Library/WebServer/Documents"
+elif [ $HOSTNAME == "xanadu.local" ]; then
+	echo "Document root at: /opt/homebrew/var/www"
+fi
 #
 # Show Current version - this is also in computerinfo.bash above amount of ram
 # sw_vers | tail -2 | head -1
