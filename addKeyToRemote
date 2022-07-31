@@ -1,0 +1,5 @@
+#!/bin/bash
+#
+#  Copy the id_rsa.pub key to a remote servers authorized_keys
+#
+cat ~/.ssh/id_rsa.pub | ssh $1 'cat >> ~/.ssh/authorized_keys'
