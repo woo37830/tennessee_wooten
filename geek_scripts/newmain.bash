@@ -95,6 +95,13 @@ $myscriptpath/computerinfo.bash
 /bin/bash ~/bin/geek_scripts/check_psql.sh
 /bin/bash ~/bin/geek_scripts/check_mongo.sh
 /bin/bash ~/bin/geek_scripts/sip_monitor.sh
+if [ -d "/usr/local/var/www" ]; then
+	echo "Document root at: /usr/local/var/www"
+elif  [ -d "/Library/WebServer/Documents" ]; then
+	echo "Document root at: /Library/WebServer/Documents"
+elif [ -d "/opt/homebrew/var/www" ]; then
+	echo "Document root at: /opt/homebrew/var/www"
+fi
 #
 # Show Current version - this is also in computerinfo.bash above amount of ram
 # sw_vers | tail -2 | head -1
