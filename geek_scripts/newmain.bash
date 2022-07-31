@@ -95,11 +95,11 @@ $myscriptpath/computerinfo.bash
 /bin/bash ~/bin/geek_scripts/check_psql.sh
 /bin/bash ~/bin/geek_scripts/check_mongo.sh
 /bin/bash ~/bin/geek_scripts/sip_monitor.sh
-if [ -d "/usr/local/var/www" ]; then
+if [ $HOSTNAME == "woo-pro.local" ]; then
 	echo "Document root at: /usr/local/var/www"
-elif  [ -d "/Library/WebServer/Documents" ]; then
+elif  [ $HOSTNAME == "woo-va-air.local" ]; then
 	echo "Document root at: /Library/WebServer/Documents"
-elif [ -d "/opt/homebrew/var/www" ]; then
+elif [ $HOSTNAME == "xanadu.local" ]; then
 	echo "Document root at: /opt/homebrew/var/www"
 fi
 #
