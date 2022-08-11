@@ -39,9 +39,8 @@ alias cirrusftp='sftp login.cirrus.ac.uk'
 # --------- patti shortcuts -----------------------------------
 alias patti='pushd /Library/WebServer/Documents/patti'
 alias patti-rails='pushd ~/Development/rails/patti'
-alias aws='ssh -i ~/.ssh/Patti-AWS.pem ec2-user@44.231.61.194'
 alias awsweb='pushd /var/www/html/patti'
-alias aws-patti='ssh -i ~/.ssh/Patti-AWS.pem ec2-user@ec2-44-241-140-144.us-west-2.compute.amazonaws.com'
+alias aws-patti='ssh ec2-user@ec2-44-241-140-144.us-west-2.compute.amazonaws.com'
 # ----------vm shortcuts
 alias   vrestore='vagrant snapshot restore \$@ --no-provision'
 alias   vlist='vagrant snapshot list'
@@ -103,7 +102,7 @@ alias   jenkins='java -jar ~/bin/jenkins-cli.jar -s http://jwooten37830.com:8080
 alias   sync-to-here='rsync --progress --partial -avz woo@\$@:\$@ \$@'
 alias   sync-from-here='rsync --progress --partial -avz \$@ woo@\$@:\$@'
 alias   awsmysql='mysql -h 44.231.61.194 -u woo -p'
-alias   awsftp='sftp -i ~/.ssh/Patti-AWS.pem ec2-user@44.231.61.194'
+alias   awsftp='sftp   ec2-user@ec2-44-241-140-144.us-west-2.compute.amazonaws.com'
 alias   pattiftp='sftp -i ~/.ssh/PattiAWS.pem ec2-user@44.241.140.144'
 alias   pattimysql='mysql -h 44.241.140.144 -u woo -p'
 # ----------managing jobs ----------------
