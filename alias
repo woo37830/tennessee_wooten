@@ -37,10 +37,9 @@ alias netVersant='sftp  john@104.42.194.119'
 alias cirrus="ssh login.cirrus.ac.uk "
 alias cirrusftp='sftp login.cirrus.ac.uk'
 # --------- patti shortcuts -----------------------------------
-alias patti='pushd /Library/WebServer/Documents/patti'
 alias patti-rails='pushd ~/Development/rails/patti'
 alias awsweb='pushd /var/www/html/patti'
-alias aws-patti='ssh ec2-user@ec2-44-241-140-144.us-west-2.compute.amazonaws.com'
+alias aws-patti='ssh -i ~/.ssh/PattiAWS.pem ec2-user@ec2-44-241-140-144.us-west-2.compute.amazonaws.com'
 # ----------vm shortcuts
 alias   vrestore='vagrant snapshot restore \$@ --no-provision'
 alias   vlist='vagrant snapshot list'
@@ -164,6 +163,9 @@ alias cc='cc.sh'
 alias xlate='pushd ~/Development/workspaces/sc_workspace/sc_tests/conf; create-latex.sh; popd'
 alias start_queue='~/bin/queue_manager &'
 #
+alias patti-pro="pushd /usr/local/var/www/patti"
+alias patti-air="pushd /Library/WebServer/Documents/patti"
+alias patti-xanadu="pushd /opt/homebrew/var/www/patti"
 ##############
 # Networking #
 ##############
