@@ -21,3 +21,9 @@
 /Users/woo/Documents/Projects/Quantellia
 /Users/woo/Projects/cfd
 /Users/woo/Projects/WorksafeAI
+/usr/local/var/www/patti
+/usr/local/var/www/notes
+/usr/local/var/www/indecks
+/usr/local/var/www/queue
+/usr/local/var/library
+/usr/local/var/dashboard
